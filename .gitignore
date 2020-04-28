@@ -1,6 +1,5 @@
 node_modules/
 jspm_packages/
-JavaScript/*.*
 *.pdf
 *sublime*
 .*
