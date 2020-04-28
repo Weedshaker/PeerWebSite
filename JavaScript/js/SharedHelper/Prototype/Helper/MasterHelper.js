@@ -2,7 +2,7 @@
 
 export class MasterHelper {
 	constructor(){
-		this.baseURL = window.sst && window.sst.karma ? window.sst.karma : '';
+		this.baseURL = window.sst && window.sst.karma ? window.sst.karma : location.host.includes('github') ? 'PeerWebSite/' : '';
 	}
 	addBaseURL(url = [], relative = true){
 		let locOrigin = relative ? '.' : location.origin;
