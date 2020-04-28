@@ -25,7 +25,7 @@ export class HTML extends MasterHTML {
 				button.on('click', () => {
 					this.disabled = true;
 					$('#txt-roomid').val($('#txt-roomid').val().replace(/\s/g, ''));
-					location.hash = $('#txt-roomid').val();
+					location.hash = $('#txt-roomid').val() || $('#txt-roomid').attr('placeholder');
 				});
 				// hot-reloader
 				if(window.sst && window.sst.isDebug){

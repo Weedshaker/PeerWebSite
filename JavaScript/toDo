@@ -1,4 +1,6 @@
 ---- UI - Server ----
+0) fix that images keep the proper sizes when newly loaded
+
 1) create new ui
 
 2) save torrents (client.add(metadata, {"store": idb})) !!! metadata must be the App.Editor.WebTorrent.client.torrents[0].torrentFile -> torrent file (buffer) or parsed torrent (from parse-torrent https://github.com/webtorrent/parse-torrent)!!!, then it will resurrect the torrent from the indexeddb [https://github.com/webtorrent/webtorrent/issues/1293#issuecomment-366378219, https://github.com/SilentBot1/webtorrent-examples/blob/master/resurrection/index.js]
