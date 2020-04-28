@@ -17,7 +17,7 @@ export class MasterWebRTC {
 		this.connection = window.sst && window.sst.isDebug && window.WebRTC && window.WebRTC.connection ? window.WebRTC.connection : new RTCMultiConnection();
 		//this.connection.socketURL = window.sst && window.sst.isDebug ? `http://${window.location.hostname}:9001/` : 'http://default-environment.digvjm9b3i.us-west-2.elasticbeanstalk.com:9001/'; // cd into repo: npm install --production / node server.js
 		//this.connection.socketURL = window.sst && window.sst.isDebug ? `http://${window.location.hostname}:9001/` : 'https://rtcmulticonnection.herokuapp.com:443/'; // cd into repo: npm install --production / node server.js
-		this.connection.socketURL = window.sst && window.sst.isDebug ? `http://${window.location.hostname}:9001/` : 'https://webrtcweb.com:9002/'; // cd into repo: npm install --production / node server.js
+		this.connection.socketURL = window.sst && window.sst.isDebug ? `http://${window.location.hostname}:9001/` : 'https://webrtcweb.com:9001/'; // cd into repo: npm install --production / node server.js
 		this.connection.session = {
 			data: true,
 			audio: false,
