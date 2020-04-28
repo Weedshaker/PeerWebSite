@@ -8,7 +8,7 @@ export class MasterHelper {
 		let locOrigin = relative ? '.' : location.origin;
 		return url.map((e) => {
 			if (!this.baseURL && relative && e.includes('./')) return e;
-			return `${locOrigin}/${this.baseURL}${e.replace(':', '/')}`;
+			return `${locOrigin}/${location.host.includes('github') && relative ? '' : this.baseURL}${e.replace(':', '/')}`;
 		});
 	}
 	getRandomString() {
