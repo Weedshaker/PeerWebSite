@@ -1,0 +1,71 @@
+/*jshint esnext: true */
+
+import { Helper } from 'WebTorrent/Classes/Helper/Helper.js';
+
+export class ServiceWorker {
+	constructor(serviceWorkerPath = 'MasterServiceWorker.js', serviceWorkerScope = './', getBlobByFileName){
+		this.serviceWorkerPath = serviceWorkerPath;
+		this.serviceWorkerScope = serviceWorkerScope;
+		this.getBlobByFileName = getBlobByFileName;
+		
+		this.name = 'ServiceWorker';
+		this.Worker = null;
+		this.messageChannel = new MessageChannel();
+		this.Helper = new Helper();
+		// NOTE: Karma Tests don't work, more information at ./JavaScript/tests/ServiceWorker/ServiceWorker.js
+		this.serviceWorkerPath = this.Helper.addBaseURL([this.serviceWorkerPath])[0];
+		this.serviceWorkerScope = this.Helper.addBaseURL([this.serviceWorkerScope])[0];
+	}
+	run(){
+		if (navigator.serviceWorker) {
+			this.addReadyEventListener();
+			this.register();
+		} else {
+			console.warn('SST:Service Worker is not supported in this browser.')
+		}
+	}
+	// wait until the ServiceWorker is ready and then addMessageChannelEventListener
+	addReadyEventListener() {
+		//console.log('@sw_helper listening to ready event');
+		navigator.serviceWorker.ready.then((registration) => {
+			this.Worker = registration.active;
+			this.addMessageChannelEventListener();
+			// send port to service worker
+			//console.log('@sw_helper sending port to ServiceWorker');
+			this.Worker.postMessage(location.origin, [this.messageChannel.port2]);
+		}).catch((e) => {
+			console.error(e);
+		});
+	}
+	// gets executed on every message received from ServiceWorker
+	addMessageChannelEventListener() {
+		this.messageChannel.port1.onmessage = (event) => {
+			if (event.data === '!!!ready') {
+				//console.log('@sw_helper Intercept is ready!');
+			} else if (Array.isArray(event.data) && event.data[0].includes('.')){
+				let name = event.data[0].split('/').slice(-1)[0];
+				this.getBlobByFileName(name).then(
+					(blob) => {
+						const init = { 'status': 200, 'statusText': name };
+						this.Worker.postMessage([event.data, [blob, init]]);
+					},
+					() => {
+						this.Worker.postMessage([event.data, false]);
+					}
+				);
+			} else {
+				this.Worker.postMessage([event.data, false]);
+			}
+		};
+	}
+	// register the service worker
+	register() {
+		//console.log(`@sw_helper register: ${this.serviceWorkerPath}; with scope: ${this.serviceWorkerScope}`);
+		navigator.serviceWorker.register(this.serviceWorkerPath, { scope: this.serviceWorkerScope }).then((registration) => {
+			registration.update();
+			//console.log('@sw_helper registered', registration);
+		}).catch((e) => {
+			console.error(e);
+		});
+	}
+}

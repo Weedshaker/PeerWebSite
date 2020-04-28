@@ -1,0 +1,53 @@
+{
+  "name": "webRTC",
+  "version": "0.0.3",
+  "private": true,
+  "dependencies": {
+    "jspm": "latest",
+    "mime-types": "latest"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "main": "app.js",
+  "repository": "git@gitlab.com/Weedshaker/webrtc-neb-operator-spoon.git",
+  "author": "Silvan Strübi",
+  "license": "Proprietory",
+  "jspm": {
+    "dependencies": {
+      "AkeemMcLennon/dom2hscript": "github:AkeemMcLennon/dom2hscript@master",
+      "Weedshaker/virtual-dom": "github:Weedshaker/virtual-dom@^2.1.2",
+      "bootstrap": "github:twbs/bootstrap@^3.3.7",
+      "capaj/systemjs-hot-reloader": "github:alexisvincent/systemjs-hot-reloader@0.6.0",
+      "hockic/summernote-ext-filedialog": "github:hockic/summernote-ext-filedialog@master",
+      "jquery": "npm:jquery@^3.3.1",
+      "muaz-khan/RTCMultiConnection": "github:muaz-khan/RTCMultiConnection@^3.4.4",
+      "parse-torrent": "npm:parse-torrent@^5.8.3",
+      "pieroxy/lz-string": "github:pieroxy/lz-string@^1.4.4",
+      "socket.io-client": "github:socketio/socket.io-client@^1.7.4",
+      "summernote/summernote": "github:summernote/summernote@^0.8.9",
+      "tanaka-de-silva/google-diff-match-patch-js": "github:tanaka-de-silva/google-diff-match-patch-js@^1.0.0",
+      "webtorrent/webtorrent": "github:webtorrent/webtorrent@^0.98.21",
+      "xuset/indexeddb-chunk-store": "github:xuset/indexeddb-chunk-store@^2.2.1"
+    },
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.8.24",
+      "babel-runtime": "npm:babel-runtime@^5.8.24",
+      "core-js": "npm:core-js@^1.1.4"
+    },
+    "buildConfig": {
+      "transpileES6": true,
+      "minify": true
+    }
+  },
+  "devDependencies": {
+    "babel-minify": "*",
+    "chokidar-socket-emitter": "*",
+    "jasmine-core": "latest",
+    "karma": "latest",
+    "karma-chrome-launcher": "*",
+    "karma-firefox-launcher": "*",
+    "karma-jasmine": "latest",
+    "karma-jspm": "latest"
+  }
+}

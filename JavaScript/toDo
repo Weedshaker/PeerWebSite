@@ -1,0 +1,28 @@
+---- UI - Server ----
+1) create new ui
+
+2) save torrents (client.add(metadata, {"store": idb})) !!! metadata must be the App.Editor.WebTorrent.client.torrents[0].torrentFile -> torrent file (buffer) or parsed torrent (from parse-torrent https://github.com/webtorrent/parse-torrent)!!!, then it will resurrect the torrent from the indexeddb [https://github.com/webtorrent/webtorrent/issues/1293#issuecomment-366378219, https://github.com/SilentBot1/webtorrent-examples/blob/master/resurrection/index.js]
+    and content (save/load page in IndexedDB by page name or https://github.com/Stuk/jszip)
+
+3) sever.js, socket.io, handshake node.js (reach user with simple geo-search and sub-domain by fingerprint pouchDB)
+    > study events and make sure all events can be customized... and or replace  mueaz-khan-webrtc configs (MasterWebRTC this.connection.session), add more events to the api: like checking for participants total, onNewParticipant trigger function, information on connect, disconnect, etc.
+        > https://github.com/feross/simple-peer / https://github.com/peers/peerjs
+        > https://github.com/webrtc/adapter
+        > insp: https://multihack.github.io/multihack-web
+
+****************************************************************************************************************************************************************************
+
+Backburner:
+ > standard linting (https://github.com/standard/standard)
+ > all text into xml/json language files (receiver this.loading), etc)   
+ > DOM - make possible to temporarely indicate recently changed/updated parts of html -> domtree (move virtual dom stuff into its own class) https://github.com/snabbdom/snabbdom->Delayed properties
+ > Webtorrent -> lazzy load when in viewport
+ > Webtorrent -> seeder shall be able to choose if file gets appended as link or media
+ > Let user choose to download file from certain size on (https://github.com/Flet/prettier-bytes (file.length))
+ > When streaming, give user choice to download file, as soon as finished [show percentage] (client.torrents[0].files[0].getBlobURL((err, url) => {console.log(url)}))
+---- UI - Server ----
+ > feed in app (ui) to see pages user is following (like twitter feed)
+ > solr (re)search
+ > [3.1] as option keep page alive with torrent for static display (clients will start hosting the torrent as soon as the sender goes offline)
+ > http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_docker_ecs.html and add http/2 support
+ > Review with: https://www.npmjs.com/package/source-map-explorer , once jspm 0.17 out of beta, check if rollup works

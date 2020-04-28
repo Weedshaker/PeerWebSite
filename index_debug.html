@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="shortcut icon" href="favicon.gif" type="image/x-icon" />
+    <!-- https://www.muicss.com/docs/v1/css-js/buttons -->
+    <link rel="stylesheet" type="text/css" href="css/mui.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <title>Peer Web Site</title>
+</head>
+<body id='body'>
+    <!-- chokidar-socket-emitter (must be executed from this path: ./JavaScript/js/)-->
+    <!-- git push -u origin --all -->
+    <script type="text/javascript" src="./jspm_packages/system.js"></script>
+    <script type="text/javascript" src="./config.js"></script>
+    <script>
+        //if(location.origin.match(/localhost/)){
+            System.trace = true;
+            System.import('capaj/systemjs-hot-reloader').then(function(HotReloader){
+                new HotReloader.default(`http://${window.location.hostname}:5776`);  // chokidar-socket-emitter port
+            });
+        //}
+        System.import('./JavaScript/js/debug.js').then(function(){
+            System.import('./JavaScript/js/init.js');
+        });
+    </script>
+</body>
+</html>
