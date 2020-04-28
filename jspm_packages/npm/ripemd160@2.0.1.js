@@ -1,0 +1,1 @@
+module.exports = require("npm:ripemd160@2.0.1/index");

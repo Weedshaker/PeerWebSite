@@ -1,0 +1,52 @@
+{
+  "name": "bencode",
+  "description": "Bencode de/encoder",
+  "version": "2.0.0",
+  "bugs": {
+    "url": "https://github.com/themasch/node-bencode/issues"
+  },
+  "contributors": [
+    {
+      "name": "Mark Schmale",
+      "email": "masch@masch.it",
+      "url": "http://masch.it/"
+    },
+    {
+      "name": "Jonas Hermsmeier",
+      "email": "jhermsmeier@gmail.com",
+      "url": "https://jhermsmeier.de/"
+    }
+  ],
+  "devDependencies": {
+    "bencoding": "latest",
+    "bncode": "latest",
+    "btparse": "latest",
+    "dht-bencode": "latest",
+    "dht.js": "latest",
+    "nanobench": "^2.1.0",
+    "standard": "^9.0.2",
+    "tap-spec": "~4.1.0",
+    "tape": "^4.6.3"
+  },
+  "keywords": [
+    "bdecode",
+    "bencode",
+    "bencoding",
+    "bittorrent",
+    "torrent"
+  ],
+  "license": "MIT",
+  "main": "lib",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/themasch/node-bencode.git"
+  },
+  "scripts": {
+    "benchmark": "nanobench benchmark/*.js",
+    "style": "standard --fix",
+    "test": "standard && tape test/*.test.js | tap-spec"
+  },
+  "dependencies": {
+    "safe-buffer": "^5.1.1"
+  }
+}

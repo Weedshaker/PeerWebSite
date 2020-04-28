@@ -1,0 +1,63 @@
+{
+  "name": "systemjs-hot-reloader",
+  "version": "0.6.0",
+  "description": "JSPM utility for hot reloading modules of your app separately",
+  "main": "hot-reloader.js",
+  "scripts": {
+    "precommit": "npm test",
+    "pretest": "node_modules/.bin/standard",
+    "test": "node run-tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/capaj/systemjs-hot-reloader.git"
+  },
+  "author": "capajj@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/capaj/systemjs-hot-reloader/issues"
+  },
+  "homepage": "https://github.com/capaj/systemjs-hot-reloader#readme",
+  "dependencies": {
+    "socket.io-client": "^1.4.5",
+    "weakee": "^1.0.0"
+  },
+  "devDependencies": {
+    "babel": "^5.8.23",
+    "chai": "^3.3.0",
+    "chokidar-socket-emitter": "^0.5.0",
+    "debug": "^2.2.0",
+    "husky": "^0.10.1",
+    "mocha": "^2.4.5",
+    "standard": "^5.4.1",
+    "systemjs": "^0.19.25"
+  },
+  "jspm": {
+    "dependencies": {
+      "debug": "npm:debug@^2.2.0",
+      "socket.io-client": "github:socketio/socket.io-client@^1.4.4",
+      "weakee": "npm:weakee@^1.0.0"
+    },
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.8.24",
+      "babel-runtime": "npm:babel-runtime@^5.8.24",
+      "core-js": "npm:core-js@^1.1.4",
+      "react": "npm:react@^0.14.3",
+      "react-dom": "npm:react-dom@^0.14.3",
+      "react-tap-event-plugin": "npm:react-tap-event-plugin@^0.2.1"
+    },
+    "map": {
+      "./default-listener.js": {
+        "node": "@empty",
+        "production": "@empty"
+      }
+    }
+  },
+  "standard": {
+    "ignore": [
+      "config.js",
+      "test/**",
+      "default-listener.js"
+    ]
+  }
+}

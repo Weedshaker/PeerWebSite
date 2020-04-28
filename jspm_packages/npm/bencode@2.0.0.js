@@ -1,0 +1,1 @@
+module.exports = require("npm:bencode@2.0.0/lib");

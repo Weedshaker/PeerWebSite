@@ -1,0 +1,1 @@
+module.exports = require("github:AkeemMcLennon/dom2hscript@master/index.js");

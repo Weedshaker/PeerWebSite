@@ -1,0 +1,1 @@
+module.exports = require("npm:get-stdin@5.0.1/index");

@@ -1,0 +1,1 @@
+module.exports = require("npm:magnet-uri@5.1.7/index.js");

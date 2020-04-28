@@ -1,0 +1,38 @@
+{
+  "name": "blob-to-buffer",
+  "description": "Convert a Blob to a Buffer",
+  "version": "1.2.7",
+  "author": {
+    "name": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "https://feross.org"
+  },
+  "bugs": {
+    "url": "https://github.com/feross/blob-to-buffer/issues"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "standard": "*",
+    "tape": "^4.0.0",
+    "zuul": "^3.8.0"
+  },
+  "homepage": "https://github.com/feross/blob-to-buffer",
+  "keywords": [
+    "blob",
+    "browserify",
+    "buffer",
+    "convert",
+    "filereader"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/feross/blob-to-buffer.git"
+  },
+  "scripts": {
+    "test": "standard && npm run test-browser",
+    "test-browser": "zuul -- test/*.js",
+    "test-browser-local": "zuul --local -- test/*.js"
+  }
+}

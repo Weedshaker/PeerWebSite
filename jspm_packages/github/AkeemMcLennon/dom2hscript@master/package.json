@@ -1,0 +1,26 @@
+{
+  "name": "dom2hscript",
+  "version": "0.2.3",
+  "description": "A lightweight (2kb) html to hyperscript converter that uses the browser's built in DOM and CSS parser.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node_modules/mochify/bin/cmd.js -R spec ./tests/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "browserify": "^11.0.1",
+    "chai": "^3.2.0",
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^4.0.0",
+    "grunt-contrib-uglify": "^0.9.1",
+    "hyperscript": "^1.4.6",
+    "mocha": "^2.2.5",
+    "mochify": "^2.13.0",
+    "sinon": "^1.15.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AkeemMcLennon/dom2hscript.git"
+  }
+}

@@ -1,0 +1,1 @@
+module.exports = require("npm:parse-torrent@5.8.3/index.js");

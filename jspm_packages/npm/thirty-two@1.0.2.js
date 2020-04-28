@@ -1,0 +1,1 @@
+module.exports = require("npm:thirty-two@1.0.2/lib/thirty-two/index.js");

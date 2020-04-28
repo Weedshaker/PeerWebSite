@@ -1,0 +1,1 @@
+module.exports = require("npm:xtend@4.0.1/immutable");

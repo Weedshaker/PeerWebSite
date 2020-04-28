@@ -1,0 +1,1 @@
+module.exports = require("npm:crypto-browserify@3.12.0/index");

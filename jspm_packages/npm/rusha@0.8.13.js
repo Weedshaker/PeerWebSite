@@ -1,0 +1,1 @@
+module.exports = require("npm:rusha@0.8.13/dist/rusha.js");

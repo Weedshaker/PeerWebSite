@@ -1,0 +1,1 @@
+module.exports = require("npm:simple-sha1@2.1.0/browser.js");

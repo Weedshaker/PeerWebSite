@@ -1,0 +1,1 @@
+module.exports = require("npm:asn1.js@4.10.1/lib/asn1.js");

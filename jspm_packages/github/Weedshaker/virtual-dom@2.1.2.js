@@ -1,0 +1,1 @@
+module.exports = require("github:Weedshaker/virtual-dom@2.1.2/index");

@@ -1,0 +1,1 @@
+module.exports = require("npm:md5.js@1.3.4/index.js");

@@ -1,0 +1,47 @@
+{
+  "name": "parse-torrent-file",
+  "description": "Parse a .torrent file and return an object of keys/values",
+  "version": "4.1.0",
+  "author": {
+    "name": "WebTorrent, LLC",
+    "email": "feross@webtorrent.io",
+    "url": "https://webtorrent.io"
+  },
+  "bugs": {
+    "url": "https://github.com/webtorrent/parse-torrent-file/issues"
+  },
+  "dependencies": {
+    "bencode": "^2.0.0",
+    "simple-sha1": "^2.0.0",
+    "uniq": "^1.0.1"
+  },
+  "devDependencies": {
+    "brfs": "^1.0.0",
+    "standard": "*",
+    "tape": "^4.0.0",
+    "webtorrent-fixtures": "^1.4.0",
+    "zuul": "^3.0.0"
+  },
+  "keywords": [
+    ".torrent",
+    "bittorrent",
+    "bittorrent",
+    "parse torrent",
+    "peer-to-peer",
+    "read torrent",
+    "torrent",
+    "webtorrent"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/webtorrent/parse-torrent-file.git"
+  },
+  "scripts": {
+    "test": "standard && npm run test-node && npm run test-browser",
+    "test-browser": "zuul -- test/*.js",
+    "test-browser-local": "zuul --local -- test/*.js",
+    "test-node": "tape test/*.js"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "registry": "npm",
+  "dependencies": {
+    "querystring": "^0.2.0"
+  }
+}

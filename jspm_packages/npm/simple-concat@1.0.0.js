@@ -1,0 +1,1 @@
+module.exports = require("npm:simple-concat@1.0.0/index.js");

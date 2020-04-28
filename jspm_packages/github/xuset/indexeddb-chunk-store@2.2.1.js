@@ -1,0 +1,1 @@
+module.exports = require("github:xuset/indexeddb-chunk-store@2.2.1/index.js");

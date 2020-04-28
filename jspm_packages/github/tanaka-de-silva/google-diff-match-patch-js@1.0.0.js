@@ -1,0 +1,1 @@
+module.exports = require("github:tanaka-de-silva/google-diff-match-patch-js@1.0.0/diff_match_patch.js");

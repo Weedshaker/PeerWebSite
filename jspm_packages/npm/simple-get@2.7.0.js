@@ -1,0 +1,1 @@
+module.exports = require("npm:simple-get@2.7.0/index.js");
