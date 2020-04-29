@@ -15,7 +15,7 @@ export class HTML extends MasterHTML {
 					<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
 					<div class="mui-checkbox useWebTorrent">
 						<label>
-						<input id="useWebTorrent" type="checkbox" value="" ${/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream ? '' : 'checked'}>
+						<input id="useWebTorrent" type="checkbox" value="" ${!!window.chrome ? 'checked' : ''}>
 						Use WebTorrent
 						</label>
 					</div>
@@ -30,14 +30,16 @@ export class HTML extends MasterHTML {
 				let clipboard = $(`<input type="text" class="mui-panel" id="clipboardInput"><button class="mui-btn mui-btn--primary" id="clipboardBtn">Copy URL</button>`).hide();
 				controls.append(clipboard);
 				this.containers.push(controls);
-				let sender = $(`<div id="${this.idNames[2]}">${window.sst && window.sst.karma ? '' : 'Your message...'}</div>`);
+				let sender = $(`<div id="${this.idNames[2]}"></div>`);
 				this.containers.push(sender);
-				let receiver = $(`<div id="${this.idNames[3]}">${window.sst && window.sst.karma ? '' : 'Waiting for response...'}</div>`);
+				let receiver = $(`<div id="${this.idNames[3]}">${window.sst && window.sst.karma ? '' : '<span class="blobLoading"></span>'}</div>`);
 				this.containers.push(receiver);
 				button.on('click', () => {
 					this.disabled = true;
 					$('#txt-roomid').val($('#txt-roomid').val().replace(/\s/g, ''));
-					location.hash = $('#txt-roomid').val() || $('#txt-roomid').attr('placeholder');
+					const hash = $('#txt-roomid').val() || $('#txt-roomid').attr('placeholder');
+					if (!location.hash) localStorage.setItem('channels', `#${hash}` + localStorage.getItem('channels') || '');
+					location.hash = hash;
 					input.hide();
 					button.hide();
 					clipboard.show();

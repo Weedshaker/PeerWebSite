@@ -30,18 +30,20 @@ export class App extends MasterApp {
 		this.WebRTC.api.onReceive.add(function(dataPack){this.HTML.setData(receiveCont, dataPack);}, this);
 
 		// connect by hash
-		this.connectHash();
+		this.connectHash(false);
 		window.addEventListener('hashchange', this.connectHash);
 		$('#txt-roomid').focus();
 	}
-	connectHash(){
+	connectHash(reload = true){
 		if (location.hash) {
 			$('#txt-roomid').val(location.hash.substr(1));
 			$('#open-or-join-room').click();
+			if (reload && !(localStorage.getItem('channels') || '').includes(location.hash)) location.reload();
 		}
 	}
 	viewerOnly(){
 		if (location.hash) {
+			if ((localStorage.getItem('channels') || '').includes(location.hash)) return false;
 			// it is assumed that this is a viewer only
 			$('#controls, #sender, .note-editor, .useWebTorrent').hide();
 			$('body').addClass('viewer');
