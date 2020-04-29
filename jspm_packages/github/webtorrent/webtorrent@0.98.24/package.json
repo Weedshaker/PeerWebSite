@@ -1,7 +1,7 @@
 {
   "name": "webtorrent",
   "description": "Streaming torrent client",
-  "version": "0.98.23",
+  "version": "0.98.24",
   "author": {
     "name": "WebTorrent, LLC",
     "email": "feross@webtorrent.io",
@@ -54,7 +54,7 @@
     "safe-buffer": "^5.0.1",
     "simple-concat": "^1.0.0",
     "simple-get": "^2.2.1",
-    "simple-peer": "^8.0.0",
+    "simple-peer": "^9.0.0",
     "simple-sha1": "^2.0.8",
     "speedometer": "^1.0.0",
     "stream-to-blob": "^1.0.0",
@@ -70,6 +70,7 @@
     "zero-fill": "^2.2.3"
   },
   "devDependencies": {
+    "airtap": "0.0.4",
     "babili": "^0.1.4",
     "bittorrent-tracker": "^9.4.0",
     "brfs": "^1.4.3",
@@ -82,8 +83,7 @@
     "serve-static": "^1.11.1",
     "standard": "*",
     "tape": "^4.6.0",
-    "webtorrent-fixtures": "^1.5.0",
-    "zuul": "^3.10.1"
+    "webtorrent-fixtures": "^1.5.0"
   },
   "engines": {
     "node": ">=4"
@@ -115,10 +115,9 @@
     "build": "browserify -s WebTorrent -e ./ | babili > webtorrent.min.js",
     "build-debug": "browserify -s WebTorrent -e ./ > webtorrent.debug.js",
     "size": "npm run build && cat webtorrent.min.js | gzip | wc -c",
-    "test": "standard && node ./bin/test.js",
-    "test-browser": "zuul -- test/*.js test/browser/*.js",
-    "test-browser-headless": "zuul --electron -- test/*.js test/browser/*.js",
-    "test-browser-local": "zuul --local -- test/*.js test/browser/*.js",
+    "test": "standard && npm run test-node && npm run test-browser",
+    "test-browser": "airtap -- test/*.js test/browser/*.js",
+    "test-browser-local": "airtap --local -- test/*.js test/browser/*.js",
     "test-node": "tape test/*.js test/node/*.js",
     "update-authors": "./bin/update-authors.sh"
   }

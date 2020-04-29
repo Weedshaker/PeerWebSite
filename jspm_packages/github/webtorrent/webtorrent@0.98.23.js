@@ -1,1 +1,0 @@
-module.exports = require("github:webtorrent/webtorrent@0.98.23/index.js");
