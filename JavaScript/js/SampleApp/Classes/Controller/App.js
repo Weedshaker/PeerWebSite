@@ -18,7 +18,7 @@ export class App extends MasterApp {
 		// openOrJoinEvent(roomid, message = '', elID = '')
 		this.HTML.attachButtonEvent(button, sendCont, this.Editor.getData, this.WebRTC.api.openOrJoinEvent);
 		// sendEvent(message, elID = 'sst_all', remoteUserId = 'sst_toAll', requestID = '', options = new Map([['diffed', true], ['compressed', 'auto']])
-		this.Editor.attachChangeEvent(sendCont, this.WebRTC.api.sendEvent);
+		if (!this.viewerOnly()) this.Editor.attachChangeEvent(sendCont, this.WebRTC.api.sendEvent);
 		// *** Events Triggert by Connection ***
 		// onNewParticipant.add(newMessageFunc, scope = this, args = []) ==> has to return [message = '', elID = '']
 		this.WebRTC.api.onNewParticipant.add(function(remoteUserId){return [this.Editor.getData(), this.Editor.container[0].id];}, this);
@@ -29,7 +29,6 @@ export class App extends MasterApp {
 		this.connectHash();
 		window.addEventListener('hashchange', this.connectHash);
 		$('#txt-roomid').focus();
-		this.viewerOnly();
 	}
 	connectHash(){
 		if (location.hash) {
@@ -42,6 +41,8 @@ export class App extends MasterApp {
 			// it is assumed that this is a viewer only
 			$('#controls, #sender, .note-editor').hide();
 			$('body').addClass('viewer');
+			return true;
 		}
+		return false;
 	}
 }

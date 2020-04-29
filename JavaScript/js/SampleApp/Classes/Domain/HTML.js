@@ -22,7 +22,7 @@ export class HTML extends MasterHTML {
 				controls.append(clipboard);
 
 				this.containers.push(controls);
-				let sender = $(`<div id="${this.idNames[2]}"></div>`);
+				let sender = $(`<div id="${this.idNames[2]}">${window.sst && window.sst.karma ? '' : 'Your message...'}</div>`);
 				this.containers.push(sender);
 				let receiver = $(`<div id="${this.idNames[3]}">${window.sst && window.sst.karma ? '' : 'Waiting for response...'}</div>`);
 				this.containers.push(receiver);
