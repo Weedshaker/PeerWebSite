@@ -9,4 +9,6 @@ This application has been only tested in Chrome. Don't expect miracles, it's a p
 
 Evtl. Roadmap: Connection Stats, Load/Save, Search Engine
 
-PS: It can not only host simple sites but you could write full JavaScript applications, games and host them from your browser.
+PS: You can not only host simple sites but you could write full JavaScript applications, games and host them from your browser.
+
+Big Thanks to Muaz Khan, feross and all others contributed to the dependencies!
