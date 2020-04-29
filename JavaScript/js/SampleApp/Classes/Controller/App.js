@@ -29,11 +29,19 @@ export class App extends MasterApp {
 		this.connectHash();
 		window.addEventListener('hashchange', this.connectHash);
 		$('#txt-roomid').focus();
+		this.viewerOnly();
 	}
 	connectHash(){
 		if (location.hash) {
 			$('#txt-roomid').val(location.hash.substr(1));
 			$('#open-or-join-room').click();
+		}
+	}
+	viewerOnly(){
+		if (location.hash) {
+			// it is assumed that this is a viewer only
+			$('#controls, #sender, .note-editor').hide();
+			$('body').addClass('viewer');
 		}
 	}
 }

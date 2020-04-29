@@ -17,15 +17,24 @@ export class HTML extends MasterHTML {
 				controls.append(input);
 				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Auto Open Or Join Room</button>`);
 				controls.append(button);
+				// clipboard
+				let clipboard = $(`<input type="text" class="mui-panel" id="clipboardInput"><button class="mui-btn mui-btn--primary" id="clipboardBtn">Copy URL</button>`).hide();
+				controls.append(clipboard);
+
 				this.containers.push(controls);
-				let sender = $(`<div id="${this.idNames[2]}"></div>`);
+				let sender = $(`<div id="${this.idNames[2]}">Your message...</div>`);
 				this.containers.push(sender);
-				let receiver = $(`<div id="${this.idNames[3]}"></div>`);
+				let receiver = $(`<div id="${this.idNames[3]}">Waiting for response...</div>`);
 				this.containers.push(receiver);
 				button.on('click', () => {
 					this.disabled = true;
 					$('#txt-roomid').val($('#txt-roomid').val().replace(/\s/g, ''));
 					location.hash = $('#txt-roomid').val() || $('#txt-roomid').attr('placeholder');
+					input.hide();
+					button.hide();
+					clipboard.show();
+					clipboard.click(this.copyToCipBoard);
+					$('#clipboardInput').val(location.href);
 				});
 				// hot-reloader
 				if(window.sst && window.sst.isDebug){
@@ -42,5 +51,14 @@ export class HTML extends MasterHTML {
 				return [sender, receiver, button];
 		}
 		return false;
+	}
+	copyToCipBoard() {
+		var copyText = document.getElementById("clipboardInput");
+		/* Select the text field */
+		copyText.select();
+		copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+		/* Copy the text inside the text field */
+		document.execCommand("copy");
 	}
 }

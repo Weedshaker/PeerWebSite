@@ -1,10 +1,10 @@
 #sender, #receiver, .note-editor{
-    width: 100%;
+    min-width: 100%;
+    width: fit-content;
     min-height: 45vh;
     height: 100%;
     border: 1px solid;
     background-color: white;
-    color: black;
 }
 #receiver {
     padding: 5px;
@@ -16,8 +16,8 @@
 	color: black;
 }
 body{
-    background-color: black !important;
-    width: calc(95vw);
+    background-color: rgb(29, 28, 28) !important;
+    min-width: 95vw;
     padding-left: 2.5vw;
     overflow: auto;
 }
@@ -25,14 +25,21 @@ body > *, body > .panel {
     border-radius: 10px;
 }
 #controls {
-    align-items: stretch;
     display: flex;
     margin-bottom: 2.5vh;
+    min-height: 5vh;
 }
 #controls > * {
-    height: 5vh;
+    height: auto;
+    min-height: 100%;
     margin: 0;
     flex: 1 1 auto;
+}
+#controls > button {
+    white-space: normal;
+    font-size: 12px;
+    line-height: 15px;
+    padding: 2px;
 }
 #controls > button:active {
     background-color: darkcyan;
@@ -60,4 +67,12 @@ body > *, body > .panel {
 /* ProgressBar */
 a.torrentControls{
     cursor: pointer;
+}
+/* Viewer Only */
+body.viewer {
+    min-width: 100vw;
+    padding-left: 0;
+}
+body.viewer #receiver {
+    min-height: 100vh;
 }
