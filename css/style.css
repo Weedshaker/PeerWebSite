@@ -14,6 +14,19 @@ iframe {
 .note-toolbar-wrapper{
     height: auto !important;
 }
+.note-editable {
+    height: fit-content !important;
+    min-height: 40vh;
+}
+.panel-heading.note-toolbar {
+    position: relative !important;
+    width: 100% !important;
+}
+.note-toolbar-wrapper.panel-default{
+    position: sticky !important;
+    top: 0;
+    z-index: 100;
+}
 #receiver {
     padding: 5px;
 }
