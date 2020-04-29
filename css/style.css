@@ -1,5 +1,6 @@
 iframe {
     margin-top: 5px;
+    border-radius: unset !important;
 }
 #sender, #receiver, .note-editor, #controls{
     min-width: fit-content;
