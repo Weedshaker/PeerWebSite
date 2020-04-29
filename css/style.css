@@ -11,10 +11,11 @@ iframe {
     border: 1px solid;
     background-color: white;
 }
+/* start editor */
 .note-toolbar-wrapper{
     height: auto !important;
 }
-.note-editable {
+.note-editor:not(.fullscreen) .note-editable {
     height: fit-content !important;
     min-height: 40vh;
 }
@@ -31,6 +32,7 @@ iframe {
     top: 0;
     z-index: 100;
 }
+/* end editor */
 #receiver {
     padding: 5px;
 }
