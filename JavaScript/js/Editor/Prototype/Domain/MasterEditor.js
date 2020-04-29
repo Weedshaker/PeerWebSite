@@ -19,9 +19,18 @@ export class MasterEditor {
 			}
 			let Reader  = new FileReader();
 			Reader.addEventListener('load', () => {
-				let node = document.createElement('a');
-				node.href = Reader.result;
-				node.text = name;
+				const type = file.type.includes('image') ? ['img', 'src'] : file.type.includes('video') ? ['video', 'src'] : ['a', 'href']
+				let node = document.createElement(type[0]);
+				if (type[0] === 'video') {
+					node.controls = true;
+					const source = document.createElement('source');
+					source[type[1]] = Reader.result;
+					source.type = file.type;
+					node.appendChild(source);
+				} else {
+					node[type[1]] = Reader.result;
+					node.text = name;
+				}
 				node.setAttribute('download', name);
 				node.setAttribute('data-filename', name);
 				if(i > 0){
