@@ -26,13 +26,15 @@ export class MasterConnectionEvent {
 	 * @param {string} [elID=''] 
 	 * @memberof MasterConnectionEvent
 	 */
-	openOrJoinEvent(roomid, message = '', elID = ''){
+	openOrJoinEvent(roomid, message = '', elID = '', send = true){
 		this.connection.openOrJoin(roomid || 'predefiend-roomid');
-		setTimeout(() => {
-			if(!this.connection.isInitiator){
-				this.Sender.sendEvent(message, elID, undefined, undefined, false, new Map([['diffed', false]]));
-			}
-		}, this.openOrJoinEventDelay); // timeout = false, diffed = false
+		if (send) {
+			setTimeout(() => {
+				if(!this.connection.isInitiator){
+					this.Sender.sendEvent(message, elID, undefined, undefined, false, new Map([['diffed', false]]));
+				}
+			}, this.openOrJoinEventDelay); // timeout = false, diffed = false
+		}
 	}
 	// called from connection
 	// newParticipant

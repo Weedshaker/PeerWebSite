@@ -41,9 +41,9 @@ export class MasterHTML {
 			if (this.lastData) this.setData.apply(this, this.lastData);
 		}, 1000);
 	}
-	attachButtonEvent(button, sendCont, getDataFunc, event){
+	attachButtonEvent(button, sendCont, getDataFunc, event, send){
 		button.on('click', () => {
-			event($(`#${this.idNames[0]}`).val(), getDataFunc(sendCont), this.idNames[2]);
+			event($(`#${this.idNames[0]}`).val(), getDataFunc(sendCont), this.idNames[2], send);
 		});
 	}
 }
