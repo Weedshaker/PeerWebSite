@@ -148,8 +148,7 @@ export class EditorSummernote extends MasterEditor {
 		$('.note-btn-group.btn-group.note-insert').prepend(button.render());
 	}
 	loadFileInit(files, text, container = this.container, image = true){
-		// dont use webtorrent blobs on iphones
-		if (this.WebTorrent && !(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream)){
+		if (this.WebTorrent && $('#useWebTorrent')[0].checked){
 			// check for doublicated video, this has a browser bug, which eventuelly looses the blob
 			let torrent;
 			// TODO: adding videos twice breaks the blob link, this is most likely a bug in browsers

@@ -43,7 +43,7 @@ export class App extends MasterApp {
 	viewerOnly(){
 		if (location.hash) {
 			// it is assumed that this is a viewer only
-			$('#controls, #sender, .note-editor').hide();
+			$('#controls, #sender, .note-editor, .useWebTorrent').hide();
 			$('body').addClass('viewer');
 			return true;
 		}

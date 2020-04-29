@@ -1,6 +1,8 @@
 # PeerWebSite
 Realtime Peer to Peer Web Site
 
+Function Description: "Use WebTorrent" -> WebTorrents let you stream videos and have overall performance advantages especially for sides with a lot of files but they download slow, when there are not may Seeders and often did not work on mobile ios at all, as far as I could test it.
+
 Send Text, Picture and Video embedded in HTML and CSS through WebRTC in acquaintance of WebTorrent for files, live edited P2P. No conversation data passes a server nor is saved anywhere but sent directly from browser to browser. Your website disappears from the aether as soon as you close or reload your tab. (maybe one day I will add an option to save, otherwise just copy paste your html, if you need to re-upload your site)
 
 Give me a star on Github and I will consider to actually tide up the code and write Docs for it, that other Developers could have an easy entry to participate, which will bring this App to what you wish for as a peer to peer privacy enthusiast. Also, on the plan is a regional, by km/miles-radius, etc., search engine to opt in your peer web site.

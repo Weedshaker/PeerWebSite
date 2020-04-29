@@ -11,7 +11,16 @@ export class HTML extends MasterHTML {
 		switch(name){
 			case 'open-or-join-room':
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
-				this.containers = [$('<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>')];
+				this.containers = [$(`<header>
+					<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
+					<div class="mui-checkbox useWebTorrent">
+						<label>
+						<input id="useWebTorrent" type="checkbox" value="" ${/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream ? '' : 'checked'}>
+						Use WebTorrent
+						</label>
+					</div>
+				</header>`)];
+				// controls
 				let controls = $('<div id="controls"></div>')
 				let input = $(`<input id="${this.idNames[0]}" class="mui-panel" placeholder="${connection.token()}">`);
 				controls.append(input);
@@ -20,7 +29,6 @@ export class HTML extends MasterHTML {
 				// clipboard
 				let clipboard = $(`<input type="text" class="mui-panel" id="clipboardInput"><button class="mui-btn mui-btn--primary" id="clipboardBtn">Copy URL</button>`).hide();
 				controls.append(clipboard);
-
 				this.containers.push(controls);
 				let sender = $(`<div id="${this.idNames[2]}">${window.sst && window.sst.karma ? '' : 'Your message...'}</div>`);
 				this.containers.push(sender);

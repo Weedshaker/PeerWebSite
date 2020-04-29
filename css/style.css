@@ -1,6 +1,14 @@
-iframe {
-    margin-top: 5px;
+body > header {
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+header iframe {
     border-radius: unset !important;
+}
+header label {
+    color: white;
 }
 #sender, #receiver, .note-editor, #controls{
     min-width: fit-content;
