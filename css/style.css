@@ -1,16 +1,23 @@
+iframe {
+    margin-top: 5px;
+}
+#sender, #receiver, .note-editor, #controls{
+    min-width: fit-content;
+}
 #sender, #receiver, .note-editor{
-    min-width: 100%;
-    width: fit-content;
     min-height: 45vh;
     height: 100%;
     border: 1px solid;
     background-color: white;
 }
+.note-toolbar-wrapper{
+    height: auto !important;
+}
 #receiver {
     padding: 5px;
 }
 .panel {
-    margin-bottom: 2.5vh !important;
+    margin-bottom: 5px !important;
 }
 #txt-roomid{
 	color: black;
@@ -18,7 +25,6 @@
 body{
     background-color: rgb(29, 28, 28) !important;
     min-width: 95vw;
-    padding-left: 2.5vw;
     overflow: auto;
 }
 body > *, body > .panel {
@@ -26,7 +32,7 @@ body > *, body > .panel {
 }
 #controls {
     display: flex;
-    margin-bottom: 2.5vh;
+    margin-bottom: 5px;
     min-height: 5vh;
 }
 #controls > * {
@@ -70,7 +76,7 @@ a.torrentControls{
 }
 /* Viewer Only */
 body.viewer {
-    min-width: 100vw;
+    min-width: 95vw;
     padding-left: 0;
 }
 body.viewer #receiver {

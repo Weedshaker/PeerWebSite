@@ -15,7 +15,7 @@ fdescribe("Connect WebRTC", () => {
 		spyOn(WebRTC.Sender.OptionSender.Diff_match_patchWorker, 'run').and.callThrough();
 		// action
 		App.Editor.setData($('#sender'), connectText);
-		$('#txt-roomid').val('karmaTest12345678910');
+		$('#txt-roomid').val('karmaTest1234567891');
 		$('#open-or-join-room').click();
 		// wait until connected
 		let interval = setInterval(() => {

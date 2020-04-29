@@ -11,7 +11,7 @@ export class HTML extends MasterHTML {
 		switch(name){
 			case 'open-or-join-room':
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
-				this.containers = [];
+				this.containers = [$('<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>')];
 				let controls = $('<div id="controls"></div>')
 				let input = $(`<input id="${this.idNames[0]}" class="mui-panel" placeholder="${connection.token()}">`);
 				controls.append(input);
@@ -22,9 +22,9 @@ export class HTML extends MasterHTML {
 				controls.append(clipboard);
 
 				this.containers.push(controls);
-				let sender = $(`<div id="${this.idNames[2]}">Your message...</div>`);
+				let sender = $(`<div id="${this.idNames[2]}">${window.sst && window.sst.karma ? '' : 'Your message...'}</div>`);
 				this.containers.push(sender);
-				let receiver = $(`<div id="${this.idNames[3]}">Waiting for response...</div>`);
+				let receiver = $(`<div id="${this.idNames[3]}">${window.sst && window.sst.karma ? '' : 'Waiting for response...'}</div>`);
 				this.containers.push(receiver);
 				button.on('click', () => {
 					this.disabled = true;

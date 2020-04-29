@@ -17,6 +17,7 @@ export class MasterHTML {
 		return container.html();
 	}
 	setData(container, dataPack){
+		this.lastData = [container, dataPack];
 		let oldMessage = this.getData(container);
 		this.WebTorrent.api.addByText(dataPack.message, [
 			// trigger the following, when the worker returns with dataPack.message -> this.Dom.setData(container, oldMessage, dataPack.message);
@@ -30,7 +31,15 @@ export class MasterHTML {
 				['scope', this.WebTorrent],
 				['attributes', [this.WebTorrent.api.container]], // needs to get this as attribute, eventhough default val, otherwise it gets overwritten by returned txt
 			])
-		]);
+		], undefined, undefined, undefined, () => this.reTriggerSetData());
+	}
+	reTriggerSetData() {
+		// re-trigger to set certain attributes like style on images after they were appended
+		// TODO: read those attributes out at RegexWorker and set when torrent gets appended
+		clearTimeout(this.reTriggerTimeOutID);
+		this.reTriggerTimeOutID = setTimeout(() => {
+			if (this.lastData) this.setData.apply(this, this.lastData);
+		}, 1000);
 	}
 	attachButtonEvent(button, sendCont, getDataFunc, event){
 		button.on('click', () => {

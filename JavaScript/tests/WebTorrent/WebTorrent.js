@@ -61,8 +61,8 @@ fdescribe("MasterWebTorrent", function() {
 			});
 			fit("=> HTMLs WebTorrent added file", function (done) {
 				setTimeout(function () {
-					expect(App.HTML.WebTorrent.api.addByText.calls.count()).toEqual(1);
-					expect(App.HTML.WebTorrent.OptionRegex.init.calls.count()).toEqual(1);
+					expect(App.HTML.WebTorrent.api.addByText.calls.count()).toEqual(2); // there is a workaround TODO at MasterHTML:36
+					expect(App.HTML.WebTorrent.OptionRegex.init.calls.count()).toEqual(2); // there is a workaround TODO at MasterHTML:36
 					expect(App.HTML.WebTorrent.add.calls.count()).toEqual(1);
 					expect(App.HTML.WebTorrent.ProgressBar.start.calls.count()).toEqual(1);
 					expect(App.HTML.WebTorrent.setNodes.calls.count()).toEqual(3); // at add & findAllNodes & progressbar
