@@ -1,16 +1,31 @@
-# PeerWebSite
-Realtime Peer to Peer Web Site
+# peerweb.site
+## Real Time Peer to Peer Web Site
 
-Function Description: "Use WebTorrent" -> WebTorrent lets you stream videos and have overall performance advantages especially for sites with a lot of files but they download slow, when there are not many seeders and often did not work on other browsers but chrome, as far as I could test it.
+### Functionalities
+1. **Use WebTorrent for files**: This will enable WebTorrent for added files. Use this, if you use Chrome and your target audience also uses Chrome. It allows video steaming and will perform better in case your site is file heavy. In cases where there are only few seeders this possibly is slower.
 
-Send Text, Picture and Video embedded in HTML and CSS through WebRTC in acquaintance of WebTorrent for files, live edited P2P. No conversation data passes a server nor is saved anywhere but sent directly from browser to browser. Your website disappears from the aether as soon as you close or reload your tab. (maybe one day I will add an option to save, otherwise just copy paste your html, if you need to re-upload your site)
+2. **Start live session**: This opens a session/peer to peer room where your audience can join and see your changes in real time. Your site will be gone once you close your tab, browser or reload.
 
-Give me a star on Github and I will consider to actually tide up the code and write Docs for it, that other Developers could have an easy entry to participate, which will bring this App to what you wish for as a peer to peer privacy enthusiast. Also, on the plan is a regional, by km/miles-radius, etc., search engine to opt in your peer web site.
+3. **Make WebTorrent**: This bundles all your text and files into a WebTorrent. It is like a snapshot of your site to share. Your link with the content stays accessible as long as at least one person has your sites WebTorrent active. More infos about WebTorrents can be found [here](https://webtorrent.io/).
 
+### Description
+Send Texts, Pictures and Videos embedded in HTML and CSS through WebRTC in acquaintance of WebTorrents for files, live edited P2P. No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent snapshots. *(Saving in-site WebTorrents is not yet supported.)*
+
+### Use cases
+You can not only host simple sites but you could write full JavaScript applications, games and host them from your browser tab. At the moment a ServiceWorker will support loading WebTorrents, if fetches references the same file name as the torrent file has. All other data has to be put inline into the HTML.
+
+### Further Development
+Give me a Star on Github and I will consider to actually tide up the code and write Docs for it, that other Developers could have an easy entry to participate, which will bring this App to what you wish for as a peer to peer privacy enthusiast.
+
+### Pitfalls
 This application has been only tested in Chrome. Don't expect miracles, it's a pure hobby, side project and due to bleeding edge sometimes buggy.
 
-Evtl. Roadmap: Persist Site as a WebTorrent, Connection Stats, Load/Save, Search Engine
+### Road map
+1. Connection Stats
 
-PS: You can not only host simple sites but you could write full JavaScript applications, games and host them from your browser.
+2. Load/Save including WebTorrents
 
-Big Thanks to Muaz Khan, feross and all others contributed to the dependencies!
+3. Search Engine (by km/miles-radius, topic, etc., to opt in your peerwebsite.)
+
+### Big Thanks to
+Muaz Khan, Feross and all others who contributed to the dependencies!
