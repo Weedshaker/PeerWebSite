@@ -3,9 +3,10 @@
 import {MasterHTML} from 'SampleApp/Prototype/Domain/MasterHTML.js';
 
 export class HTML extends MasterHTML {
-	constructor(WebTorrent, Editor){
-		super(WebTorrent);
+	constructor(WebTorrentReceiver, WebTorrentSeeder, Editor){
+		super(WebTorrentReceiver);
 
+		this.WebTorrentSeeder = WebTorrentSeeder;
 		this.Editor = Editor;
 	}
 	createElements(name, attach = '#body', connection = null){
@@ -18,7 +19,7 @@ export class HTML extends MasterHTML {
 					<div class="mui-checkbox useWebTorrent">
 						<label>
 						<input id="useWebTorrent" type="checkbox" value="" ${localStorage.getItem('useWebTorrent') ? localStorage.getItem('useWebTorrent') === 'true' ? 'checked' : '' : ''}>
-						<span>Use WebTorrent for files</span><span class="tiny">(supports video streaming)</span>
+						<span>Use WebTorrent for files</span><span class="tiny">(supports video streaming but maybe does not work on all devices/browsers)</span>
 						</label>
 					</div>
 				</header>`)];
@@ -26,12 +27,22 @@ export class HTML extends MasterHTML {
 				let controls = $('<div id="controls"></div>')
 				let input = $(`<input id="${this.idNames[0]}" class="mui-panel" placeholder="${connection.token()}">`);
 				controls.append(input);
-				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Auto Open Or Join Room</button>`);
+				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Open Live Editing Room</button>`);
 				controls.append(button);
-				// webtorrent
 				// clipboard
 				let clipboard = $(`<input type="text" class="mui-panel" id="clipboardInput"><button class="mui-btn mui-btn--primary" id="clipboardBtn">Copy Room URL</button>`).hide();
 				controls.append(clipboard);
+				// webtorrent
+				let buttonWebTorrent = $(`<button id="buttonWebTorrent" class="mui-btn mui-btn--primary">Make WebTorrent & Copy URL</button>`);
+				controls.append(buttonWebTorrent);
+				let inputWebTorrent = $(`<input id="inputWebTorrent" class="mui-panel" placeholder="MagnetURI...">`);
+				controls.append(inputWebTorrent);
+				buttonWebTorrent.click(() => {
+					this.WebTorrentSeeder.api.seed(new File([this.Editor.getData()], 'peerWebSite', { type: 'plain/text', endings: 'native' }), undefined, undefined, undefined, undefined, (torrent) => {
+						inputWebTorrent.val(`${location.href.replace(location.hash, '')}#${torrent.magnetURI}`);
+						this.copyToCipBoard('inputWebTorrent');
+					});
+				});
 				this.containers.push(controls);
 				// main containers
 				let sender = $(`<div id="${this.idNames[2]}">${localStorage.getItem(location.hash) || ''}</div>`);
@@ -47,8 +58,8 @@ export class HTML extends MasterHTML {
 					input.hide();
 					button.hide();
 					clipboard.show();
-					clipboard.click(() => this.copyToCipBoard('clipboardInput'));
 					$('#clipboardInput').val(location.href);
+					clipboard.click(() => this.copyToCipBoard('clipboardInput'));
 					// persist site
 					localStorage.setItem(location.hash, this.Editor.getData());
 				});

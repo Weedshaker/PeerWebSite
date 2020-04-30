@@ -13,7 +13,7 @@ export class MasterApp {
 		this.WebTorrentReceiver = new WebTorrentReceiver();
 		this.WebTorrentSeeder = new WebTorrentSeeder();
 		this.Editor = new EditorSummernote(this.WebTorrentSeeder);
-		this.HTML = new HTML(this.WebTorrentReceiver, this.Editor);
+		this.HTML = new HTML(this.WebTorrentReceiver, this.WebTorrentSeeder, this.Editor);
 		this.ServiceWorker = new ServiceWorker(undefined, undefined, this.WebTorrentReceiver.getBlobByFileName.bind(this.WebTorrentReceiver));
 		this.ServiceWorker.run();
 

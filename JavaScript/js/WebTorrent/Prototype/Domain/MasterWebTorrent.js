@@ -3,7 +3,7 @@
 import {Helper} from 'WebTorrent/Classes/Helper/Helper.js';
 import {OptionRegex} from 'WebTorrent/Classes/Helper/OptionRegex.js';
 import WebTorrent from 'webtorrent/webtorrent/webtorrent.min';
-import IndexeddbChunkStore from 'xuset/indexeddb-chunk-store/idbchunkstore.min.js';
+//import IndexeddbChunkStore from 'xuset/indexeddb-chunk-store/idbchunkstore.min.js';
 //import parseTorrent from 'parse-torrent/index.js'; // doesn't work in karma
 
 export class MasterWebTorrent {
@@ -32,7 +32,7 @@ export class MasterWebTorrent {
 			path: String,              // Folder to download files to (default=`/tmp/webtorrent/`)
 			store: Function            // Custom chunk store (must follow [abstract-chunk-store](https://www.npmjs.com/package/abstract-chunk-store) API)
 			*/
-			store: IndexeddbChunkStore
+			//store: IndexeddbChunkStore
 		};
 		this.seedOpts = {
 			/*
@@ -46,7 +46,7 @@ export class MasterWebTorrent {
 			urlList: [String]        // web seed urls (see [bep19](http://www.bittorrent.org/beps/bep_0019.html))
 			*/
 			comment: 'sst_WebRTC',
-			store: IndexeddbChunkStore
+			//store: IndexeddbChunkStore
 		};
 		this.appendToOpts = {
 			/*
