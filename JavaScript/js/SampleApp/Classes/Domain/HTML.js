@@ -28,7 +28,15 @@ export class HTML extends MasterHTML {
 				// controls
 				let controls = $('<div id="controls"></div>')
 				let input = $(`<input id="${this.idNames[0]}" class="mui-panel" placeholder="${connection.token()}">`);
-				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Start Live Session & Copy URL</button>`);
+				controls.append(input);
+				// clipboard
+				let clipboard = $(`<input type="text" class="mui-panel" id="clipboardInput">`).hide();
+				clipboard.keypress(function (e) {
+					e.preventDefault();
+					e.target.blur();
+				});
+				controls.append(clipboard);
+				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Start/Resume Live Session & Copy URL</button>`);
 				input.keypress(function (e) {
 					if (e.keyCode == 13) {
 						e.preventDefault();
@@ -36,15 +44,7 @@ export class HTML extends MasterHTML {
 						button.click();
 					}
 				});
-				controls.append(input);
 				controls.append(button);
-				// clipboard
-				let clipboard = $(`<input type="text" class="mui-panel" id="clipboardInput"><button class="mui-btn mui-btn--primary" id="clipboardBtn">Copy Session URL</button>`).hide();
-				clipboard.keypress(function (e) {
-					e.preventDefault();
-					e.target.blur();
-				});
-				controls.append(clipboard);
 				// webtorrent
 				let inputWebTorrent = $(`<input tabindex="-1" id="inputWebTorrent" class="mui-panel" placeholder="MagnetURI...">`);
 				inputWebTorrent.keypress(function (e) {
@@ -74,11 +74,9 @@ export class HTML extends MasterHTML {
 					if (!location.hash) localStorage.setItem('channels', `#${hash}` + localStorage.getItem('channels') || '');
 					location.hash = hash;
 					input.hide();
-					button.hide();
 					clipboard.show();
 					$('#clipboardInput').val(location.href);
 					this.copyToCipBoard('clipboardInput');
-					clipboard.click(() => this.copyToCipBoard('clipboardInput'));
 					// persist site
 					localStorage.setItem(location.hash, this.Editor.getData());
 				});
