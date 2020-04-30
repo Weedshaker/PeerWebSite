@@ -1,6 +1,7 @@
 body > header {
     margin: 5px 0;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-around;
     align-items: center;
 }
@@ -12,6 +13,13 @@ header label {
     font-size: 12px;
     display: flex;
     align-items: center;
+}
+header button.mui-btn {
+    height: auto;
+    background-color: #adadad;
+}
+header button.mui-btn:hover label {
+    color: black;
 }
 header label span {
     margin-right: 2px;
@@ -89,8 +97,15 @@ body > *, body > .panel {
     line-height: 15px;
     padding: 2px;
 }
+#controls > input {
+    color: green;
+    font-weight: bold;
+}
 #controls > button:active {
     background-color: darkcyan;
+}
+#controls > #inputWebTorrent, #controls > #clipboardInput {
+    cursor: not-allowed;
 }
 /* EditorSummernote.js */
 :empty.blobLoading, :empty.torrentLoading{

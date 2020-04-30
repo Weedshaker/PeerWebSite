@@ -15,29 +15,47 @@ export class HTML extends MasterHTML {
 			case 'open-or-join-room':
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				this.containers = [$(`<header>
-					<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
-					<div class="mui-checkbox useWebTorrent">
-						<label>
-						<input id="useWebTorrent" type="checkbox" value="" ${localStorage.getItem('useWebTorrent') ? localStorage.getItem('useWebTorrent') === 'true' ? 'checked' : '' : ''}>
-						<span>Use WebTorrent for files</span><span class="tiny">(supports video streaming but maybe does not work on all devices/browsers)</span>
-						</label>
-					</div>
+					<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><span class="tiny" style="color:white">Visit Github for more Infos!</span>
+					<button class="mui-btn">
+						<div class="mui-checkbox useWebTorrent">
+							<label>
+							<input id="useWebTorrent" type="checkbox" value="" ${localStorage.getItem('useWebTorrent') ? localStorage.getItem('useWebTorrent') === 'true' ? 'checked' : '' : ''}>
+							<span>Use WebTorrent for files</span><span class="tiny">(supports video streaming. Preferably use Chrome with this feature! It likely does not work with other browsers.)</span>
+							</label>
+						</div>
+					</button>
 				</header>`)];
 				// controls
 				let controls = $('<div id="controls"></div>')
 				let input = $(`<input id="${this.idNames[0]}" class="mui-panel" placeholder="${connection.token()}">`);
+				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Start Live Session & Copy URL</button>`);
+				input.keypress(function (e) {
+					if (e.keyCode == 13) {
+						e.preventDefault();
+						e.target.blur();
+						button.click();
+					}
+				});
 				controls.append(input);
-				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Open Live Editing Room</button>`);
 				controls.append(button);
 				// clipboard
-				let clipboard = $(`<input type="text" class="mui-panel" id="clipboardInput"><button class="mui-btn mui-btn--primary" id="clipboardBtn">Copy Room URL</button>`).hide();
+				let clipboard = $(`<input type="text" class="mui-panel" id="clipboardInput"><button class="mui-btn mui-btn--primary" id="clipboardBtn">Copy Session URL</button>`).hide();
+				clipboard.keypress(function (e) {
+					e.preventDefault();
+					e.target.blur();
+				});
 				controls.append(clipboard);
 				// webtorrent
-				let buttonWebTorrent = $(`<button id="buttonWebTorrent" class="mui-btn mui-btn--primary">Make WebTorrent & Copy URL</button>`);
-				controls.append(buttonWebTorrent);
-				let inputWebTorrent = $(`<input id="inputWebTorrent" class="mui-panel" placeholder="MagnetURI...">`);
+				let inputWebTorrent = $(`<input tabindex="-1" id="inputWebTorrent" class="mui-panel" placeholder="MagnetURI...">`);
+				inputWebTorrent.keypress(function (e) {
+					e.preventDefault();
+					e.target.blur();
+				});
 				controls.append(inputWebTorrent);
+				let buttonWebTorrent = $(`<button id="buttonWebTorrent" class="mui-btn mui-btn--accent">Make WebTorrent & Copy URL</button>`);
+				controls.append(buttonWebTorrent);
 				buttonWebTorrent.click(() => {
+					this.copyToCipBoard('inputWebTorrent');
 					this.WebTorrentSeeder.api.seed(new File([this.Editor.getData()], 'peerWebSite', { type: 'plain/text', endings: 'native' }), undefined, undefined, undefined, undefined, (torrent) => {
 						inputWebTorrent.val(`${location.href.replace(location.hash, '')}#${torrent.magnetURI}`);
 						this.copyToCipBoard('inputWebTorrent');
@@ -59,6 +77,7 @@ export class HTML extends MasterHTML {
 					button.hide();
 					clipboard.show();
 					$('#clipboardInput').val(location.href);
+					this.copyToCipBoard('clipboardInput');
 					clipboard.click(() => this.copyToCipBoard('clipboardInput'));
 					// persist site
 					localStorage.setItem(location.hash, this.Editor.getData());
