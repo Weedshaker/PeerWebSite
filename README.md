@@ -9,7 +9,7 @@ Give me a star on Github and I will consider to actually tide up the code and wr
 
 This application has been only tested in Chrome. Don't expect miracles, it's a pure hobby, side project and due to bleeding edge sometimes buggy.
 
-Evtl. Roadmap: Connection Stats, Load/Save, Search Engine
+Evtl. Roadmap: Persist Site as a WebTorrent, Connection Stats, Load/Save, Search Engine
 
 PS: You can not only host simple sites but you could write full JavaScript applications, games and host them from your browser.
 

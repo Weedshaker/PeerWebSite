@@ -9,6 +9,18 @@ header iframe {
 }
 header label {
     color: white;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+}
+header label span {
+    margin-right: 2px;
+}
+header .mui-checkbox > label input[type="checkbox"] {
+    margin-top: 0;
+}
+.tiny {
+    font-size: 8px;
 }
 #sender, #receiver, .note-editor, #controls{
     min-width: fit-content;
