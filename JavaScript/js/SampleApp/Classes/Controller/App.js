@@ -27,8 +27,14 @@ export class App extends MasterApp {
 			// onNewParticipant.add(newMessageFunc, scope = this, args = []) ==> has to return [message = '', elID = '']
 			this.WebRTC.api.onNewParticipant.add(function(remoteUserId){return [this.Editor.getData(), this.Editor.container[0].id];}, this);
 			// reconnect on tab focus
+			let visibilityTimeOutID = null;
 			document.addEventListener('visibilitychange', () => {
-				$('#open-or-join-room').click();
+				clearTimeout(visibilityTimeOutID);
+				visibilityTimeOutID = setTimeout(() => {
+					if (document.visibilityState === 'visible') {
+						$('#open-or-join-room').click();
+					}
+				}, 200);
 			});
 		}
 		// onReceive.add(newMessageFunc, scope = this, args = [])

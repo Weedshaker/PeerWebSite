@@ -31,19 +31,19 @@ export class MasterSender {
 	 * @param {Map} options 
 	 * @memberof MasterSender
 	 */
-	sendEvent(message, elID = this.SentMessage.elID, remoteUserId = this.SentMessage.remoteUserId, requestID = '', timeout = this.timeout, options){
+	sendEvent(message, elID = this.SentMessage.elID, remoteUserId = this.SentMessage.remoteUserId, requestID = '', timeout = this.timeout, options, forceSending = false){
 		if(this.connection.getAllParticipants().length > 0 && message.length > 0){
 			//console.log(`send: ${message}`);
 			if(timeout){
 				clearTimeout(this.timeoutCont);
 				this.timeoutCont = setTimeout(() => {
-					if(message !== this.SentMessage.get(elID, remoteUserId)){
+					if(message !== this.SentMessage.get(elID, remoteUserId) || forceSending){
 						// make a backup of the message and doublicate to [rawMessage, message]
 						this.OptionSender.init([message, message], elID, remoteUserId, requestID, options);
 					}
 				}, this.changeDelay);
 			}else{
-				if(message !== this.SentMessage.get(elID, remoteUserId)){
+				if(message !== this.SentMessage.get(elID, remoteUserId) || forceSending){
 					// make a backup of the message and doublicate to [rawMessage, message]
 					this.OptionSender.init([message, message], elID, remoteUserId, requestID, options);
 				}

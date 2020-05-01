@@ -24,9 +24,9 @@ export class MasterConnectionEvent {
 		this.connection.onPeerStateChanged = (state) => {
 			this.newParticipant(state.userid);
 		};
-		this.connection.onopen = (event) => {
+		/*this.connection.onopen = (event) => {
 			this.newParticipant(event.userid);
-		};
+		};*/
 		this.connection.onSettingLocalDescription = (event) => {
 			this.newParticipant(event.userid);
 		};
@@ -63,7 +63,7 @@ export class MasterConnectionEvent {
 		this.connection.openOrJoin(roomid || 'predefiend-roomid');
 		setTimeout(() => {
 			if(this.isSender[0] && send){
-				this.Sender.sendEvent(message, elID, undefined, undefined, false, new Map([['diffed', false]]));
+				this.Sender.sendEvent(message, elID, undefined, undefined, false, new Map([['diffed', false]]), true);
 			}
 			this.updatePeerCounter();
 		}, this.openOrJoinEventDelay); // timeout = false, diffed = false
