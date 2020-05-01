@@ -10,12 +10,44 @@ export class MasterConnectionEvent {
 
 		this.openOrJoinEventDelay = 5000;
 		this.newParticipantDelay = 1000;
-		// newParticipantEvent
+		// https://www.rtcmulticonnection.org/
 		this.connection.onNewParticipant = (participantId, userPreferences) => {
 			this.newParticipant(participantId, userPreferences);
 		};
+		this.connection.onReConnecting = (event) => {
+			this.newParticipant(event.userid);
+		};
+		this.connection.onUserStatusChanged = (event) => {
+			this.newParticipant(event.userid);
+		};
+		this.connection.onPeerStateChanged = (state) => {
+			this.newParticipant(state.userid);
+		};
+		this.connection.onopen = (event) => {
+			this.newParticipant(event.userid);
+		};
+		this.connection.onSettingLocalDescription = (event) => {
+			this.newParticipant(event.userid);
+		};
+		this.connection.onclose = (event) => {
+			setTimeout(() => {
+				this.updatePeerCounter();
+			}, this.openOrJoinEventDelay);
+		};
+		this.connection.onleave = (event) => {
+			setTimeout(() => {
+				this.updatePeerCounter();
+			}, this.openOrJoinEventDelay);
+		};
+		this.connection.onerror = (event) => {
+			setTimeout(() => {
+				this.updatePeerCounter();
+			}, this.openOrJoinEventDelay);
+		};
 		this.Helper = new Helper();
 		this.onNewParticipant = this.Helper.getEventHandler(); // event handler (api hook)
+
+		this.peerCounterElements = [];
 	}
 	/**
 	 * called from dom
@@ -32,13 +64,13 @@ export class MasterConnectionEvent {
 			if(send){
 				this.Sender.sendEvent(message, elID, undefined, undefined, false, new Map([['diffed', false]]));
 			}
+			this.updatePeerCounter();
 		}, this.openOrJoinEventDelay); // timeout = false, diffed = false
 	}
 	// called from connection
 	// newParticipant
 	newParticipant(remoteUserId, userPreferences){
-		this.connection.acceptParticipationRequest(remoteUserId, userPreferences);
-		console.log('connection', this.connection);
+		if (remoteUserId !== 'sst_toAll' && userPreferences !== undefined) this.connection.acceptParticipationRequest(remoteUserId, userPreferences);
 		let msgElID = false;
 		this.onNewParticipant.container.forEach((e) => {
 			let result = e.func.apply(e.scope, [remoteUserId].concat(e.args));
@@ -54,6 +86,10 @@ export class MasterConnectionEvent {
 					});
 				}
 			}
+			this.updatePeerCounter();
 		}, this.newParticipantDelay);
+	}
+	updatePeerCounter() {
+		this.peerCounterElements.forEach(element => element.textContent = `(${this.connection.peers.getLength()} connected)`)
 	}
 }

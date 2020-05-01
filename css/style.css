@@ -87,7 +87,7 @@ body > *, body > .panel {
 #controls > * {
     height: auto;
     min-height: 54px;
-    min-width: 50%;
+    width: 50%;
     margin: 5px 0 0;
     flex: 1 1 auto;
 }

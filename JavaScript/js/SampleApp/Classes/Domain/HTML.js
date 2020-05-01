@@ -3,11 +3,12 @@
 import {MasterHTML} from 'SampleApp/Prototype/Domain/MasterHTML.js';
 
 export class HTML extends MasterHTML {
-	constructor(WebTorrentReceiver, WebTorrentSeeder, Editor){
+	constructor(WebTorrentReceiver, WebTorrentSeeder, Editor, WebRTC){
 		super(WebTorrentReceiver);
 
 		this.WebTorrentSeeder = WebTorrentSeeder;
 		this.Editor = Editor;
+		this.WebRTC = WebRTC;
 	}
 	createElements(name, attach = '#body', connection = null){
 		attach = $(attach).length > 0 ? attach : 'body';
@@ -36,7 +37,10 @@ export class HTML extends MasterHTML {
 					e.target.blur();
 				});
 				controls.append(clipboard);
-				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Start/Resume Live Session & Copy URL</button>`);
+				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Start/Resume Live Session & Copy URL </button>`);
+				let counterWebRTC = $('<span>(0 connected)</span>');
+				button.append(counterWebRTC);
+				this.WebRTC.api.peerCounterElements.push(counterWebRTC[0]);
 				input.keypress(function (e) {
 					if (e.keyCode == 13) {
 						e.preventDefault();

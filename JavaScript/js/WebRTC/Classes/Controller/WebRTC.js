@@ -17,6 +17,7 @@ export class WebRTC extends MasterWebRTC {
 			 * @memberof MasterConnectionEvent
 			 */
 			openOrJoinEvent: this.ConnectionEvent.openOrJoinEvent.bind(this.ConnectionEvent), // roomid, message = '', elID = ''
+			peerCounterElements: this.ConnectionEvent.peerCounterElements,
 			/**
 			 * message, elID (used for Diff_match_patch), remoteUserId (@user), requestID (used at sendRequest)
 			 * 

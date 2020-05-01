@@ -33,6 +33,10 @@ export class App extends MasterApp {
 		this.connectHash(false);
 		window.addEventListener('hashchange', () => this.connectHash());
 		$('#txt-roomid').focus();
+		// reconnect on tab focus
+		document.addEventListener('visibilitychange', () => {
+			$('#open-or-join-room').click();
+		});
 	}
 	connectHash(reload = true){
 		if (location.hash) {
