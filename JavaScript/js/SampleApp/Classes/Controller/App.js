@@ -55,8 +55,6 @@ export class App extends MasterApp {
 		// connect by hash
 		this.connectHash(false);
 		window.addEventListener('hashchange', () => this.connectHash());
-		// focus
-		$('.note-editable').focus();
 	}
 	connectHash(reload = true){
 		if (location.hash) {

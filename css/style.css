@@ -16,6 +16,8 @@ header label {
 }
 header button.mui-btn {
     height: auto;
+    white-space: normal;
+    line-height: 15px;
     background-color: #adadad;
 }
 header button.mui-btn:hover label {
