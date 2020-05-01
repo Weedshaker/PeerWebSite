@@ -95,7 +95,7 @@ export class EditorSummernote extends MasterEditor {
 				lineNumbers: true,
 				theme: 'monokai'
 			},
-			height: '40vh',
+			height: '65vh', /* when adjusting search: height in-code search. to change both values. */
 			minHeight: null,
 			maxHeight: null,
 			focus: false,

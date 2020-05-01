@@ -21,9 +21,11 @@ Give me a Star on Github and I will consider to actually tide up the code and wr
 This application has been only tested in Chrome. Don't expect miracles, it's a pure hobby, side project and due to bleeding edge sometimes buggy.
 
 ### Road map
-1. Load/Save including WebTorrents
+1. Tide up Code
 
-2. Search Engine (by km/miles-radius, topic, etc., to opt in your peerwebsite.)
+2. Load/Save including WebTorrents
+
+3. Search Engine (by km/miles-radius, topic, etc., to opt in your peerwebsite.)
 
 ### Big Thanks to
 Muaz Khan, Feross and all others who contributed to the dependencies!

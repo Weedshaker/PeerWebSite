@@ -43,9 +43,9 @@ header .mui-checkbox > label input[type="checkbox"] {
 .note-toolbar-wrapper{
     height: auto !important;
 }
-.note-editor:not(.fullscreen) .note-editable {
+.note-editor:not(.fullscreen) .note-editable, #sender {
     height: fit-content !important;
-    min-height: 40vh;
+    min-height: 65vh; /* when adjusting search: height in-code search. to change both values. */
 }
 .note-editable img, .note-editable video, #receiver img, #receiver video {
     max-width: 100%;
@@ -106,6 +106,16 @@ body > *, body > .panel {
 }
 #controls > #inputWebTorrent, #controls > #clipboardInput {
     cursor: not-allowed;
+}
+.counter {
+    display: block;
+    white-space: nowrap;
+    font-style: italic;
+    font-weight: bold;
+    color: rgb(221, 195, 195);
+}
+#buttonWebTorrent .counter {
+    olor: rgb(198, 195, 221);
 }
 /* EditorSummernote.js */
 :empty.blobLoading, :empty.torrentLoading{

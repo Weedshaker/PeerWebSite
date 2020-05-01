@@ -8,6 +8,7 @@ export class MasterConnectionEvent {
 		this.Sender = Sender;
 		this.SentMessage = SentMessage;
 
+		this.isSender = [true]; // App defines this by looking at hash
 		this.openOrJoinEventDelay = 5000;
 		this.newParticipantDelay = 1000;
 		// https://www.rtcmulticonnection.org/
@@ -61,7 +62,7 @@ export class MasterConnectionEvent {
 	openOrJoinEvent(roomid, message = '', elID = '', send = true){
 		this.connection.openOrJoin(roomid || 'predefiend-roomid');
 		setTimeout(() => {
-			if(send){
+			if(this.isSender[0] && send){
 				this.Sender.sendEvent(message, elID, undefined, undefined, false, new Map([['diffed', false]]));
 			}
 			this.updatePeerCounter();
@@ -77,7 +78,7 @@ export class MasterConnectionEvent {
 			msgElID = result.constructor === Array && result[0] && result[1] ? result : msgElID;
 		});
 		setTimeout(() => {
-			if(this.connection.isInitiator){
+			if(this.isSender[0]){
 				if(msgElID){
 					this.Sender.sendEvent(msgElID[0], msgElID[1], remoteUserId, undefined, false, new Map([['diffed', false]])); // timeout = false, diffed = false
 				}else{
@@ -90,6 +91,6 @@ export class MasterConnectionEvent {
 		}, this.newParticipantDelay);
 	}
 	updatePeerCounter() {
-		this.peerCounterElements.forEach(element => element.textContent = `(${this.connection.peers.getLength()} connected)`)
+		this.peerCounterElements.forEach(element => element.textContent = `[${this.connection.peers.getLength()} connected]`)
 	}
 }

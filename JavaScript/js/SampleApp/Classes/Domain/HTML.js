@@ -16,7 +16,7 @@ export class HTML extends MasterHTML {
 			case 'open-or-join-room':
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				this.containers = [$(`<header>
-					<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><span class="tiny" style="color:white">Visit Github for more Infos!</span>
+					<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">Visit Github for more Infos!</a>
 					<button class="mui-btn">
 						<div class="mui-checkbox useWebTorrent">
 							<label>
@@ -37,8 +37,8 @@ export class HTML extends MasterHTML {
 					e.target.blur();
 				});
 				controls.append(clipboard);
-				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Start/Resume Live Session & Copy URL </button>`);
-				let counterWebRTC = $('<span>(0 connected)</span>');
+				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Activate Live Session & Copy URL </button>`);
+				let counterWebRTC = $('<span class="counter">[0 connected]</span>');
 				button.append(counterWebRTC);
 				this.WebRTC.api.peerCounterElements.push(counterWebRTC[0]);
 				input.keypress(function (e) {
@@ -56,13 +56,20 @@ export class HTML extends MasterHTML {
 					e.target.blur();
 				});
 				controls.append(inputWebTorrent);
-				let buttonWebTorrent = $(`<button id="buttonWebTorrent" class="mui-btn mui-btn--accent">Make WebTorrent & Copy URL</button>`);
+				let buttonWebTorrent = $(`<button id="buttonWebTorrent" class="mui-btn mui-btn--accent">Make WebTorrent & Copy URL </button>`);
+				let counterWebTorrent = $('<span class="counter">[0 peers]</span>');
+				buttonWebTorrent.append(counterWebTorrent);
 				controls.append(buttonWebTorrent);
+				let webTorrentCounterID = null;
 				buttonWebTorrent.click(() => {
 					this.copyToCipBoard('inputWebTorrent');
 					this.WebTorrentSeeder.api.seed(new File([this.Editor.getData()], 'peerWebSite', { type: 'plain/text', endings: 'native' }), undefined, undefined, undefined, undefined, (torrent) => {
 						inputWebTorrent.val(`${location.href.replace(location.hash, '')}#${torrent.magnetURI}`);
 						this.copyToCipBoard('inputWebTorrent');
+						clearInterval(webTorrentCounterID);
+						webTorrentCounterID = setInterval(() => {
+							counterWebTorrent[0].textContent = `[${torrent.numPeers} peer${torrent.numPeers === 1 ? '' : 's'}]`;
+						}, 1000);
 					});
 				});
 				this.containers.push(controls);

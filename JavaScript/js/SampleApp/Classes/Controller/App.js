@@ -16,6 +16,7 @@ export class App extends MasterApp {
 		this.WebTorrentSeeder.container = sendCont[0].nextSibling.getElementsByClassName('note-editable')[0]; // dom scope not set for Seeder. 1: SummerNote changes the active container, 2: its only used at removeDeletedNodes
 		
 		const isViewerOnly = this.viewerOnly();
+		this.WebRTC.api.isSender[0] = !isViewerOnly;
 		// *** Events Triggert by DOM ***
 		// openOrJoinEvent(roomid, message = '', elID = '')
 		this.HTML.attachButtonEvent(button, sendCont, this.Editor.getData, this.WebRTC.api.openOrJoinEvent, !isViewerOnly);
@@ -25,6 +26,10 @@ export class App extends MasterApp {
 			// *** Events Triggert by Connection ***
 			// onNewParticipant.add(newMessageFunc, scope = this, args = []) ==> has to return [message = '', elID = '']
 			this.WebRTC.api.onNewParticipant.add(function(remoteUserId){return [this.Editor.getData(), this.Editor.container[0].id];}, this);
+			// reconnect on tab focus
+			document.addEventListener('visibilitychange', () => {
+				$('#open-or-join-room').click();
+			});
 		}
 		// onReceive.add(newMessageFunc, scope = this, args = [])
 		this.WebRTC.api.onReceive.add(function(dataPack){this.HTML.setData(this.receiveCont, dataPack);}, this);
@@ -33,10 +38,6 @@ export class App extends MasterApp {
 		this.connectHash(false);
 		window.addEventListener('hashchange', () => this.connectHash());
 		$('#txt-roomid').focus();
-		// reconnect on tab focus
-		document.addEventListener('visibilitychange', () => {
-			$('#open-or-join-room').click();
-		});
 	}
 	connectHash(reload = true){
 		if (location.hash) {
