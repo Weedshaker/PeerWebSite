@@ -78,7 +78,8 @@ export class HTML extends MasterHTML {
 					$('#clipboardInput').val(location.href);
 					this.copyToCipBoard('clipboardInput');
 					// persist site
-					localStorage.setItem(location.hash, this.Editor.getData());
+					const data = this.Editor.getData();
+					if (data.length >= 30) localStorage.setItem(location.hash, data);
 				});
 				// hot-reloader
 				if(window.sst && window.sst.isDebug){

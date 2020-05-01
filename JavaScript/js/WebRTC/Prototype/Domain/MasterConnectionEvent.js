@@ -28,18 +28,17 @@ export class MasterConnectionEvent {
 	 */
 	openOrJoinEvent(roomid, message = '', elID = '', send = true){
 		this.connection.openOrJoin(roomid || 'predefiend-roomid');
-		if (send) {
-			setTimeout(() => {
-				if(!this.connection.isInitiator){
-					this.Sender.sendEvent(message, elID, undefined, undefined, false, new Map([['diffed', false]]));
-				}
-			}, this.openOrJoinEventDelay); // timeout = false, diffed = false
-		}
+		setTimeout(() => {
+			if(send){
+				this.Sender.sendEvent(message, elID, undefined, undefined, false, new Map([['diffed', false]]));
+			}
+		}, this.openOrJoinEventDelay); // timeout = false, diffed = false
 	}
 	// called from connection
 	// newParticipant
 	newParticipant(remoteUserId, userPreferences){
 		this.connection.acceptParticipationRequest(remoteUserId, userPreferences);
+		console.log('connection', this.connection);
 		let msgElID = false;
 		this.onNewParticipant.container.forEach((e) => {
 			let result = e.func.apply(e.scope, [remoteUserId].concat(e.args));
