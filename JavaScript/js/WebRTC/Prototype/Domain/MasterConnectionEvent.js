@@ -80,10 +80,10 @@ export class MasterConnectionEvent {
 		setTimeout(() => {
 			if(this.isSender[0]){
 				if(msgElID){
-					this.Sender.sendEvent(msgElID[0], msgElID[1], remoteUserId, undefined, false, new Map([['diffed', false]])); // timeout = false, diffed = false
+					this.Sender.sendEvent(msgElID[0], msgElID[1], remoteUserId, undefined, false, new Map([['diffed', false]]), true); // timeout = false, diffed = false
 				}else{
 					this.SentMessage.getAll().forEach((message) => {
-						this.Sender.sendEvent(message[0], message[1], remoteUserId, undefined, false, new Map([['diffed', false]])); // timeout = false, diffed = false
+						this.Sender.sendEvent(message[0], message[1], remoteUserId, undefined, false, new Map([['diffed', false]]), true); // timeout = false, diffed = false
 					});
 				}
 			}

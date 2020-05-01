@@ -36,6 +36,18 @@ export class App extends MasterApp {
 					}
 				}, 200);
 			});
+			// save
+			window.addEventListener('beforeunload', (e) => {
+				/*
+				// Cancel the event
+				e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
+				// Chrome requires returnValue to be set
+				e.returnValue = '';
+				*/
+				// persist site
+				const data = this.Editor.getData();
+				if (data.length >= 30 && location.hash && !location.hash.includes('magnet:')) localStorage.setItem(location.hash, data);
+			});
 		}
 		// onReceive.add(newMessageFunc, scope = this, args = [])
 		this.WebRTC.api.onReceive.add(function(dataPack){this.HTML.setData(this.receiveCont, dataPack);}, this);
@@ -43,7 +55,8 @@ export class App extends MasterApp {
 		// connect by hash
 		this.connectHash(false);
 		window.addEventListener('hashchange', () => this.connectHash());
-		$('#txt-roomid').focus();
+		// focus
+		$('.note-editable').focus();
 	}
 	connectHash(reload = true){
 		if (location.hash) {
