@@ -20,8 +20,8 @@ export class HTML extends MasterHTML {
 					<button class="mui-btn">
 						<div class="mui-checkbox useWebTorrent">
 							<label>
-							<input id="useWebTorrent" type="checkbox" value="" ${localStorage.getItem('useWebTorrent') ? localStorage.getItem('useWebTorrent') === 'true' ? 'checked' : '' : !!window.chrome ? 'checked' : ''}>
-							<span>Use WebTorrent for files</span><span class="tiny">(supports video streaming, big files plus more files. Preferably use Chrome with this feature! <span style="color:red">It may not work with other browsers, ios, etc.</span>)</span>
+							<input id="useWebTorrent" type="checkbox" value="" ${localStorage.getItem('useWebTorrent') ? localStorage.getItem('useWebTorrent') === 'true' ? 'checked' : '' : 'checked'}>
+							<span>Use WebTorrent for files</span><span class="tiny">(supports video streaming, big files plus more files. Preferably use Chrome with this feature! It may not work with other browsers.)</span>
 							</label>
 						</div>
 					</button>

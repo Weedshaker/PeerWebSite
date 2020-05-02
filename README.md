@@ -2,7 +2,7 @@
 ## Real Time Peer to Peer Web Site
 
 ### Functionalities
-1. **Use WebTorrent for files**: This will enable WebTorrent for added files. Use this, if you use Chrome and your target audience also uses Chrome. It allows video steaming and will perform better in case your site is file heavy. It is mandatory for multiple files to load efficiently. Although, it may not work with mobile, ios, etc.
+1. **Use WebTorrent for files**: This will enable WebTorrent for added files. It allows video steaming and will perform better in case your site is file heavy. It is mandatory for multiple files to load efficiently. Although, it may not work with other browsers but Chrome.
 
 2. **Start live session**: This opens a session/peer to peer room where your audience can join and see your changes in real time. Your site will be gone once you close your tab, browser or reload.
 
