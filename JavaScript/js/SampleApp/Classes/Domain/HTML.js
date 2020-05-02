@@ -20,7 +20,7 @@ export class HTML extends MasterHTML {
 					<button class="mui-btn">
 						<div class="mui-checkbox useWebTorrent">
 							<label>
-							<input id="useWebTorrent" type="checkbox" value="" ${localStorage.getItem('useWebTorrent') ? localStorage.getItem('useWebTorrent') === 'true' ? 'checked' : '' : ''}>
+							<input id="useWebTorrent" type="checkbox" value="" ${localStorage.getItem('useWebTorrent') ? localStorage.getItem('useWebTorrent') === 'true' ? 'checked' : '' : !!window.chrome ? 'checked' : ''}>
 							<span>Use WebTorrent for files</span><span class="tiny">(supports video streaming and bigger in size plus more files. Preferably use Chrome with this feature! It likely does not work with other browsers.)</span>
 							</label>
 						</div>
@@ -31,7 +31,7 @@ export class HTML extends MasterHTML {
 				let input = $(`<input id="${this.idNames[0]}" class="mui-panel" placeholder="${connection.token()}">`);
 				controls.append(input);
 				// clipboard
-				let clipboard = $(`<input type="text" class="mui-panel" id="clipboardInput">`).hide();
+				let clipboard = $(`<input dir="rtl" type="text" class="mui-panel" id="clipboardInput">`).hide();
 				clipboard.keypress(function (e) {
 					e.preventDefault();
 					e.target.blur();
@@ -50,7 +50,7 @@ export class HTML extends MasterHTML {
 				});
 				controls.append(button);
 				// webtorrent
-				let inputWebTorrent = $(`<input tabindex="-1" id="inputWebTorrent" class="mui-panel" placeholder="MagnetURI...">`);
+				let inputWebTorrent = $(`<input dir="rtl" tabindex="-1" id="inputWebTorrent" class="mui-panel" placeholder="MagnetURI...">`);
 				inputWebTorrent.keypress(function (e) {
 					e.preventDefault();
 					e.target.blur();

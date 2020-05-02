@@ -1,7 +1,6 @@
 ---- UI - Server ----
--1) update project and fix local server (https://github.com/muaz-khan/RTCMultiConnection-Server/blob/master/server.js)
 
-0) fix that images keep the proper sizes when newly loaded
+0) fix build process with bundle-sfx and new webtorrent version + update summernote (consider full http2 native inline imports)
 
 1) create new ui
 

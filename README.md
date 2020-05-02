@@ -23,9 +23,11 @@ This application has been only tested in Chrome. Don't expect miracles, it's a p
 ### Road map
 1. Tide up Code
 
-2. Load/Save including WebTorrents
+2. WebGL Drawing, Grids, other TextEditors without Bootstrap and Jquery
 
-3. Search Engine (by km/miles-radius, topic, etc., to opt in your peerwebsite.)
+3. Load/Save including WebTorrents
+
+4. Search Engine (by km/miles-radius, topic, etc., to opt in your peerwebsite.)
 
 ### Big Thanks to
 Muaz Khan, Feross and all others who contributed to the dependencies!

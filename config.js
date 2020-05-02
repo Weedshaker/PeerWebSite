@@ -65,7 +65,7 @@ System.config({
     "parse-torrent": "npm:parse-torrent@5.8.3",
     "pieroxy/lz-string": "github:pieroxy/lz-string@1.4.4",
     "socket.io-client": "github:socketio/socket.io-client@1.7.4",
-    "summernote/summernote": "github:summernote/summernote@0.8.10",
+    "summernote/summernote": "github:summernote/summernote@0.8.16",
     "tanaka-de-silva/google-diff-match-patch-js": "github:tanaka-de-silva/google-diff-match-patch-js@1.0.0",
     "webtorrent/webtorrent": "github:webtorrent/webtorrent@0.108.1",
     "xuset/indexeddb-chunk-store": "github:xuset/indexeddb-chunk-store@2.2.1",
