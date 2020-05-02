@@ -67,7 +67,7 @@ System.config({
     "socket.io-client": "github:socketio/socket.io-client@1.7.4",
     "summernote/summernote": "github:summernote/summernote@0.8.10",
     "tanaka-de-silva/google-diff-match-patch-js": "github:tanaka-de-silva/google-diff-match-patch-js@1.0.0",
-    "webtorrent/webtorrent": "github:webtorrent/webtorrent@0.98.24",
+    "webtorrent/webtorrent": "github:webtorrent/webtorrent@0.108.1",
     "xuset/indexeddb-chunk-store": "github:xuset/indexeddb-chunk-store@2.2.1",
     "github:alexisvincent/systemjs-hot-reloader@0.6.0": {
       "debug": "npm:debug@2.6.9",

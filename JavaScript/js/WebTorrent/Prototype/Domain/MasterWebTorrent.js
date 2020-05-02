@@ -51,11 +51,14 @@ export class MasterWebTorrent {
 		this.appendToOpts = {
 			/*
 			!!! IMPORTANT !!! when autoplay off it doesn't work in Firefox and Chrome
-			autoplay: Boolean, // Autoplay video/audio files (default: true)
+			autoplay: Boolean, // Autoplay video/audio files (default: false)
+			muted: Mute video/audio files (default: false)
 			controls: Boolean, // Show video/audio player controls (default: true)
 			maxBlobLength: Number, // Files above this size will skip the "blob" strategy and fail (default: 200 * 1000 * 1000 bytes)
 			*/
-			maxBlobLength: 2 * 1000 * 1000 * 1000 /*2GB*/
+			autoplay: true,
+			muted: true,
+			controls: true
 		};
 		// !!! Important !!! set the attributes in the same order as in the array below
 		this.attributes = ['data-id', 'data-magnetURL', 'data-blobs', 'onerror', 'data-linktxt'];
