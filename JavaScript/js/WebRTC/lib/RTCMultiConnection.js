@@ -4476,7 +4476,8 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
                     }
 
                     // [disabled] retry after 3 seconds
-                    false && setTimeout(function() {
+                    // sst: enabled
+                    setTimeout(function() {
                         joinRoom(connectionDescription, cb);
                     }, 3000);
                 }
