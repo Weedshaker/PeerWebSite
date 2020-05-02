@@ -8,6 +8,16 @@ body > header {
 header iframe {
     border-radius: unset !important;
 }
+header .recycle {
+    color: green;
+    display: flex;
+    align-items: center;
+    font-size: 30px;
+}
+header .recycle:hover {
+    text-decoration: none;
+    font-style: italic;
+}
 header label {
     color: white;
     font-size: 12px;

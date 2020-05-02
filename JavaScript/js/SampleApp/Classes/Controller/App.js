@@ -21,6 +21,7 @@ export class App extends MasterApp {
 		// openOrJoinEvent(roomid, message = '', elID = '')
 		this.HTML.attachButtonEvent(button, sendCont, this.Editor.getData, this.WebRTC.api.openOrJoinEvent, !isViewerOnly);
 		if (!isViewerOnly) {
+			// Seeder/Sender
 			// sendEvent(message, elID = 'sst_all', remoteUserId = 'sst_toAll', requestID = '', options = new Map([['diffed', true], ['compressed', 'auto']])
 			this.Editor.attachChangeEvent(sendCont, this.WebRTC.api.sendEvent);
 			// *** Events Triggert by Connection ***
@@ -48,6 +49,12 @@ export class App extends MasterApp {
 				const data = this.Editor.getData();
 				if (data.length >= 30 && location.hash && !location.hash.includes('magnet:')) localStorage.setItem(location.hash, data);
 			});
+			// expose download all torrents to global scope
+			window.getAllTorrentFiles = this.WebTorrentSeeder.api.getAllTorrentFiles;
+		} else {
+			// Receiver
+			// expose download all torrents to global scope
+			window.getAllTorrentFiles = this.WebTorrentReceiver.api.getAllTorrentFiles;
 		}
 		// onReceive.add(newMessageFunc, scope = this, args = [])
 		this.WebRTC.api.onReceive.add(function(dataPack){this.HTML.setData(this.receiveCont, dataPack);}, this);
@@ -60,7 +67,7 @@ export class App extends MasterApp {
 		if (location.hash) {
 			if (location.hash.includes('magnet:')) {
 				const torrent = this.WebTorrentReceiver.add(location.hash.substr(1), undefined, undefined, undefined, undefined, torrent => {
-					if (torrent.files && torrent.files[0] && torrent.files[0].name === 'peerWebSite') {
+					if (torrent.files && torrent.files[0] && torrent.files[0].name.includes('peerWebSite')) {
 						torrent.files[0].getBlob((err, blob) => {
 							const reader = new FileReader();
 							reader.onload = (reader => {

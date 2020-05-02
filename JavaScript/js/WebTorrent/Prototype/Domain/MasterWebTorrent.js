@@ -97,6 +97,7 @@ export class MasterWebTorrent {
 			 * @memberof MasterWebTorrent
 			 */
 			container: this.container,
+			getAllTorrentFiles: this.getAllTorrentFiles.bind(this)
 		};
 	}
 	// add (download)
@@ -216,9 +217,17 @@ export class MasterWebTorrent {
 								if(Number(torrent.sst_id) === Number(node.getAttribute(this.attributes[0]))){
 									// this only gets triggered on WebTorrentReceiver
 									if (this.ProgressBar) this.ProgressBar.removeAll(torrent);
+									torrent.sst_containsVideo = node.innerHTML.indexOf('video') !== -1;
+									if (torrent.sst_containsVideo) {
+										const unMute = event => {
+											node.removeEventListener('click', unMute);
+											node.childNodes.forEach(child => child.muted = false);
+											event.preventDefault();
+										};
+										node.addEventListener('click', unMute)
+									}
 									// set node content to torrent
 									torrent.sst_nodeCont = node.innerHTML;
-									torrent.sst_containsVideo = torrent.sst_nodeCont.indexOf('video') !== -1;
 									this.appended(torrent, appendToCallback, text);
 								}else{
 									// reset nodes and start over
@@ -356,7 +365,7 @@ export class MasterWebTorrent {
 			clearTimeout(this.timeoutCont);
 			this.timeoutCont = setTimeout(() => {
 				this.blobsRefresh();
-			}, 1000);
+			}, 10000);
 		}
 	}
 	// nodes
@@ -484,5 +493,8 @@ export class MasterWebTorrent {
 				reject('not found!');
 			}
 		});
+	}
+	getAllTorrentFiles() {
+		this.client.torrents.forEach(torrent => this.Helper.saveData(torrent.torrentFileBlobURL, `${torrent.name}.torrent`));
 	}
 }
