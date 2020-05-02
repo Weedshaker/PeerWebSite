@@ -31,3 +31,5 @@ This application has been only tested in Chrome. Don't expect miracles, it's a p
 
 ### Big Thanks to
 Muaz Khan, Feross and all others who contributed to the dependencies!
+
+*PeerWebSite is released under MIT licence . Copyright (c) Silvan Strübi.*
