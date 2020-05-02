@@ -57,7 +57,7 @@ header .mui-checkbox > label input[type="checkbox"] {
     width: 100% !important;
     position: sticky !important;
     top: 0;
-    z-index: 100;
+    z-index: 1000;
 }
 /* end editor */
 #receiver {
