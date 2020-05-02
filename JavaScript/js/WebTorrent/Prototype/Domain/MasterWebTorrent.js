@@ -2,7 +2,7 @@
 
 import {Helper} from 'WebTorrent/Classes/Helper/Helper.js';
 import {OptionRegex} from 'WebTorrent/Classes/Helper/OptionRegex.js';
-//import IndexeddbChunkStore from 'xuset/indexeddb-chunk-store/idbchunkstore.min.js';
+import IndexeddbChunkStore from 'xuset/indexeddb-chunk-store/idbchunkstore.min.js';
 //import parseTorrent from 'parse-torrent/index.js'; // doesn't work in karma
 
 export class MasterWebTorrent {
@@ -31,7 +31,7 @@ export class MasterWebTorrent {
 			path: String,              // Folder to download files to (default=`/tmp/webtorrent/`)
 			store: Function            // Custom chunk store (must follow [abstract-chunk-store](https://www.npmjs.com/package/abstract-chunk-store) API)
 			*/
-			//store: IndexeddbChunkStore
+			store: IndexeddbChunkStore
 		};
 		this.seedOpts = {
 			/*
@@ -45,7 +45,7 @@ export class MasterWebTorrent {
 			urlList: [String]        // web seed urls (see [bep19](http://www.bittorrent.org/beps/bep_0019.html))
 			*/
 			comment: 'sst_WebRTC',
-			//store: IndexeddbChunkStore
+			store: IndexeddbChunkStore
 		};
 		this.appendToOpts = {
 			/*
@@ -97,7 +97,7 @@ export class MasterWebTorrent {
 			 * @memberof MasterWebTorrent
 			 */
 			container: this.container,
-			getAllTorrentFiles: this.getAllTorrentFiles.bind(this)
+			getAllTorrents: this.getAllTorrents.bind(this)
 		};
 	}
 	// add (download)
@@ -365,7 +365,7 @@ export class MasterWebTorrent {
 			clearTimeout(this.timeoutCont);
 			this.timeoutCont = setTimeout(() => {
 				this.blobsRefresh();
-			}, 10000);
+			}, 1000);
 		}
 	}
 	// nodes
@@ -494,7 +494,7 @@ export class MasterWebTorrent {
 			}
 		});
 	}
-	getAllTorrentFiles() {
-		this.client.torrents.forEach(torrent => this.Helper.saveData(torrent.torrentFileBlobURL, `${torrent.name}.torrent`));
+	getAllTorrents() {
+		this.Helper.saveData(this.client.torrents.map(torrent => torrent.magnetURI).join("\n\n"), `peerWebSiteTorrents_${this.Helper.getRandomString()}.txt`);
 	}
 }

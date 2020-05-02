@@ -50,11 +50,11 @@ export class App extends MasterApp {
 				if (data.length >= 30 && location.hash && !location.hash.includes('magnet:')) localStorage.setItem(location.hash, data);
 			});
 			// expose download all torrents to global scope
-			window.getAllTorrentFiles = this.WebTorrentSeeder.api.getAllTorrentFiles;
+			window.getAllTorrents = this.WebTorrentSeeder.api.getAllTorrents;
 		} else {
 			// Receiver
 			// expose download all torrents to global scope
-			window.getAllTorrentFiles = this.WebTorrentReceiver.api.getAllTorrentFiles;
+			window.getAllTorrents = this.WebTorrentReceiver.api.getAllTorrents;
 		}
 		// onReceive.add(newMessageFunc, scope = this, args = [])
 		this.WebRTC.api.onReceive.add(function(dataPack){this.HTML.setData(this.receiveCont, dataPack);}, this);
