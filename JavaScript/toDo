@@ -1,6 +1,6 @@
 ---- UI - Server ----
 
-0) fix build process with bundle-sfx and new webtorrent version + update summernote (consider full http2 native inline imports)
+0) use new build process, preferably native import
 
 1) create new ui
 
