@@ -21,7 +21,7 @@ export class HTML extends MasterHTML {
 						<div class="mui-checkbox useWebTorrent">
 							<label>
 							<input id="useWebTorrent" type="checkbox" value="" ${localStorage.getItem('useWebTorrent') ? localStorage.getItem('useWebTorrent') === 'true' ? 'checked' : '' : 'checked'}>
-							<span>Use WebTorrent for files</span><span class="tiny">(supports video streaming, big files plus multiple files. Preferably use Chrome with this feature! It may not work well with other browsers.)</span>
+							<span>Use WebTorrent for files</span><span class="tiny">(supports video streaming, big files plus multiple files. Preferably use Chrome with this feature!)</span>
 							</label>
 						</div>
 					</button>
@@ -37,7 +37,7 @@ export class HTML extends MasterHTML {
 					e.target.blur();
 				});
 				controls.append(clipboard);
-				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Activate Live Session & Copy URL </button>`);
+				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Activate Live Session & Copy Link</button>`);
 				let counterWebRTC = $('<span class="counter">[0 connected]</span>');
 				button.append(counterWebRTC);
 				this.WebRTC.api.peerCounterElements.push(counterWebRTC[0]);
@@ -50,13 +50,13 @@ export class HTML extends MasterHTML {
 				});
 				controls.append(button);
 				// webtorrent
-				let inputWebTorrent = $(`<input dir="rtl" tabindex="-1" id="inputWebTorrent" class="mui-panel" placeholder="MagnetURI...">`);
+				let inputWebTorrent = $(`<input dir="rtl" tabindex="-1" id="inputWebTorrent" class="mui-panel" placeholder="WebTorrent MagnetURI...">`);
 				inputWebTorrent.keypress(function (e) {
 					e.preventDefault();
 					e.target.blur();
 				});
 				controls.append(inputWebTorrent);
-				let buttonWebTorrent = $(`<button id="buttonWebTorrent" class="mui-btn mui-btn--accent">Make WebTorrent & Copy URL </button>`);
+				let buttonWebTorrent = $(`<button id="buttonWebTorrent" class="mui-btn mui-btn--accent">Take Snapshot & Copy Link</button>`);
 				let counterWebTorrent = $('<span class="counter">[0 peers]</span>');
 				buttonWebTorrent.append(counterWebTorrent);
 				controls.append(buttonWebTorrent);
