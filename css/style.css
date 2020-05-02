@@ -42,12 +42,26 @@ header .mui-checkbox > label input[type="checkbox"] {
     background-color: white;
 }
 /* start editor */
+.note-file-input.form-control {
+    height: auto;
+}
+input.note-file-input.form-control::after {
+    content: 'Only choose one file at a time to avoid glitches!!!';
+    font-size: 10px;
+    color: red;
+    white-space: normal;
+    padding-top: 2px;
+    display: block;
+}
 .note-toolbar{
     height: auto !important;
 }
 .note-editor:not(.fullscreen) .note-editable, #sender {
     height: fit-content !important;
     min-height: 65vh; /* when adjusting search: height in-code search. to change both values. */
+}
+.note-editor.fullscreen .note-editable{
+    max-width: 100vw;
 }
 .note-editable img, .note-editable video, #receiver img, #receiver video {
     max-width: 100%;
