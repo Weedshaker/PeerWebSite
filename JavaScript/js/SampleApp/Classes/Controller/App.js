@@ -8,6 +8,7 @@ export class App extends MasterApp {
 	}
 	createElements(name = 'open-or-join-room'){
 		const isSender = !location.hash || (localStorage.getItem('channels') || '').includes(`[${location.hash}]`);
+		this.isSender = isSender;
 		this.originalHash = location.hash;
 		let htmlElements = super.createElements(name, isSender);
 		let sendCont = htmlElements[0];
@@ -83,7 +84,7 @@ export class App extends MasterApp {
 	}
 	connectHash(reload = true){
 		if (location.hash) {
-			if (reload && !(localStorage.getItem('channels') || '').includes(`[${location.hash}]`)) {
+			if (reload && (!(localStorage.getItem('channels') || '').includes(`[${location.hash}]`) || !this.isSender)) {
 				location.reload();
 			} else if (location.hash.includes('magnet:')) {
 				const torrent = this.WebTorrentReceiver.add(location.hash.substr(1), undefined, undefined, undefined, undefined, torrent => {
@@ -112,7 +113,9 @@ export class App extends MasterApp {
 				this.WebTorrentReceiver.ProgressBar.start();
 			} else {
 				$('#txt-roomid').val(location.hash.substr(1));
-				$('#open-or-join-room').click();
+				// don't change on button click change hash, since this double triggers
+				if (this.originalHash === location.hash) $('#open-or-join-room').click();
+				this.originalHash = location.hash;
 			}
 		}
 	}
