@@ -72,7 +72,7 @@ export class App extends MasterApp {
 			e.returnValue = '';
 			*/
 			// persist site
-			const data = this.Editor.getData();
+			const data = isSender ? this.Editor.getData() : this.receiveCont[0].innerHTML;
 			if (data.length >= 30 && location.hash && !location.hash.includes('magnet:')) localStorage.setItem(location.hash, data);
 		});
 		// connect by hash
