@@ -8,6 +8,7 @@ export class App extends MasterApp {
 	}
 	createElements(name = 'open-or-join-room'){
 		const isSender = !location.hash || (localStorage.getItem('channels') || '').includes(location.hash);
+		this.originalHash = location.hash;
 		let htmlElements = super.createElements(name, isSender);
 		let sendCont = htmlElements[0];
 		this.receiveCont = htmlElements[1];
@@ -72,8 +73,9 @@ export class App extends MasterApp {
 			e.returnValue = '';
 			*/
 			// persist site
+			const hash = this.originalHash || location.hash;
 			const data = isSender ? this.Editor.getData() : this.receiveCont[0].innerHTML;
-			if (data.length >= 30 && location.hash && !location.hash.includes('magnet:')) localStorage.setItem(location.hash, data);
+			if (data.length >= 30 && hash && !hash.includes('magnet:')) localStorage.setItem(hash, data);
 		});
 		// connect by hash
 		this.connectHash(false);
@@ -81,7 +83,9 @@ export class App extends MasterApp {
 	}
 	connectHash(reload = true){
 		if (location.hash) {
-			if (location.hash.includes('magnet:')) {
+			if (reload && !(localStorage.getItem('channels') || '').includes(location.hash)) {
+				location.reload();
+			} else if (location.hash.includes('magnet:')) {
 				const torrent = this.WebTorrentReceiver.add(location.hash.substr(1), undefined, undefined, undefined, undefined, torrent => {
 					if (torrent.files && torrent.files[0] && torrent.files[0].name.includes('peerWebSite')) {
 						torrent.files[0].getBlob((err, blob) => {
@@ -110,7 +114,6 @@ export class App extends MasterApp {
 				$('#txt-roomid').val(location.hash.substr(1));
 				$('#open-or-join-room').click();
 			}
-			if (reload && !(localStorage.getItem('channels') || '').includes(location.hash)) location.reload();
 		}
 	}
 	setReceiverOrSender(isSender){
