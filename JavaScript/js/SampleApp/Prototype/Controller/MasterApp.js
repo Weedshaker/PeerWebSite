@@ -22,7 +22,7 @@ export class MasterApp {
 			window.App = this;
 		}
 	}
-	createElements(name){
-		return this.HTML.createElements(name, undefined, this.WebRTC.connection);
+	createElements(name, isSender){
+		return this.HTML.createElements(name, undefined, this.WebRTC.connection, isSender);
 	}
 }

@@ -7,7 +7,8 @@ export class App extends MasterApp {
 		super();
 	}
 	createElements(name = 'open-or-join-room'){
-		let htmlElements = super.createElements(name);
+		const isSender = !this.viewerOnly();
+		let htmlElements = super.createElements(name, isSender);
 		let sendCont = htmlElements[0];
 		this.receiveCont = htmlElements[1];
 		this.WebTorrentReceiver.container = this.receiveCont[0]; // set the dom scope for the WebTorrent clients
@@ -15,12 +16,11 @@ export class App extends MasterApp {
 		this.Editor.add(sendCont);
 		this.WebTorrentSeeder.container = sendCont[0].nextSibling.getElementsByClassName('note-editable')[0]; // dom scope not set for Seeder. 1: SummerNote changes the active container, 2: its only used at removeDeletedNodes
 		
-		const isViewerOnly = this.viewerOnly();
-		this.WebRTC.api.isSender[0] = !isViewerOnly;
+		this.WebRTC.api.isSender[0] = isSender;
 		// *** Events Triggert by DOM ***
 		// openOrJoinEvent(roomid, message = '', elID = '')
-		this.HTML.attachButtonEvent(button, sendCont, this.Editor.getData, this.WebRTC.api.openOrJoinEvent, !isViewerOnly);
-		if (!isViewerOnly) {
+		this.HTML.attachButtonEvent(button, sendCont, this.Editor.getData, this.WebRTC.api.openOrJoinEvent, isSender);
+		if (isSender) {
 			// Seeder/Sender
 			// sendEvent(message, elID = 'sst_all', remoteUserId = 'sst_toAll', requestID = '', options = new Map([['diffed', true], ['compressed', 'auto']])
 			this.Editor.attachChangeEvent(sendCont, this.WebRTC.api.sendEvent);

@@ -10,13 +10,13 @@ export class HTML extends MasterHTML {
 		this.Editor = Editor;
 		this.WebRTC = WebRTC;
 	}
-	createElements(name, attach = '#body', connection = null){
+	createElements(name, attach = '#body', connection = null, isSender = true){
 		attach = $(attach).length > 0 ? attach : 'body';
 		switch(name){
 			case 'open-or-join-room':
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				this.containers = [$(`<header>
-					<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.2.0; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+					<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.2.1; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					<button class="mui-btn">
 						<div class="mui-checkbox useWebTorrent">
 							<label>
@@ -75,9 +75,9 @@ export class HTML extends MasterHTML {
 				});
 				this.containers.push(controls);
 				// main containers
-				let sender = $(`<div id="${this.idNames[2]}">${localStorage.getItem(location.hash) || ''}</div>`);
+				let sender = $(`<div id="${this.idNames[2]}">${window.sst && window.sst.karma ? '' : isSender ? localStorage.getItem(location.hash) || '' : ''}</div>`);
 				this.containers.push(sender);
-				let receiver = $(`<div id="${this.idNames[3]}">${window.sst && window.sst.karma ? '' : '<span class="blobLoading"></span>'}</div>`);
+				let receiver = $(`<div id="${this.idNames[3]}">${window.sst && window.sst.karma ? '' : !isSender ? localStorage.getItem(location.hash) || '<span class="blobLoading"></span>' : 'response...'}</div>`);
 				this.containers.push(receiver);
 				button.on('click', () => {
 					this.disabled = true;
