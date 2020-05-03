@@ -27,28 +27,6 @@ export class App extends MasterApp {
 			// *** Events Triggert by Connection ***
 			// onNewParticipant.add(newMessageFunc, scope = this, args = []) ==> has to return [message = '', elID = '']
 			this.WebRTC.api.onNewParticipant.add(function(remoteUserId){return [this.Editor.getData(), this.Editor.container[0].id];}, this);
-			// reconnect on tab focus
-			let visibilityTimeOutID = null;
-			document.addEventListener('visibilitychange', () => {
-				clearTimeout(visibilityTimeOutID);
-				visibilityTimeOutID = setTimeout(() => {
-					if (document.visibilityState === 'visible' && location.hash) {
-						$('#open-or-join-room').click();
-					}
-				}, 200);
-			});
-			// save
-			window.addEventListener('beforeunload', (e) => {
-				/*
-				// Cancel the event
-				e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
-				// Chrome requires returnValue to be set
-				e.returnValue = '';
-				*/
-				// persist site
-				const data = this.Editor.getData();
-				if (data.length >= 30 && location.hash && !location.hash.includes('magnet:')) localStorage.setItem(location.hash, data);
-			});
 			// expose download all torrents to global scope
 			window.getAllTorrents = this.WebTorrentSeeder.api.getAllTorrents;
 		} else {
@@ -58,7 +36,28 @@ export class App extends MasterApp {
 		}
 		// onReceive.add(newMessageFunc, scope = this, args = [])
 		this.WebRTC.api.onReceive.add(function(dataPack){this.HTML.setData(this.receiveCont, dataPack);}, this);
-
+		// reconnect on tab focus
+		let visibilityTimeOutID = null;
+		document.addEventListener('visibilitychange', () => {
+			clearTimeout(visibilityTimeOutID);
+			visibilityTimeOutID = setTimeout(() => {
+				if (document.visibilityState === 'visible' && location.hash) {
+					$('#open-or-join-room').click();
+				}
+			}, 200);
+		});
+		// save
+		window.addEventListener('beforeunload', (e) => {
+			/*
+			// Cancel the event
+			e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
+			// Chrome requires returnValue to be set
+			e.returnValue = '';
+			*/
+			// persist site
+			const data = this.Editor.getData();
+			if (data.length >= 30 && location.hash && !location.hash.includes('magnet:')) localStorage.setItem(location.hash, data);
+		});
 		// connect by hash
 		this.connectHash(false);
 		window.addEventListener('hashchange', () => this.connectHash());
