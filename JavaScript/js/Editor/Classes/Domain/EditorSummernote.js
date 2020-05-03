@@ -11,7 +11,12 @@ import 'Editor/lib/codemirror/css.js';
 import 'Editor/lib/codemirror/htmlmixed.js';
 import 'Editor/lib/codemirror/formatting.js';
 import 'summernote/summernote';
+// plugins
 import 'hockic/summernote-ext-filedialog';
+import 'Editor/Classes/Helper/summernote-image-shapes.js';
+import 'Editor/Classes/Helper/summernote-plugin-image-download.js';
+
+// summernote uses this icons: https://fontawesome.com/icons [jspm_packages/github/summernote/summernote@0.8.16/summernote-bs4.css]
 
 export class EditorSummernote extends MasterEditor {
 	constructor(WebTorrent = null){
@@ -99,7 +104,15 @@ export class EditorSummernote extends MasterEditor {
 			minHeight: null,
 			maxHeight: null,
 			focus: false,
-			fontSizes: ['8', '9', '10', '11', '12', '14', '18', '24', '36', '48', '64', '82', '150']
+			fontSizes: ['8', '9', '10', '11', '12', '14', '18', '24', '36', '48', '64', '82', '150'],
+			popover: {
+				image: [
+				  ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+				  ['float', ['floatLeft', 'floatRight', 'floatNone']],
+				  ['custom', ['imageShapes']],
+				  ['remove', ['imageDownload', 'removeMedia']]
+				]
+			}
 		};
 	}
 	add(container = this.container){

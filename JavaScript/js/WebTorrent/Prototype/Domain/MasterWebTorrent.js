@@ -218,13 +218,34 @@ export class MasterWebTorrent {
 									// this only gets triggered on WebTorrentReceiver
 									if (this.ProgressBar) this.ProgressBar.removeAll(torrent);
 									torrent.sst_containsVideo = node.innerHTML.indexOf('video') !== -1;
+									// Event Listeners
+									// save files
+									const download = event => {
+										torrent.files.forEach(file => {
+											file.getBlobURL((err, url) => {
+												if (err) return console.warn(err);
+												this.Helper.saveBlobUrl(url, file.name);
+											});
+										});
+									};
+									node.sst_download = download;
 									if (torrent.sst_containsVideo) {
+										// save files
+										let downloadTimerID = null;
+										node.addEventListener('mousedown', event => (downloadTimerID = setTimeout(() => {
+											if (event.which === 1) download();
+										}, 1000)));
+										node.addEventListener('mouseup', () => clearTimeout(downloadTimerID));
+										// unmute
 										const unMute = event => {
 											node.removeEventListener('click', unMute);
 											node.childNodes.forEach(child => child.muted = false);
 											event.preventDefault();
 										};
-										node.addEventListener('click', unMute)
+										node.addEventListener('click', unMute);
+									} else {
+										// save files
+										node.addEventListener('dblclick', download);
 									}
 									// set node content to torrent
 									torrent.sst_nodeCont = node.innerHTML;
