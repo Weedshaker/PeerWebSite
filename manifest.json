@@ -3,6 +3,7 @@
     "short_name": "PWS",
     "theme_color": "#ffffff",
     "background_color": "#ffffff",
+    "display": "minimal-ui",
     "scope": "./",
     "start_url": "./",
     "icons": [
