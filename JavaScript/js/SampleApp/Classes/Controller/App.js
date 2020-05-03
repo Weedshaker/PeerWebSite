@@ -60,7 +60,7 @@ export class App extends MasterApp {
 		document.addEventListener('visibilitychange', () => {
 			clearTimeout(visibilityTimeOutID);
 			visibilityTimeOutID = setTimeout(() => {
-				if (document.visibilityState === 'visible' && location.hash) {
+				if (document.visibilityState === 'visible' && location.hash && !location.hash.includes('magnet:')) {
 					$('#open-or-join-room').click();
 				}
 			}, 200);
