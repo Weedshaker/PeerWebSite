@@ -1,7 +1,6 @@
 /*jshint esnext: true */
 
 import {MasterHTML} from 'SampleApp/Prototype/Domain/MasterHTML.js';
-import {MasterHelper} from 'SharedHelper/Prototype/Helper/MasterHelper.js';
 
 export class HTML extends MasterHTML {
 	constructor(WebTorrentReceiver, WebTorrentSeeder, Editor, WebRTC){
@@ -10,7 +9,6 @@ export class HTML extends MasterHTML {
 		this.WebTorrentSeeder = WebTorrentSeeder;
 		this.Editor = Editor;
 		this.WebRTC = WebRTC;
-		this.Helper = new MasterHelper();
 	}
 	createElements(name, attach = '#body', connection = null){
 		attach = $(attach).length > 0 ? attach : 'body';
@@ -18,7 +16,7 @@ export class HTML extends MasterHTML {
 			case 'open-or-join-room':
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				this.containers = [$(`<header>
-					<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.1.7; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+					<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.1.8; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					<button class="mui-btn">
 						<div class="mui-checkbox useWebTorrent">
 							<label>
@@ -65,7 +63,8 @@ export class HTML extends MasterHTML {
 				let webTorrentCounterID = null;
 				buttonWebTorrent.click(() => {
 					this.copyToCipBoard('inputWebTorrent');
-					this.WebTorrentSeeder.api.seed(new File([this.Editor.getData()], `peerWebSite_${this.Helper.getRandomString()}`, { type: 'plain/text', endings: 'native' }), undefined, undefined, undefined, undefined, (torrent) => {
+					// must always be same file name 'peerWebSite' otherwise webtorrent gives us a new magicURI
+					this.WebTorrentSeeder.api.seed(new File([this.Editor.getData()], 'peerWebSite', { type: 'plain/text', endings: 'native' }), undefined, undefined, undefined, undefined, (torrent) => {
 						inputWebTorrent.val(`${location.href.replace(location.hash, '')}#${torrent.magnetURI}`);
 						this.copyToCipBoard('inputWebTorrent');
 						clearInterval(webTorrentCounterID);

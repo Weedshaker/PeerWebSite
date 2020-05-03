@@ -2,7 +2,7 @@
 
 import {Helper} from 'WebTorrent/Classes/Helper/Helper.js';
 import {OptionRegex} from 'WebTorrent/Classes/Helper/OptionRegex.js';
-//import IndexeddbChunkStore from 'xuset/indexeddb-chunk-store/idbchunkstore.min.js';
+//import IndexeddbChunkStore from 'xuset/indexeddb-chunk-store/idbchunkstore.min.js'; // too slow
 //import parseTorrent from 'parse-torrent/index.js'; // doesn't work in karma
 
 export class MasterWebTorrent {
