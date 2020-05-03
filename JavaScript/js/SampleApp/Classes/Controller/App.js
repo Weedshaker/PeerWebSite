@@ -7,7 +7,7 @@ export class App extends MasterApp {
 		super();
 	}
 	createElements(name = 'open-or-join-room'){
-		const isSender = !location.hash || (localStorage.getItem('channels') || '').includes(location.hash);
+		const isSender = !location.hash || (localStorage.getItem('channels') || '').includes(`[${location.hash}]`);
 		this.originalHash = location.hash;
 		let htmlElements = super.createElements(name, isSender);
 		let sendCont = htmlElements[0];
@@ -83,7 +83,7 @@ export class App extends MasterApp {
 	}
 	connectHash(reload = true){
 		if (location.hash) {
-			if (reload && !(localStorage.getItem('channels') || '').includes(location.hash)) {
+			if (reload && !(localStorage.getItem('channels') || '').includes(`[${location.hash}]`)) {
 				location.reload();
 			} else if (location.hash.includes('magnet:')) {
 				const torrent = this.WebTorrentReceiver.add(location.hash.substr(1), undefined, undefined, undefined, undefined, torrent => {
