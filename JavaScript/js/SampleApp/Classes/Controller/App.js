@@ -7,14 +7,30 @@ export class App extends MasterApp {
 		super();
 	}
 	createElements(name = 'open-or-join-room'){
-		const isSender = !this.viewerOnly();
+		const isSender = !location.hash || (localStorage.getItem('channels') || '').includes(location.hash);
 		let htmlElements = super.createElements(name, isSender);
-		let sendCont = htmlElements[0];
-		this.receiveCont = htmlElements[1];
+		let [sendCont, receiveCont, button] = htmlElements;
+		this.receiveCont = receiveCont;
+		this.Editor.add(sendCont); // initiate before .WebTorrentSeeder.container 
 		this.WebTorrentReceiver.container = this.receiveCont[0]; // set the dom scope for the WebTorrent clients
-		let button = htmlElements[2];
-		this.Editor.add(sendCont);
+		this.WebTorrentReceiver.addByText(this.WebTorrentReceiver.container.innerHTML, [
+			// trigger the following, when the worker returns with dataPack.message -> this.Dom.setData(container, oldMessage, dataPack.message);
+			new Map([
+				['function', ()=>{}],
+				['scope', this],
+				['attributes', ['none']],
+			])
+		]);
 		this.WebTorrentSeeder.container = sendCont[0].nextSibling.getElementsByClassName('note-editable')[0]; // dom scope not set for Seeder. 1: SummerNote changes the active container, 2: its only used at removeDeletedNodes
+		this.WebTorrentSeeder.addByText(this.WebTorrentSeeder.container.innerHTML, [
+			// trigger the following, when the worker returns with dataPack.message -> this.Dom.setData(container, oldMessage, dataPack.message);
+			new Map([
+				['function', ()=>{}],
+				['scope', this],
+				['attributes', ['none']],
+			])
+		]);
+		this.setReceiverOrSender(isSender);
 		
 		this.WebRTC.api.isSender[0] = isSender;
 		// *** Events Triggert by DOM ***
@@ -96,14 +112,12 @@ export class App extends MasterApp {
 			if (reload && !(localStorage.getItem('channels') || '').includes(location.hash)) location.reload();
 		}
 	}
-	viewerOnly(){
-		if (location.hash) {
-			if ((localStorage.getItem('channels') || '').includes(location.hash)) return false;
+	setReceiverOrSender(isSender){
+		if (!isSender) {
 			// it is assumed that this is a viewer only
 			$('#controls, #sender, .note-editor, .useWebTorrent').hide();
 			$('body').addClass('viewer');
 			return true;
 		}
-		return false;
 	}
 }
