@@ -9,8 +9,9 @@ export class App extends MasterApp {
 	createElements(name = 'open-or-join-room'){
 		const isSender = !location.hash || (localStorage.getItem('channels') || '').includes(location.hash);
 		let htmlElements = super.createElements(name, isSender);
-		let [sendCont, receiveCont, button] = htmlElements;
-		this.receiveCont = receiveCont;
+		let sendCont = htmlElements[0];
+		this.receiveCont = htmlElements[1];
+		let button = htmlElements[2];
 		this.Editor.add(sendCont); // initiate before .WebTorrentSeeder.container 
 		this.WebTorrentReceiver.container = this.receiveCont[0]; // set the dom scope for the WebTorrent clients
 		this.WebTorrentReceiver.addByText(this.WebTorrentReceiver.container.innerHTML, [
