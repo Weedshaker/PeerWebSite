@@ -46,16 +46,6 @@ export class App extends MasterApp {
 			this.WebRTC.api.onNewParticipant.add(function(remoteUserId){return [this.Editor.getData(), this.Editor.container[0].id];}, this);
 			// expose download all torrents to global scope
 			window.getAllTorrents = this.WebTorrentSeeder.api.getAllTorrents;
-			// reconnect on tab focus
-			let visibilityTimeOutID = null;
-			document.addEventListener('visibilitychange', () => {
-				clearTimeout(visibilityTimeOutID);
-				visibilityTimeOutID = setTimeout(() => {
-					if (document.visibilityState === 'visible' && location.hash) {
-						$('#open-or-join-room').click();
-					}
-				}, 200);
-			});
 		} else {
 			// Receiver
 			// expose download all torrents to global scope
@@ -63,6 +53,16 @@ export class App extends MasterApp {
 		}
 		// onReceive.add(newMessageFunc, scope = this, args = [])
 		this.WebRTC.api.onReceive.add(function(dataPack){this.HTML.setData(this.receiveCont, dataPack);}, this);
+		// reconnect on tab focus
+		let visibilityTimeOutID = null;
+		document.addEventListener('visibilitychange', () => {
+			clearTimeout(visibilityTimeOutID);
+			visibilityTimeOutID = setTimeout(() => {
+				if (document.visibilityState === 'visible' && location.hash) {
+					$('#open-or-join-room').click();
+				}
+			}, 200);
+		});
 		// save
 		window.addEventListener('beforeunload', (e) => {
 			/*
