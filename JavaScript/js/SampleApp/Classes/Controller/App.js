@@ -16,23 +16,25 @@ export class App extends MasterApp {
 		let button = htmlElements[2];
 		this.Editor.add(sendCont); // initiate before .WebTorrentSeeder.container 
 		this.WebTorrentReceiver.container = this.receiveCont[0]; // set the dom scope for the WebTorrent clients
-		this.WebTorrentReceiver.addByText(this.WebTorrentReceiver.container.innerHTML, [
+		// reactivating torrents from save has strange sideeffects
+		/*this.WebTorrentReceiver.addByText(this.WebTorrentReceiver.container.innerHTML, [
 			// trigger the following, when the worker returns with dataPack.message -> this.Dom.setData(container, oldMessage, dataPack.message);
 			new Map([
 				['function', ()=>{}],
 				['scope', this],
 				['attributes', ['none']],
 			])
-		]);
+		]);*/
 		this.WebTorrentSeeder.container = sendCont[0].nextSibling.getElementsByClassName('note-editable')[0]; // dom scope not set for Seeder. 1: SummerNote changes the active container, 2: its only used at removeDeletedNodes
-		this.WebTorrentSeeder.addByText(this.WebTorrentSeeder.container.innerHTML, [
+		// reactivating torrents from save has strange sideeffects
+		/*this.WebTorrentSeeder.addByText(this.WebTorrentSeeder.container.innerHTML, [
 			// trigger the following, when the worker returns with dataPack.message -> this.Dom.setData(container, oldMessage, dataPack.message);
 			new Map([
 				['function', ()=>{}],
 				['scope', this],
 				['attributes', ['none']],
 			])
-		]);
+		]);*/
 		this.setReceiverOrSender(isSender);
 		
 		this.WebRTC.api.isSender[0] = isSender;
