@@ -1,39 +1,45 @@
 # peerweb.site
-## Real Time Peer to Peer Web Site
+## Real Time Peer to Peer Web Site Host from your Browser
+
+### Description
+Send Texts, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC in acquaintance of WebTorrents for files, live edited P2P as well as static Torrents. No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent snapshots. *(Saving in-site WebTorrents is not yet supported.)*
 
 ### Functionalities
 1. **Use WebTorrent for files**: This will enable WebTorrent for added files. It allows video steaming and will perform better in case your site is file heavy. It is mandatory for multiple files to load efficiently. Although, it may not work well with other browsers but Chrome.
 
-2. **Activate Live Session & Copy Link**: This opens a session/peer to peer room where your audience can join and see your changes in real time. Your site will not be reachable, once you close your browser tab.
+2. **Activate Live Session & Copy Link**: This opens a session/peer to peer room where your audience can join and see your changes in real time. Your site will not be reachable, once you close your browser tab. *You could have a two way communication, if you join the room/site not through the link with hash but manually put the channel name into the input field.*
 
-3. **Take Snapshot & Copy Link**: This bundles all your text and files into a WebTorrent. Which is like a snapshot of your site to share. Your link with the content stays accessible as long as at least one person has your sites WebTorrent active. More infos about WebTorrents can be found [here](https://webtorrent.io/).
+3. **Take Snapshot & Copy Link**: This bundles all your text and files into a WebTorrent. Which is like a snapshot of your site to share. Your link with the content stays accessible as long as at least one person has your sites WebTorrent active. More info about WebTorrents can be found [here](https://webtorrent.io/). In case you need to memorize a generated snapshot link, simply use [tinyurl](https://tinyurl.com/), there you can convert your long https://peerweb.site/#magnet:?xt=urn:btih:a... url into a tiny url, which is easy to remember.
 
-4. **Download Files**: To download a picture -> double click. To download a video -> long press. (Default behaviors vary between different browsers and devices. These possibly conflict.)
+4. **Download Files**: To download a picture -> double click. To download a video -> long press. (Default behaviors vary between different browsers and devices. *These possibly conflict.*)
 
-5. **WebTorrent Desktop**: You can host your site reliably from your Mac, Windows or Ubuntu and keep it online. Simply create your site at peerweb.site, open the browsers console and type: `getAllTorrents()`. Save the text file and copy/paste each of the magnetURIs to your [WebTorrent Desktop](https://webtorrent.io/desktop/) client. Wait until WebTorrent Desktop has downloaded all magnetURI/files. Then you can close your browser and your site stays online as long as WebTorrent Desktop runs or other people seed your peerweb.site.
+5. **WebTorrent Desktop**: You can host your site reliably from your Mac, Windows or Ubuntu and keep it online. Simply create your site at peerweb.site, once done click "Take Snapshot & Copy Link", open the browsers console and type: `getAllTorrents()`. Save the text file and copy/paste each of the magnetURIs to your [WebTorrent Desktop](https://webtorrent.io/desktop/) client. Wait until WebTorrent Desktop has downloaded all magnetURI/files. Then you can close your browser and your site stays online as long as WebTorrent Desktop hosts it or other people start seeding your peerweb.site.
 
-### Description
-Send Texts, Pictures and Videos embedded in HTML and CSS through WebRTC in acquaintance of WebTorrents for files, live edited P2P as well as static Torrents. No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent snapshots. *(Saving in-site WebTorrents is not yet supported.)*
+### Use Cases
+1. **Quickly and directly transfer data from one device to an other** without the need of sending an e-mail or texting yourself and feeding content to the big data servers from facebook, google, aws or companions. I often have pictures and texts on the smartphone or second computer and need to share them fast and uncomplicated, without login and logging, to my other device(s).
 
-### Use cases
-You can not only host simple sites but you could write full JavaScript applications, games and host them from your browser tab. At the moment a ServiceWorker will support loading WebTorrents, if fetches references the same file name as the torrent file has. All other data has to be put inline into the HTML.
+2. **Share Content Temporarily** by opening a peerweb.site session.
+
+3. **Create your Torrent aka. Snapshot** with your content in no-time and share it to the wast world.
+
+4. **Full JavaScript applications eg. games, single page apps, etc.** to host them from your browser tab. A ServiceWorker will support loading WebTorrents, if fetches references the same file name a present WebTorrent file has, without using the magnetURI/blob as source. All other data has to be put inline into the HTML. Summernote allows direct code editing or simply use the browser dev-tools.
 
 ### Further Development
-Give me a Star on Github and I will consider to actually tide up the code and write Docs for it, that other Developers could have an easy entry to participate, which will bring this App to what you wish for as a peer to peer privacy enthusiast.
+Give me a star on Github, which will motivate me to tide up the code and write Docs for it, that other Developers could have an easy entry to participate, which will bring this App to what you wish for as a peer to peer, privacy and opensource enthusiast.
 
 ### Pitfalls
-This application has been only tested in Chrome. Don't expect miracles, it's a pure hobby, side project and due to bleeding edge sometimes buggy.
+This beta application has been only tested in Chrome. Don't expect miracles, it's a pure hobby, side project and due to bleeding edge sometimes buggy.
 
 ### Road map
 1. Tide up Code
 
-2. WebGL Drawing, WebRTC one direction video broadcast, Grids, other TextEditors without Bootstrap and Jquery, better Video Player, rotate Images, WebTorrent Desktop preview
+2. WebGL Drawing, drag and drop Grids Layouts, other TextEditors without Bootstrap and Jquery, better Video Player, rotate Images, WebTorrent Desktop preview, WebRTC one direction video broadcast
 
 3. Load/Save including WebTorrents
 
 4. Search Engine (by km/miles-radius, topic, etc., to opt in your peerwebsite.)
 
 ### Big Thanks to
-Muaz Khan, Feross and all others who contributed to the dependencies!
+Muaz Khan, Feross and all others who contributed to this repo and this repos dependencies! Also thanks for your support, using this application, spreading the word and a github star ;-)
 
-*PeerWebSite is released under MIT licence . Copyright (c) Silvan Strübi.*
+*PeerWebSite is released under MIT License . Copyright (c) Silvan Strübi.*
