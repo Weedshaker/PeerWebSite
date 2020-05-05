@@ -45,14 +45,23 @@ export class ServiceWorker {
 				//console.log('@sw_helper Intercept is ready!');
 			} else if (Array.isArray(event.data) && event.data[0].includes('.')){
 				let name = event.data[0].split('/').slice(-1)[0];
-				Promise.all([this.getBlobByFileNameArray[0](name), this.getBlobByFileNameArray[1](name)]).then(
-					blobs => {
-						const blob = blobs[0] || blobs[1];
-						if (!blob) return this.Worker.postMessage([event.data, false]);
-						const init = { 'status': 200, 'statusText': name };
-						this.Worker.postMessage([event.data, [blob, init]]);
+				// Promise.all is not supported by jspm "buildConfig": { "transpileES6": true
+				const blobs = [];
+				const resolve = (newBlob) => {
+					blobs.push(newBlob);
+					if (blobs[0] === undefined || blobs[1] === undefined) return false;
+					const blob = blobs[0] || blobs[1];
+					if (!blob) {
+						this.Worker.postMessage([event.data, false]);
+						return null;
 					}
-				);
+					const init = { 'status': 200, 'statusText': name };
+					this.Worker.postMessage([event.data, [blob, init]]);
+					return !!blob;
+				};
+				// promise returns null or blob
+				this.getBlobByFileNameArray[0](name).then(blob => resolve(blob));
+				this.getBlobByFileNameArray[1](name).then(blob => resolve(blob));
 			} else {
 				this.Worker.postMessage([event.data, false]);
 			}
