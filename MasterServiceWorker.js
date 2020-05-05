@@ -6,7 +6,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.messageChannel = null;
-		this.doNotIntercept = ['socket.io'];
+		this.doNotIntercept = ['socket.io', 'peerweb.site/img/', 'peerweb.site/jspm_packages/'];
 		this.doIntercept = [];
 		this.resolveMap = new Map(); // used to resolve after the message response
 		this.clientId = {
@@ -69,8 +69,8 @@ class MasterServiceWorker {
 			this.clientId.recent = event.clientId;
 			// feed a selfexecuting function
 			event.respondWith((() => {
-				if (this.clientId.isApproved() && this.doNotIntercept.every(url => !event.request.url.includes(url)) && this.doIntercept.every(url => event.request.url.includes(url))) {
-					//console.log('@serviceworker intercept', event.request.url);
+				if (this.clientId.isApproved() && this.doNotIntercept.every(url => !event.request.url.includes(url)) && this.doIntercept.some(url => event.request.url.includes(url))) {
+					console.info('@serviceworker intercept', event.request.url);
 					const key = this.getRandomString();
 					this.messageChannel.postMessage([event.request.url, key]);
 					return new Promise((resolve, reject) => {
