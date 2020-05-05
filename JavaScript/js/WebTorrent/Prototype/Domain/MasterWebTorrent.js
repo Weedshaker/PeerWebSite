@@ -367,8 +367,8 @@ export class MasterWebTorrent {
 					}
 					// error handling if blobs have to be renewed => this.blobsRefresh (set globally at WebTorrentSeeder / WebTorrentReceiver)
 					child.setAttribute(this.attributes[3], `${this.appended_onerror}(${torrent.sst_id});`);
-					torrent.sst_onerror = `${this.appended_onerror}(${torrent.sst_id});`; // needs to be set on Regex replaceBlobURL
 				});
+				torrent.sst_onerror = `${this.appended_onerror}(${torrent.sst_id});`; // needs to be set on Regex replaceBlobURL
 				// set data-blobs
 				node.setAttribute(this.attributes[2], torrent.sst_localBlobs.join(','));
 			}else{

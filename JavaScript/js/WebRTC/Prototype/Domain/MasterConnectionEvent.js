@@ -11,6 +11,7 @@ export class MasterConnectionEvent {
 		this.isSender = [true]; // App defines this by looking at hash
 		this.openOrJoinEventDelay = 5000;
 		this.newParticipantDelay = 1000;
+		this.openOrJoinEventID = null;
 		// https://www.rtcmulticonnection.org/
 		this.connection.onNewParticipant = (participantId, userPreferences) => {
 			this.newParticipant(participantId, userPreferences);
@@ -18,18 +19,18 @@ export class MasterConnectionEvent {
 		this.connection.onReConnecting = (event) => {
 			this.newParticipant(event.userid);
 		};
-		this.connection.onUserStatusChanged = (event) => {
+		/*this.connection.onUserStatusChanged = (event) => {
 			this.newParticipant(event.userid);
-		};
-		this.connection.onPeerStateChanged = (state) => {
+		};*/
+		/*this.connection.onPeerStateChanged = (state) => {
 			this.newParticipant(state.userid);
-		};
+		};*/
 		/*this.connection.onopen = (event) => {
 			this.newParticipant(event.userid);
 		};*/
-		this.connection.onSettingLocalDescription = (event) => {
+		/*this.connection.onSettingLocalDescription = (event) => {
 			this.newParticipant(event.userid);
-		};
+		};*/
 		this.connection.onclose = (event) => {
 			setTimeout(() => {
 				this.updatePeerCounter();
@@ -61,7 +62,8 @@ export class MasterConnectionEvent {
 	 */
 	openOrJoinEvent(roomid, message = '', elID = '', send = true){
 		this.connection.openOrJoin(roomid || 'predefiend-roomid');
-		setTimeout(() => {
+		clearTimeout(this.openOrJoinEventID);
+		this.openOrJoinEventID = setTimeout(() => {
 			if(this.isSender[0] && send){
 				this.Sender.sendEvent(message, elID, undefined, undefined, false, new Map([['diffed', false]]), true);
 			}
@@ -80,10 +82,10 @@ export class MasterConnectionEvent {
 		setTimeout(() => {
 			if(this.isSender[0]){
 				if(msgElID){
-					this.Sender.sendEvent(msgElID[0], msgElID[1], remoteUserId, undefined, false, new Map([['diffed', false]]), true); // timeout = false, diffed = false
+					this.Sender.sendEvent(msgElID[0], msgElID[1], remoteUserId, undefined, false, new Map([['diffed', false]])); // timeout = false, diffed = false
 				}else{
 					this.SentMessage.getAll().forEach((message) => {
-						this.Sender.sendEvent(message[0], message[1], remoteUserId, undefined, false, new Map([['diffed', false]]), true); // timeout = false, diffed = false
+						this.Sender.sendEvent(message[0], message[1], remoteUserId, undefined, false, new Map([['diffed', true]])); // timeout = false, diffed = false
 					});
 				}
 			}
