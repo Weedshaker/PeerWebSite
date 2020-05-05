@@ -3,10 +3,11 @@
 import { Helper } from 'WebTorrent/Classes/Helper/Helper.js';
 
 export class ServiceWorker {
-	constructor(serviceWorkerPath = 'MasterServiceWorker.js', serviceWorkerScope = './', getBlobByFileName){
+	constructor(serviceWorkerPath = 'MasterServiceWorker.js', serviceWorkerScope = './', getBlobByFileNameArray){
 		this.serviceWorkerPath = serviceWorkerPath;
 		this.serviceWorkerScope = serviceWorkerScope;
-		this.getBlobByFileName = getBlobByFileName;
+		// array of getBlobByFileName of webtorrent receiver [0] and seeder [1]
+		this.getBlobByFileNameArray = getBlobByFileNameArray;
 		
 		this.name = 'ServiceWorker';
 		this.Worker = null;
@@ -44,13 +45,12 @@ export class ServiceWorker {
 				//console.log('@sw_helper Intercept is ready!');
 			} else if (Array.isArray(event.data) && event.data[0].includes('.')){
 				let name = event.data[0].split('/').slice(-1)[0];
-				this.getBlobByFileName(name).then(
-					(blob) => {
+				Promise.all([this.getBlobByFileNameArray[0](name), this.getBlobByFileNameArray[1](name)]).then(
+					blobs => {
+						const blob = blobs[0] || blobs[1];
+						if (!blob) return this.Worker.postMessage([event.data, false]);
 						const init = { 'status': 200, 'statusText': name };
 						this.Worker.postMessage([event.data, [blob, init]]);
-					},
-					() => {
-						this.Worker.postMessage([event.data, false]);
 					}
 				);
 			} else {

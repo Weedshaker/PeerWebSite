@@ -75,18 +75,20 @@ export class OptionRegex extends MasterOption {
 	addTorrent(data){
 		let workerID = data[0][2]
 		// nonExistingTorrents
-		// !!! IMPORTANT !!! gets executed at _resultAddByText -> this function must be executed after the new text has been applied to dom and settled for 50ms otherwise nodes get mixed up -> see appendTo workaround bug
+		// !!! IMPORTANT !!! gets executed at _resultAddByText -> this appendto function must be executed after the new text has been applied to dom and settled for 100ms otherwise nodes get mixed up -> see appendTo workaround bug
 		let returnAndOptions = this.addByTextReturn.get(workerID); // [arrayReturnMap, [addOpts, appendToOpts, addCallback, appendToCallback]]
 		if (returnAndOptions) returnAndOptions[0].push(
 			new Map([
 				['function', function(){
-					setTimeout(() => {
-						// data[1][0] = nonExistingTorrents[[id, [magnetURL, [remoteBlobs, localBlobs, onerror], TagName]]]
-						data[1][0].forEach((nonExistingTorrent) => {
-							let torrent = this.WebTorrent.add(nonExistingTorrent[1][0].replace(/amp;/g, ''), nonExistingTorrent[0], undefined, returnAndOptions[1][0], returnAndOptions[1][1], returnAndOptions[1][2], returnAndOptions[1][3]);
+					// data[1][0] = nonExistingTorrents[[id, [magnetURL, [remoteBlobs, localBlobs, onerror], TagName]]]
+					data[1][0].forEach((nonExistingTorrent) => {
+						let torrent = this.WebTorrent.add(nonExistingTorrent[1][0].replace(/amp;/g, ''), nonExistingTorrent[0], undefined, returnAndOptions[1][0], returnAndOptions[1][1], /* addCallback */ typeof returnAndOptions[1][2] === 'function' ? torrent => {
+								setTimeout(() => {
+									returnAndOptions[1][2](torrent);
+								}, 100);
+							} : 100, returnAndOptions[1][3]);
 							if (torrent) torrent.sst_remoteBlobs = nonExistingTorrent[1][1][0];
 						});
-					}, 50);
 				}],
 				['scope', this],
 				['attributes', []],

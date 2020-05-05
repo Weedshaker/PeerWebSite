@@ -10,6 +10,7 @@ export class MasterWebTorrent {
 		this.container = container;
 		this.Helper = new Helper();
 		this.client = new WebTorrent();
+		this.client.sst_magnetURI = [];
 		this.client.on('error', err => {
 			console.error('ERROR: ' + err.message);
 		});
@@ -103,6 +104,14 @@ export class MasterWebTorrent {
 	// add (download)
 	add(magnetURL, id, node, addOpts = Object.assign({}, this.addOpts), appendToOpts, addCallback = (torrent) => {return this.appendTo(undefined, appendToOpts, appendToCallback, torrent);}, appendToCallback){
 		id = Number(id);
+		if (!isNaN(addCallback)) {
+			const timer = addCallback;
+			addCallback = (torrent) => {
+				setTimeout(() => {
+					this.appendTo(undefined, appendToOpts, appendToCallback, torrent);
+				}, timer);
+			};
+		}
 		// don't add dublicated torrents (files) but simply use existing torrent
 		for(let torrent of this.client.torrents){
 			// in case of matching files.length check deeper for size and name
@@ -116,6 +125,7 @@ export class MasterWebTorrent {
 		// none dublicated torrents
 		// below gets executed before appendTo callback
 		let torrent = this.client.add(magnetURL, addOpts, addCallback);
+		this.client.sst_magnetURI.push(magnetURL);
 		this.addParseTorrent(torrent);
 		torrent.sst_id = id;
 		this.torrents.set(torrent.sst_id, torrent);
@@ -188,6 +198,9 @@ export class MasterWebTorrent {
 		// none dublicated torrents
 		// below gets executed before appendTo callback
 		let torrent = this.client.seed(files, seedOpts, seedCallback);
+		torrent.on('infoHash', () => {
+			this.client.sst_magnetURI.push(torrent.magnetURI);
+		});
 		this.addParseTorrent(torrent);
 		torrent.sst_id = id;
 		this.torrents.set(torrent.sst_id, torrent);
@@ -462,6 +475,8 @@ export class MasterWebTorrent {
 						URL.revokeObjectURL(blob);
 					});
 				}
+				const magnetURI_index = this.client.sst_magnetURI.indexOf(torrent.magnetURI)
+				if (magnetURI_index !== -1) this.client.sst_magnetURI.splice(magnetURI_index, 1);
 				if(callback){
 					// Alias for client.remove(torrent)
 					torrent.destroy(callback);
@@ -487,22 +502,29 @@ export class MasterWebTorrent {
 			});
 		}*/
 	}
+	// name come as encodeURI / magnetURI comes as encodeURIComponent + .replace(/%20/g, '+')
 	getBlobByFileName(name){
-		return new Promise((resolve, reject) => {
+		const origName = name;
+		name = decodeURI(name);
+		return new Promise(resolve => {
 			let getBlob = (file) => {
 				file.getBlob((err, blob) => {
-					if (err) return reject(console.warn(err));
+					if (err) {
+						console.warn(err);
+						return resolve(null);
+					}
 					resolve(blob);
 				});
 			};
 			if(!this.client.torrents.some((torrent) => {
 				let file;
 				if(torrent.done && (file = torrent.files.find((file) => {
+					// file.name is plain without encoding
 					return file.name === name;
 				}))){
 					getBlob(file);
 					return true;
-				} else if(torrent.magnetURI.includes(name)){
+				} else if(torrent.magnetURI && torrent.magnetURI.includes(encodeURIComponent(name).replace(/%20/g, '+'))){
 					// !!!waiting for on.done, only works with torrents which have a single file!!!
 					torrent.on('done', () => {
 						getBlob(torrent.files[0]);
@@ -511,7 +533,18 @@ export class MasterWebTorrent {
 				}
 				return false;
 			})){
-				reject('not found!');
+				// no torrent found but check if it will be loaded but just hasn't been initiated
+				if (this.client.sst_magnetURI.some((magnetURI) => {
+					// how magnetURI gets built: https://github.com/webtorrent/magnet-uri/blob/master/index.js encodeURIComponent + .replace(/%20/g, '+')
+					return magnetURI.includes(encodeURIComponent(name).replace(/%20/g, '+'));
+				})) {
+					// try later
+					setTimeout(() => {
+						this.getBlobByFileName(origName).then(blob => resolve(blob));
+					}, 1000);
+				} else {
+					resolve(null);
+				}
 			}
 		});
 	}

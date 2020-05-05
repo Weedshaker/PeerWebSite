@@ -14,7 +14,7 @@ export class MasterApp {
 		this.WebTorrentSeeder = new WebTorrentSeeder();
 		this.Editor = new EditorSummernote(this.WebTorrentSeeder);
 		this.HTML = new HTML(this.WebTorrentReceiver, this.WebTorrentSeeder, this.Editor, this.WebRTC);
-		this.ServiceWorker = new ServiceWorker(undefined, undefined, this.WebTorrentReceiver.getBlobByFileName.bind(this.WebTorrentReceiver));
+		this.ServiceWorker = new ServiceWorker(undefined, undefined, [this.WebTorrentReceiver.getBlobByFileName.bind(this.WebTorrentReceiver), this.WebTorrentSeeder.getBlobByFileName.bind(this.WebTorrentSeeder)]);
 		this.ServiceWorker.run();
 
 		// hot-reloader clear all

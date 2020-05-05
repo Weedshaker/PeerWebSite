@@ -43,7 +43,7 @@ export class MasterHTML {
 	}
 	attachButtonEvent(button, sendCont, getDataFunc, event, send){
 		button.on('click', () => {
-			event($(`#${this.idNames[0]}`).val(), getDataFunc(sendCont), this.idNames[2], send);
+			event($(`#${this.idNames[0]}`).val() || $(`#${this.idNames[0]}`).attr('placeholder'), getDataFunc(sendCont), this.idNames[2], send);
 		});
 	}
 }
