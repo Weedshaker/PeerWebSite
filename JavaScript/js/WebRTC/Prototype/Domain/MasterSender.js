@@ -83,12 +83,14 @@ export class MasterSender {
 	}
 	_send(chunks, elID, remoteUserId, requestID, compressed = false){
 		let uuid = this.Helper.getRandomString();
-		this.connection.peers[remoteUserId].channels.forEach((channel) => {
-			chunks.forEach((chunk, i) => {
-				let info = [uuid, elID, requestID, compressed, i + 1, chunks.length, new Date().getTime()];
-				channel.send(`${chunk}(sst:${info.toString()})`);
+		if(this.connection.peers[remoteUserId]){
+			this.connection.peers[remoteUserId].channels.forEach((channel) => {
+				chunks.forEach((chunk, i) => {
+					let info = [uuid, elID, requestID, compressed, i + 1, chunks.length, new Date().getTime()];
+					channel.send(`${chunk}(sst:${info.toString()})`);
+				});
 			});
-		});
+		}
 	}
 	setIgnoreOption(){
 		// skip with binding this.send
