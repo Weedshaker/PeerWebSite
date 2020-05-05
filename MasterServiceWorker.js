@@ -6,7 +6,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.messageChannel = null;
-		this.doNotIntercept = ['socket.io', 'peerweb.site/img/', 'peerweb.site/jspm_packages/', 'peerweb.site/manifest.json', 'peerweb.site/favicon.ico'];
+		this.doNotIntercept = ['socket.io', 'peerweb.site/img/', 'peerweb.site/jspm_packages/', 'peerweb.site/manifest.json', 'peerweb.site/favicon.ico', 'peerweb.site/#'];
 		this.doIntercept = [];
 		this.resolveMap = new Map(); // used to resolve after the message response
 		this.clientId = {
