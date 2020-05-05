@@ -33,6 +33,34 @@ export class MasterWebTorrent {
 			store: Function            // Custom chunk store (must follow [abstract-chunk-store](https://www.npmjs.com/package/abstract-chunk-store) API)
 			*/
 			//store: IndexeddbChunkStore
+			announce: [
+				'udp://tracker.leechers-paradise.org:6969',
+				'udp://tracker.coppersurfer.tk:6969',
+				'udp://tracker.opentrackr.org:1337',
+				'udp://explodie.org:6969',
+				'udp://tracker.empire-js.us:1337',
+				'udp://zephir.monocul.us:6969/announce',
+				'udp://p4p.arenabg.com:1337/announce',
+				'udp://tracker.internetwarriors.net:1337/announce',
+				'udp://public.popcorn-tracker.org:6969/announce',
+				'udp://eddie4.nl:6969/announce',
+				'udp://open.stealth.si:80/announce',
+				'udp://tracker.ex.ua:80/announce',
+				'udp://tracker.filetracker.pl:8089/announce',
+				'udp://tracker.flashtorrents.org:6969/announce',
+				'udp://tracker.kicks-ass.net:80/announce',
+				'udp://tracker.kuroy.me:5944/announce',
+				'udp://tracker.piratepublic.com:1337/announce',
+				'udp://tracker.tiny-vps.com:6969/announce',
+				'udp://tracker.yoshi210.com:6969/announce',
+				'udp://185.5.97.139:8089/announce',
+				'udp://zer0day.ch:1337/announce',
+				'udp://thetracker.org:80/announce',
+				'udp://wambo.club:1337/announce',
+				'udp://tc.animereactor.ru:8082/announce',
+				'udp://tracker.bittor.pw:1337/announce',
+				'udp://tracker.vanitycore.co:6969/announce'
+			]
 		};
 		this.seedOpts = {
 			/*
@@ -45,7 +73,7 @@ export class MasterWebTorrent {
 			announceList: [[String]] // custom trackers (array of arrays of strings) (see [bep12](http://www.bittorrent.org/beps/bep_0012.html))
 			urlList: [String]        // web seed urls (see [bep19](http://www.bittorrent.org/beps/bep_0019.html))
 			*/
-			comment: 'sst_WebRTC',
+			comment: 'peerweb.site'
 			//store: IndexeddbChunkStore
 		};
 		this.appendToOpts = {
