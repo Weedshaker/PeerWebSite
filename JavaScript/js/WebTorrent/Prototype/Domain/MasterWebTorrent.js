@@ -551,7 +551,7 @@ export class MasterWebTorrent {
 				}else{
 					name = name.replace(/.*\?xt=urn:/, 'magnet:?xt=urn:');
 				}
-				this.add(name, undefined, undefined, undefined, undefined, torrent => {
+				const torrent = this.add(name, undefined, undefined, undefined, undefined, torrent => {
 					if (torrent.files && torrent.files[0]) {
 						// !!!waiting for on.done, only works with torrents which have a single file!!! multiple files don't get mentioned in magnetURI
 						getBlob(torrent.files[0]);
@@ -560,6 +560,11 @@ export class MasterWebTorrent {
 						resolve(null);
 						console.warn('this torrent is invalid:', name);
 					}
+				});
+				torrent.on('error', () => {
+					// not found
+					resolve(null);
+					console.warn('this torrent is invalid:', name);
 				});
 			} else if(!this.client.torrents.some((torrent) => {
 				// search for torrents by name
