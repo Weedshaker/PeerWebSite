@@ -22,9 +22,10 @@ Send Texts, Pictures and Videos embedded in HTML with CSS and JavaScript through
 
 3. **Create your Torrent aka. Snapshot** with your content in no-time and share it to the wast world.
 
-4. **Full JavaScript applications eg. games, single page apps, etc.** to host them from your browser tab. *works best with Take Snapshot*
+4. **Full JavaScript applications eg. games, single page apps, etc.** to host them from your browser tab.
+    *Use the browser dev-tools to manipulate `class="note-editable"` aka rich text editor area. Create or copy/paste your html/js/css and open a snapshot link at a fresh window in incognito mode to view the result*
     1. A ServiceWorker will support loading WebTorrents, if fetch, src, href, etc. references the same file name an already present WebTorrent file has (short: first upload files in peerweb.site and then reference them by only file name within scripts, html, etc.), without using the magnetURI/blob as reference.
-    2. Alternatively, you can use [Instant.io](https://instant.io/) or [WebTorrent Desktop](https://webtorrent.io/desktop/) to host all your assets, make sure to create a magnetURI for each file and don't bundle them. Then copy/paste or create your indexes html at peerweb.site in the editors container `class="note-editable"`, use the browser dev-tools. Make sure to use magnetURIs as referenced values for fetch, src, href, etc. in your scripts/html. You must reference them as src example: `src="http://magnet:?xt=urn:...`, prepend `http://` or `https://` before `magnet`.
+    2. Alternatively, you can use [Instant.io](https://instant.io/) or [WebTorrent Desktop](https://webtorrent.io/desktop/) to host all your assets, make sure to create a magnetURI for each file and don't bundle them. Then copy/paste or create your indexes html at peerweb.site in the editors container `class="note-editable"`. Make sure to use magnetURIs as referenced values for fetch, src, href, etc. in your scripts/html. You must reference them as src example: `src="https://magnet:?xt=urn:...`, prepend `https://` before `magnet`.
 
 ### Further Development
 Give me a star on Github, which will motivate me to tide up the code and write Docs for it, that other Developers could have an easy entry to participate, which will bring this App to what you wish for as a peer to peer, privacy and opensource enthusiast.
