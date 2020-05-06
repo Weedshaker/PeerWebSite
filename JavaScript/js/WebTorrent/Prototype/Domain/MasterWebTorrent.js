@@ -571,7 +571,7 @@ export class MasterWebTorrent {
 				let file;
 				if(torrent.done && (file = torrent.files.find((file) => {
 					// file.name is plain without encoding
-					return file.name === name;
+					return name.includes(file.name);
 				}))){
 					// found file with same name
 					getBlob(file);
