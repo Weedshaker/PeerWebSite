@@ -131,7 +131,7 @@ export class App extends MasterApp {
 	setReceiverOrSender(isSender){
 		if (!isSender) {
 			// it is assumed that this is a viewer only
-			$('#controls, #sender, .note-editor, .useWebTorrent').hide();
+			$('#controls, #sender, .note-editor, .useWebTorrent, .mui-btn').hide();
 			$('body').addClass('viewer');
 			return true;
 		}
