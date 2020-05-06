@@ -544,16 +544,36 @@ export class MasterWebTorrent {
 					resolve(blob);
 				});
 			};
-			if(!this.client.torrents.some((torrent) => {
+			// got magnetURI !!!if you change this, change equal at JavaScript/js/ServiceWorker/ServiceWorker.js.addMessageChannelEventListener!!!
+			if(name.includes('magnet:') || name.includes('magnet/') || name.includes('?xt=urn:')){
+				if(name.includes('magnet')){
+					name = name.replace(/.*magnet[:\/]/, 'magnet:');
+				}else{
+					name = name.replace(/.*\?xt=urn:/, 'magnet:?xt=urn:');
+				}
+				this.add(name, undefined, undefined, undefined, undefined, torrent => {
+					if (torrent.files && torrent.files[0]) {
+						// !!!waiting for on.done, only works with torrents which have a single file!!! multiple files don't get mentioned in magnetURI
+						getBlob(torrent.files[0]);
+					} else {
+						// not found
+						resolve(null);
+						console.warn('this torrent is invalid:', name);
+					}
+				});
+			} else if(!this.client.torrents.some((torrent) => {
+				// search for torrents by name
 				let file;
 				if(torrent.done && (file = torrent.files.find((file) => {
 					// file.name is plain without encoding
 					return file.name === name;
 				}))){
+					// found file with same name
 					getBlob(file);
 					return true;
 				} else if(torrent.magnetURI && torrent.magnetURI.includes(encodeURIComponent(name).replace(/%20/g, '+'))){
-					// !!!waiting for on.done, only works with torrents which have a single file!!!
+					// magnetURI references the name
+					// !!!waiting for on.done, only works with torrents which have a single file!!! multiple files don't get mentioned in magnetURI
 					torrent.on('done', () => {
 						getBlob(torrent.files[0]);
 					});
@@ -571,12 +591,13 @@ export class MasterWebTorrent {
 						this.getBlobByFileName(origName).then(blob => resolve(blob));
 					}, 1000);
 				} else {
+					// not found
 					resolve(null);
 				}
 			}
 		});
 	}
 	getAllTorrents() {
-		this.Helper.saveData(this.client.torrents.map(torrent => torrent.magnetURI).join("\n\n"), `peerWebSiteTorrents_${this.Helper.getRandomString()}.txt`);
+		this.Helper.saveData(this.client.torrents.map(torrent => torrent.magnetURI).join("\n\n---\n\n"), `peerWebSiteTorrents_${this.Helper.getRandomString()}.txt`);
 	}
 }

@@ -77,8 +77,15 @@ export class App extends MasterApp {
 			*/
 			// persist site
 			const hash = this.originalHash || location.hash;
-			const data = isSender ? this.Editor.getData() : this.receiveCont[0].innerHTML;
-			if (data.length >= 30 && hash && !hash.includes('magnet:')) localStorage.setItem(hash, data);
+			if(hash && !hash.includes('magnet:')){
+				// force DOM to update once receiving connect
+				if (!isSender) {
+					document.querySelectorAll('[src]').forEach(element => (element.src += `?${Date.now()}`));
+					document.querySelectorAll('[href]').forEach(element => (element.href += `?${Date.now()}`));
+				}
+				const data = isSender ? this.Editor.getData() : this.receiveCont[0].innerHTML;
+				if (data.length >= 30) localStorage.setItem(hash, data);
+			}
 		});
 		// connect by hash
 		this.connectHash(false);

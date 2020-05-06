@@ -2,19 +2,25 @@ body > header {
     margin: 5px 0;
     display: flex;
     flex-wrap: wrap;
+    justify-content: flex-end;
+}
+header > div.flex {
+    display: flex;
     justify-content: space-around;
     align-items: center;
+    flex-grow: 1;
 }
-header iframe {
+header > div.flex iframe {
     border-radius: unset !important;
 }
-header .recycle {
+header > div.flex .recycle {
     color: green;
     display: flex;
     align-items: center;
     font-size: 30px;
+    padding: 0 10px;
 }
-header .recycle:hover {
+header > div.flex .recycle:hover {
     text-decoration: none;
     font-style: italic;
 }

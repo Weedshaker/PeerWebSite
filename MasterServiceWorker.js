@@ -6,8 +6,8 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.messageChannel = null;
-		this.doNotIntercept = ['socket.io', 'peerweb.site/img/', 'peerweb.site/jspm_packages/', 'peerweb.site/manifest.json', 'peerweb.site/favicon.ico', 'peerweb.site/#'];
-		this.doIntercept = [];
+		this.doNotIntercept = ['socket.io', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
+		this.doIntercept = ['magnet:', 'magnet/']; // + location.origin added below on message
 		this.resolveMap = new Map(); // used to resolve after the message response
 		this.clientId = {
 			approved: -1,
@@ -69,8 +69,9 @@ class MasterServiceWorker {
 			this.clientId.recent = event.clientId;
 			// feed a selfexecuting function
 			event.respondWith((() => {
-				if (this.clientId.isApproved() && this.doNotIntercept.every(url => !event.request.url.includes(url)) && this.doIntercept.some(url => event.request.url.includes(url))) {
-					console.info('@serviceworker intercept', event.request.url);
+				const intercept = this.clientId.isApproved() && this.doNotIntercept.every(url => !event.request.url.includes(url)) && this.doIntercept.some(url => event.request.url.includes(url))
+				console.info(`@serviceworker intercept ${intercept}:`, event.request.url);
+				if (intercept) {
 					const key = this.getRandomString();
 					this.messageChannel.postMessage([event.request.url, key]);
 					return new Promise((resolve, reject) => {

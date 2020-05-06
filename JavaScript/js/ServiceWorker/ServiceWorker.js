@@ -59,9 +59,16 @@ export class ServiceWorker {
 					this.Worker.postMessage([event.data, [blob, init]]);
 					return !!blob;
 				};
-				// promise returns null or blob
-				this.getBlobByFileNameArray[0](name).then(blob => resolve(blob));
-				this.getBlobByFileNameArray[1](name).then(blob => resolve(blob));
+				// only ask one instance of webtorrent when there is a magnetURI to resolve !!!if you change this, change equal at JavaScript/js/WebTorrent/Prototype/Domain/MasterWebTorrent.js.getBlobByFileName!!!
+				if(name.includes('magnet:') || name.includes('magnet/') || name.includes('?xt=urn:')){
+					// promise returns null or blob
+					this.getBlobByFileNameArray[0](name).then(blob => resolve(blob));
+					resolve(null);
+				}else{
+					// promise returns null or blob
+					this.getBlobByFileNameArray[0](name).then(blob => resolve(blob));
+					this.getBlobByFileNameArray[1](name).then(blob => resolve(blob));
+				}
 			} else {
 				this.Worker.postMessage([event.data, false]);
 			}

@@ -11,7 +11,7 @@ export class Helper extends MasterHelper {
 			document.body.appendChild(a);
 			a.style = 'display: none';
 			return function (data, fileName) {
-				const blob = new Blob([data], {type: 'octet/stream'}),
+				const blob = new Blob([data || 'empty'], {type: 'plain/text'}),
 					url = window.URL.createObjectURL(blob);
 				a.href = url;
 				a.download = fileName;
