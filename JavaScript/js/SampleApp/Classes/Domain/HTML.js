@@ -16,8 +16,8 @@ export class HTML extends MasterHTML {
 			case 'open-or-join-room':
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				this.containers = [$(`<header>
-					<div class="flex">
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.4.0; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+					<div id="info" class="flex">
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.4.1; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 					<button class="mui-btn">
 						<div class="mui-checkbox useWebTorrent">
@@ -28,6 +28,8 @@ export class HTML extends MasterHTML {
 						</div>
 					</button>
 				</header>`)];
+				// specific only for receiver
+				const headerReceiver = $('<div class="headerReceiver"></div>');
 				// controls
 				let controls = $('<div id="controls"></div>')
 				let input = $(`<input id="${this.idNames[0]}" class="mui-panel" placeholder="${connection.token()}">`);
@@ -40,8 +42,12 @@ export class HTML extends MasterHTML {
 				});
 				controls.append(clipboard);
 				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Activate Live Session & Copy Link</button>`);
-				let counterWebRTC = $('<span class="counter">[0 connected]</span>');
-				button.append(counterWebRTC);
+				let counterWebRTC = $('<span class="counter counterWebRTC">[0 connected]</span>');
+				if (isSender) {
+					button.append(counterWebRTC);
+				}else{
+					headerReceiver.append(counterWebRTC);
+				}
 				this.WebRTC.api.peerCounterElements.push(counterWebRTC[0]);
 				input.keypress(function (e) {
 					if (e.keyCode == 13) {
@@ -59,21 +65,32 @@ export class HTML extends MasterHTML {
 				});
 				controls.append(inputWebTorrent);
 				let buttonWebTorrent = $(`<button id="buttonWebTorrent" class="mui-btn mui-btn--accent">Take Snapshot & Copy Link</button>`);
-				let counterWebTorrent = $('<span class="counter">[0 peers]</span>');
-				buttonWebTorrent.append(counterWebTorrent);
+				let counterWebTorrent = $('<span class="counter counterWebTorrent">[0 peers]</span>');
+				if (isSender) {
+					buttonWebTorrent.append(counterWebTorrent);
+				}else{
+					headerReceiver.append(counterWebTorrent);
+				}
 				controls.append(buttonWebTorrent);
 				let webTorrentCounterID = null;
+				let torrentCreatedData = [];
 				buttonWebTorrent.click(() => {
 					this.copyToCipBoard('inputWebTorrent');
 					// must always be same file name 'peerWebSite' otherwise webtorrent gives us a new magicURI
-					this.WebTorrentSeeder.api.seed(new File([this.Editor.getData()], 'peerWebSite', { type: 'plain/text', endings: 'native' }), undefined, undefined, undefined, undefined, (torrent) => {
+					const data = this.Editor.getData();
+					if (!torrentCreatedData.includes(data)) this.WebTorrentSeeder.api.seed(new File([data], 'peerWebSite', { type: 'plain/text', endings: 'native' }), undefined, undefined, undefined, undefined, (torrent) => {
 						inputWebTorrent.val(`${location.href.replace(location.hash, '')}#${torrent.magnetURI}`);
 						this.copyToCipBoard('inputWebTorrent');
 						clearInterval(webTorrentCounterID);
 						webTorrentCounterID = setInterval(() => {
 							counterWebTorrent[0].textContent = `[${torrent.numPeers} peer${torrent.numPeers === 1 ? '' : 's'}]`;
 						}, 1000);
+						torrentCreatedData.push(data);
 					});
+				});
+				this.WebTorrentSeeder.client.on('error', () => {
+					clearInterval(webTorrentCounterID);
+					counterWebTorrent[0].textContent = `[ERROR! Please, reload.]`;
 				});
 				this.containers.push(controls);
 				// main containers
@@ -108,11 +125,13 @@ export class HTML extends MasterHTML {
 					$(attach).append(e);
 				});
 
+				$('#info').append(headerReceiver);
+
 				$('#useWebTorrent').on('click', (e) => {
 					localStorage.setItem('useWebTorrent', e.target.checked);
 				});
 
-				return [sender, receiver, button];
+				return [sender, receiver, button, counterWebTorrent];
 		}
 		return false;
 	}

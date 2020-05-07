@@ -14,10 +14,10 @@ export class MasterConnectionEvent {
 		this.openOrJoinEventID = null;
 		// https://www.rtcmulticonnection.org/
 		this.connection.onNewParticipant = (participantId, userPreferences) => {
-			this.newParticipant(participantId, userPreferences);
+			this.newParticipant(participantId, userPreferences, true);
 		};
 		this.connection.onReConnecting = (event) => {
-			this.newParticipant(event.userid);
+			this.newParticipant(event.userid, undefined, true);
 		};
 		/*this.connection.onUserStatusChanged = (event) => {
 			this.newParticipant(event.userid);
@@ -43,7 +43,7 @@ export class MasterConnectionEvent {
 		};
 		this.connection.onerror = (event) => {
 			setTimeout(() => {
-				this.updatePeerCounter();
+				this.updatePeerCounter('[ERROR! Please, reload.]');
 			}, this.openOrJoinEventDelay);
 		};
 		this.Helper = new Helper();
@@ -72,7 +72,7 @@ export class MasterConnectionEvent {
 	}
 	// called from connection
 	// newParticipant
-	newParticipant(remoteUserId, userPreferences){
+	newParticipant(remoteUserId, userPreferences, force = false){
 		if (remoteUserId !== 'sst_toAll' && userPreferences !== undefined) this.connection.acceptParticipationRequest(remoteUserId, userPreferences);
 		let msgElID = false;
 		this.onNewParticipant.container.forEach((e) => {
@@ -82,17 +82,17 @@ export class MasterConnectionEvent {
 		setTimeout(() => {
 			if(this.isSender[0]){
 				if(msgElID){
-					this.Sender.sendEvent(msgElID[0], msgElID[1], remoteUserId, undefined, false, new Map([['diffed', false]])); // timeout = false, diffed = false
+					this.Sender.sendEvent(msgElID[0], msgElID[1], remoteUserId, undefined, false, new Map([['diffed', false]]), force); // timeout = false, diffed = false
 				}else{
 					this.SentMessage.getAll().forEach((message) => {
-						this.Sender.sendEvent(message[0], message[1], remoteUserId, undefined, false, new Map([['diffed', true]])); // timeout = false, diffed = false
+						this.Sender.sendEvent(message[0], message[1], remoteUserId, undefined, false, new Map([['diffed', true]]), force); // timeout = false, diffed = false
 					});
 				}
 			}
 			this.updatePeerCounter();
 		}, this.newParticipantDelay);
 	}
-	updatePeerCounter() {
-		this.peerCounterElements.forEach(element => element.textContent = `[${this.connection.peers.getLength()} connected]`)
+	updatePeerCounter(message) {
+		this.peerCounterElements.forEach(element => element.textContent = message ? message : `[${this.connection.peers.getLength()} connected]`)
 	}
 }

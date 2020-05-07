@@ -18,9 +18,9 @@ export class MasterApp {
 		this.ServiceWorker.run();
 
 		// hot-reloader clear all
-		if(window.sst && window.sst.isDebug){
+		//if(window.sst && window.sst.isDebug){
 			window.App = this;
-		}
+		//}
 	}
 	createElements(name, isSender){
 		return this.HTML.createElements(name, undefined, this.WebRTC.connection, isSender);

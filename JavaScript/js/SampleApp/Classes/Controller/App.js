@@ -14,6 +14,8 @@ export class App extends MasterApp {
 		let sendCont = htmlElements[0];
 		this.receiveCont = htmlElements[1];
 		let button = htmlElements[2];
+		this.counterWebTorrent = htmlElements[3];
+
 		this.Editor.add(sendCont); // initiate before .WebTorrentSeeder.container 
 		this.WebTorrentReceiver.container = this.receiveCont[0]; // set the dom scope for the WebTorrent clients
 		// reactivating torrents from save has strange sideeffects
@@ -114,17 +116,26 @@ export class App extends MasterApp {
 					this.WebTorrentReceiver.findAllNodes(torrent);
 					if (!this.WebTorrentReceiver.areTorrentsLoading()) this.WebTorrentReceiver.ProgressBar.end();
 				});
+				const webTorrentCounterID = setInterval(() => {
+					this.counterWebTorrent[0].textContent = `[${torrent.numPeers} peer${torrent.numPeers === 1 ? '' : 's'}]`;
+				}, 1000);
+				this.WebTorrentReceiver.client.on('error', () => {
+					clearInterval(webTorrentCounterID);
+					this.counterWebTorrent[0].textContent = `[ERROR! Please, reload.]`;
+				});
 				const progressBarNode = document.createElement('span');
 				$('#receiver').html(progressBarNode);
 				torrent.sst_nodes = [progressBarNode];
 				torrent.sst_id = 'peerWebSite';
 				this.WebTorrentReceiver.findAllNodes(torrent); // to have nodes where the progressbar can attach to
 				this.WebTorrentReceiver.ProgressBar.start();
+				$('.headerReceiver > .counterWebRTC').hide();
 			} else {
 				$('#txt-roomid').val(location.hash.substr(1));
 				// don't change on button click change hash, since this double triggers
 				if (this.originalHash === location.hash) $('#open-or-join-room').click();
 				this.originalHash = location.hash;
+				$('.headerReceiver > .counterWebTorrent').hide();
 			}
 		}
 	}
@@ -134,6 +145,8 @@ export class App extends MasterApp {
 			$('#controls, #sender, .note-editor, .useWebTorrent, .mui-btn').hide();
 			$('body').addClass('viewer');
 			return true;
+		}else {
+			$('.headerReceiver').hide();
 		}
 	}
 }

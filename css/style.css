@@ -9,6 +9,7 @@ header > div.flex {
     justify-content: space-around;
     align-items: center;
     flex-grow: 1;
+    flex-wrap: wrap;
 }
 header > div.flex iframe {
     border-radius: unset !important;
@@ -44,6 +45,10 @@ header label span {
 }
 header .mui-checkbox > label input[type="checkbox"] {
     margin-top: 0;
+}
+header .headerReceiver {
+    color: white;
+    font-size: 10px;
 }
 .tiny {
     font-size: 8px;
