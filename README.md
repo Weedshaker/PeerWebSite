@@ -36,11 +36,16 @@ This beta application has been only tested in Chrome. Don't expect miracles, it'
 ### Road map
 1. Tide up Code, move UI to WebComponents based Event Driven Architecture
 
-2. WebGL Drawing, drag and drop Grids Layouts, other TextEditors without Bootstrap and Jquery, better Video Player, rotate Images, WebTorrent Desktop preview, WebRTC one direction video broadcast
+2. Increase stability by more carefully handle webtorrent and webrtc events
 
-3. Load/Save including WebTorrents
+3. WebGL Drawing, drag and drop Grids Layouts, other TextEditors without Bootstrap and Jquery, better Video Player, rotate Images, WebTorrent Desktop preview, WebRTC one direction video broadcast
 
-4. Search Engine (by km/miles-radius, topic, etc., to opt in your peerwebsite.)
+4. Load/Save including WebTorrents
+
+5. Search Engine (by km/miles-radius, topic, etc., to opt in your peerwebsite.)
+
+### Tests
+1. Simple pictures + text snapshot (webtorrent) test from my raspberrypi https://peerweb.site/#magnet:?xt=urn:btih:16fe5b7bf0a7cccfdd7b808a97b09558826278b0&dn=peerWebSite&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&tr=wss%3A%2F%2Ftracker.fastcast.nz
 
 ### Big Thanks to
 Muaz Khan, Feross and all others who contributed to this repo and this repos dependencies! Also thanks for your support, using this application, spreading the word and a github star ;-)
