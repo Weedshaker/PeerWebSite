@@ -52,10 +52,12 @@ export class App extends MasterApp {
 			this.WebRTC.api.onNewParticipant.add(function(remoteUserId){return [this.Editor.getData(), this.Editor.container[0].id];}, this);
 			// expose download all torrents to global scope
 			window.getAllTorrents = this.WebTorrentSeeder.api.getAllTorrents;
+			window.getAllTorrentFiles = this.WebTorrentSeeder.api.getAllTorrentFiles;
 		} else {
 			// Receiver
 			// expose download all torrents to global scope
 			window.getAllTorrents = this.WebTorrentReceiver.api.getAllTorrents;
+			window.getAllTorrentFiles = this.WebTorrentReceiver.api.getAllTorrentFiles;
 		}
 		// onReceive.add(newMessageFunc, scope = this, args = [])
 		this.WebRTC.api.onReceive.add(function(dataPack){this.HTML.setData(this.receiveCont, dataPack);}, this);

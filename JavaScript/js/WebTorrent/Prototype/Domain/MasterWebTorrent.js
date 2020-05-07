@@ -126,7 +126,8 @@ export class MasterWebTorrent {
 			 * @memberof MasterWebTorrent
 			 */
 			container: this.container,
-			getAllTorrents: this.getAllTorrents.bind(this)
+			getAllTorrents: this.getAllTorrents.bind(this),
+			getAllTorrentFiles: this.getAllTorrentFiles.bind(this)
 		};
 	}
 	// add (download)
@@ -604,5 +605,15 @@ export class MasterWebTorrent {
 	}
 	getAllTorrents() {
 		this.Helper.saveData(this.client.torrents.map(torrent => torrent.magnetURI).join("\n\n---\n\n"), `peerWebSiteTorrents_${this.Helper.getRandomString()}.txt`);
+	}
+	getAllTorrentFiles() {
+		this.client.torrents.forEach(torrent => {
+			torrent.files.forEach(file => {
+				file.getBlobURL((err, url) => {
+					if (err) return console.warn(err);
+					this.Helper.saveBlobUrl(url, file.name);
+				});
+			});
+		});
 	}
 }
