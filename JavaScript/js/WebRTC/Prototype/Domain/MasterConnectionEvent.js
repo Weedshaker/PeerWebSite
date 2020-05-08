@@ -25,9 +25,9 @@ export class MasterConnectionEvent {
 		/*this.connection.onPeerStateChanged = (state) => {
 			this.newParticipant(state.userid);
 		};*/
-		/*this.connection.onopen = (event) => {
-			this.newParticipant(event.userid);
-		};*/
+		this.connection.onopen = (event) => {
+			this.newParticipant(event.userid, undefined, true);
+		};
 		/*this.connection.onSettingLocalDescription = (event) => {
 			this.newParticipant(event.userid);
 		};*/

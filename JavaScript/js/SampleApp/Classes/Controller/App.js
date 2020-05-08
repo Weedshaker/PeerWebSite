@@ -81,7 +81,7 @@ export class App extends MasterApp {
 			*/
 			// persist site
 			const hash = this.originalHash || location.hash;
-			if(hash && !hash.includes('magnet:')){
+			if(hash){
 				// force DOM to update once receiving connect
 				if (!isSender) {
 					document.querySelectorAll('[src]').forEach(element => (element.src += `?${Date.now()}`));
