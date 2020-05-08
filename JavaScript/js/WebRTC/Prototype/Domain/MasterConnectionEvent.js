@@ -10,7 +10,7 @@ export class MasterConnectionEvent {
 
 		this.isSender = [true]; // App defines this by looking at hash
 		this.openOrJoinEventDelay = 5000;
-		this.newParticipantDelay = 1000;
+		this.newParticipantDelay = 2000;
 		this.openOrJoinEventID = null;
 		// https://www.rtcmulticonnection.org/
 		this.connection.onNewParticipant = (participantId, userPreferences) => {
