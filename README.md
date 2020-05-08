@@ -24,7 +24,7 @@ After this is done, you can close your tab at peerweb and your site stays online
 
 2. **Share Content Temporarily** by opening a peerweb.site session.
 
-3. **Create your Torrent aka. Snapshot** with your content in no-time and share it to the wast world.
+3. **Create your Torrent aka. Snapshot** with your content in no-time and share it to the vast world.
 
 4. **Full JavaScript applications eg. games, single page apps, etc.** to host them from your browser tab.
     *Use the browser dev-tools to manipulate `class="note-editable"` aka rich text editor area. Create or copy/paste your html/js/css and open a snapshot link at a fresh window in incognito mode to view the result*
