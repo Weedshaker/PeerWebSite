@@ -81,7 +81,8 @@ export class App extends MasterApp {
 			*/
 			// persist site
 			const hash = this.originalHash || location.hash;
-			if(hash){
+			// TODO: consider to save magnet uris as well, but then loading at html l:99 has to be adjusted as well
+			if(hash && !hash.includes('magnet:')){
 				// force DOM to update once receiving connect
 				if (!isSender) {
 					document.querySelectorAll('[src]').forEach(element => (element.src += `?${Date.now()}`));
