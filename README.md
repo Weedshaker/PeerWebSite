@@ -7,7 +7,7 @@ Send Texts, Pictures and Videos embedded in HTML with CSS and JavaScript through
 ### Functionalities
 1. **Use WebTorrent for files**: This will enable WebTorrent for added files. It allows video steaming and will perform better in case your site is file heavy. It is mandatory for multiple files to load efficiently. Although, it may not work well with other browsers but Chrome.
 
-2. **Activate Live Session & Copy Link**: This opens a session/peer to peer room where your audience can join and see your changes in real time. Your site will not be reachable, once you close your browser tab. *You could have a two way communication, if you join the room/site not through the link with hash but manually put the channel name into the input field.*
+2. **Activate Live Session & Copy Link**: (unstable: Due to ICE failed, use Webtorrent/Snapshot to avoid this issue.)This opens a session/peer to peer room where your audience can join and see your changes in real time. Your site will not be reachable, once you close your browser tab. *You could have a two way communication, if you join the room/site not through the link with hash but manually put the channel name into the input field.*
 
 3. **Take Snapshot & Copy Link**: This bundles all your text and files into a WebTorrent. Which is like a snapshot of your site to share. Your link with the content stays accessible as long as at least one person has your sites WebTorrent active. More info about WebTorrents can be found [here](https://webtorrent.io/). In case you need to memorize a generated snapshot link, simply use [tinyurl](https://tinyurl.com/), there you can convert your long https://peerweb.site/#magnet:?xt=urn:btih:a... url into a tiny url, which is easy to remember.
 
