@@ -9,16 +9,17 @@ export class MasterConnectionEvent {
 		this.SentMessage = SentMessage;
 
 		this.isSender = [true]; // App defines this by looking at hash
-		this.openOrJoinEventDelay = 5000;
+		this.openOrJoinEventDelay = 1000;
 		this.newParticipantDelay = 2000;
 		this.openOrJoinEventID = null;
+		this.newParticipantEventID = null;
 		// https://www.rtcmulticonnection.org/
 		this.connection.onNewParticipant = (participantId, userPreferences) => {
-			this.newParticipant(participantId, userPreferences, true);
+			this.newParticipant(participantId, userPreferences);
 		};
-		this.connection.onReConnecting = (event) => {
+		/*this.connection.onReConnecting = (event) => {
 			this.newParticipant(event.userid, undefined, true);
-		};
+		};*/
 		/*this.connection.onUserStatusChanged = (event) => {
 			this.newParticipant(event.userid);
 		};*/
@@ -26,7 +27,7 @@ export class MasterConnectionEvent {
 			this.newParticipant(state.userid);
 		};*/
 		this.connection.onopen = (event) => {
-			this.newParticipant(event.userid, undefined, true);
+			this.sendMessage(event.userid, true);
 		};
 		/*this.connection.onSettingLocalDescription = (event) => {
 			this.newParticipant(event.userid);
@@ -61,9 +62,9 @@ export class MasterConnectionEvent {
 	 * @memberof MasterConnectionEvent
 	 */
 	openOrJoinEvent(roomid, message = '', elID = '', send = true){
-		this.connection.openOrJoin(roomid || 'predefiend-roomid');
 		clearTimeout(this.openOrJoinEventID);
 		this.openOrJoinEventID = setTimeout(() => {
+			this.connection.openOrJoin(roomid || 'predefiend-roomid');
 			if(this.isSender[0] && send){
 				this.Sender.sendEvent(message, elID, undefined, undefined, false, new Map([['diffed', false]]), true);
 			}
@@ -72,25 +73,29 @@ export class MasterConnectionEvent {
 	}
 	// called from connection
 	// newParticipant
-	newParticipant(remoteUserId, userPreferences, force = false){
-		if (remoteUserId !== 'sst_toAll' && userPreferences !== undefined) this.connection.acceptParticipationRequest(remoteUserId, userPreferences);
+	newParticipant(remoteUserId, userPreferences){
+		clearTimeout(this.newParticipantEventID);
+		this.newParticipantEventID = setTimeout(() => {
+			if (remoteUserId !== 'sst_toAll' && userPreferences !== undefined) this.connection.acceptParticipationRequest(remoteUserId, userPreferences);
+			this.updatePeerCounter();
+		}, this.newParticipantDelay); // timeout = false, diffed = false
+	}
+	sendMessage(remoteUserId, force = false){
 		let msgElID = false;
 		this.onNewParticipant.container.forEach((e) => {
 			let result = e.func.apply(e.scope, [remoteUserId].concat(e.args));
 			msgElID = result.constructor === Array && result[0] && result[1] ? result : msgElID;
 		});
-		setTimeout(() => {
-			if(this.isSender[0]){
-				if(msgElID){
-					this.Sender.sendEvent(msgElID[0], msgElID[1], remoteUserId, undefined, false, new Map([['diffed', false]]), force); // timeout = false, diffed = false
-				}else{
-					this.SentMessage.getAll().forEach((message) => {
-						this.Sender.sendEvent(message[0], message[1], remoteUserId, undefined, false, new Map([['diffed', true]]), force); // timeout = false, diffed = false
-					});
-				}
+		if(this.isSender[0]){
+			if(msgElID){
+				this.Sender.sendEvent(msgElID[0], msgElID[1], remoteUserId, undefined, false, new Map([['diffed', false]]), force); // timeout = false, diffed = false
+			}else{
+				this.SentMessage.getAll().forEach((message) => {
+					this.Sender.sendEvent(message[0], message[1], remoteUserId, undefined, false, new Map([['diffed', true]]), force); // timeout = false, diffed = false
+				});
 			}
-			this.updatePeerCounter();
-		}, this.newParticipantDelay);
+		}
+		this.updatePeerCounter();
 	}
 	updatePeerCounter(message) {
 		this.peerCounterElements.forEach(element => element.textContent = message ? message : `[${this.connection.peers.getLength()} connected]`)

@@ -51,7 +51,7 @@ export class MasterReceiver {
 	// message = [oldMessage, message]
 	receive(message, elID, remoteUserId, requestID, options, result){
 		if(message[1].length > 0){
-			let dataPack = {message: message[1], elID: elID, remoteUserId: remoteUserId, requestID: requestID};
+			let dataPack = {message: message[1], elID: elID, remoteUserId: remoteUserId, requestID: requestID, result: result};
 			let success = false;
 			// diff did't pass
 			if(this.Helper.arrayKeyValStrToObj(result)['receiveDiff'] === 'failed'){
