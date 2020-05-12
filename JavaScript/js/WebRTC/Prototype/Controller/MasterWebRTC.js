@@ -20,6 +20,14 @@ export class MasterWebRTC {
 		//this.connection.socketURL = window.sst && window.sst.isDebug ? `http://${window.location.hostname}:9001/` : 'https://webrtcweb.com:9001/'; // cd into repo: npm install --production / node server.js
 		// server was updated and lib/RTCMultiConnection.js so needs update to work locally again
 		this.connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/'; // cd into repo: npm install --production / node server.js
+		this.connection.iceServers = [{
+			'urls': [
+				'stun:stun.l.google.com:19302',
+				'stun:stun1.l.google.com:19302',
+				'stun:stun2.l.google.com:19302',
+				'stun:stun.l.google.com:19302?transport=udp',
+			]
+		}];
 		this.connection.session = {
 			data: true,
 			audio: false,
