@@ -42,7 +42,7 @@ export class EditorSummernote extends MasterEditor {
 			}).appendTo('head');
 		});
 		// options
-		this.addEmojis();
+		//this.addEmojis();
 		this.opts = {
 			toolbar: [
 				['insert', ['link', 'codeview'/*, 'picture', 'video'*/]],
@@ -75,7 +75,7 @@ export class EditorSummernote extends MasterEditor {
 					}
 				}
 			},
-			hint: {
+			/*hint: {
 				match: /:([\-+\w]+)$/,
 				search: function(keyword, callback){
 					callback($.grep(emojis, function(item){
@@ -93,7 +93,7 @@ export class EditorSummernote extends MasterEditor {
 					}
 					return '';
 				}
-			},
+			},*/
 			codemirror: {
 				mode: 'htmlmixed',
 				htmlMode: true,
