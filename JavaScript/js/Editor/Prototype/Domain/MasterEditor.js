@@ -3,6 +3,16 @@
 export class MasterEditor {
 	constructor(){
 	}
+	addEmojis(){
+		$.ajax({
+			url: 'https://api.github.com/emojis',
+			crossDomain: true,
+			dataType: 'json'
+		}).then(function(data) {
+			window.emojis = Object.keys(data);
+			window.emojiUrls = data; 
+		});
+	}
 	loadFile(files, text, container = this.container){
 		$.each(files, (i, file) => {
 			let name = file.name;
