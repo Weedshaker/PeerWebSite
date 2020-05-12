@@ -48,6 +48,11 @@ System.config({
       "deps": [
         "Editor/lib/codemirror/codemirror.js"
       ]
+    },
+    "Editor/lib/codemirror/xml.js": {
+      "deps": [
+        "Editor/lib/codemirror/codemirror.js"
+      ]
     }
   },
 
