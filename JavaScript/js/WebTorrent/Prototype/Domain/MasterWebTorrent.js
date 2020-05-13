@@ -364,8 +364,6 @@ export class MasterWebTorrent {
 					child.setAttribute(this.attributes[3], `${this.appended_onerror}(${torrent.sst_id});`);
 				});
 				torrent.sst_onerror = `${this.appended_onerror}(${torrent.sst_id});`; // needs to be set on Regex replaceBlobURL
-				// set data-blobs
-				node.setAttribute(this.attributes[2], torrent.sst_localBlobs.join(','));
 			}else{
 				invalidNodes.push(node);
 			}
@@ -460,13 +458,22 @@ export class MasterWebTorrent {
 		});
 		// generate blobs if there are no nodes with src/href referencing blobs found
 		if (!torrent.sst_localBlobs.length) {
-			torrent.files.forEach(file => {
+			torrent.files.forEach((file, i) => {
 				file.getBlobURL((err, url) => {
 					if (err) return console.warn(err);
 					if (!torrent.sst_localBlobs.includes(url)) torrent.sst_localBlobs.push(url);
+					if (i === torrent.files.length - 1) this.updateLocalBlobsOnNodes(torrent);
 				});
 			});
+		} else {
+			this.updateLocalBlobsOnNodes(torrent);
 		}
+	}
+	updateLocalBlobsOnNodes(torrent) {
+		torrent.sst_nodes.forEach(node => {
+			// set data-blobs
+			node.setAttribute(this.attributes[2], torrent.sst_localBlobs.join(','));
+		});
 	}
 	/**
 	 * remove - check whole body if node, to which the torrent got appended, is still existent => not delete entry in node and torrent and client.torrents (api hook)
