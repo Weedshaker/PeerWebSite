@@ -347,7 +347,7 @@ export class MasterWebTorrent {
 	}
 	appended(torrent, appendToCallback = false, text = false){
 		let invalidNodes = []; // saving can invalidate nodes, grap those and pass it to removeInvalidNodes
-		torrent.sst_nodes.forEach((node, i) => {
+		torrent.sst_nodes.forEach(node => {
 			if (node && typeof node.getAttribute === 'function'){
 				// set same content to all nodes
 				if (node.innerHTML !== torrent.sst_nodeCont) node.innerHTML = torrent.sst_nodeCont;
@@ -358,14 +358,8 @@ export class MasterWebTorrent {
 				// loading finished remove classes
 				if (node.classList.contains(this.classes[1])) node.classList.remove(this.classes[1]);
 				if (node.classList.contains(this.classes[2])) node.classList.remove(this.classes[2]);
-				// prepare blob array for the first node
-				if (i === 0) torrent.sst_localBlobs = [];
+				// set error handling
 				node.childNodes.forEach(child => {
-					// grab blobs
-					if(i === 0){
-						let blob = child.getAttribute('src') ? child.getAttribute('src') : child.getAttribute('href');
-						if (blob) torrent.sst_localBlobs.push(blob);
-					}
 					// error handling if blobs have to be renewed => this.blobsRefresh (set globally at WebTorrentSeeder / WebTorrentReceiver)
 					child.setAttribute(this.attributes[3], `${this.appended_onerror}(${torrent.sst_id});`);
 				});
@@ -376,6 +370,7 @@ export class MasterWebTorrent {
 				invalidNodes.push(node);
 			}
 		});
+		this.findAllLocalBlobs(torrent);
 		this.removeInvalidNodes(invalidNodes, torrent.sst_id);
 		if (appendToCallback) appendToCallback(torrent);
 	}
@@ -392,6 +387,7 @@ export class MasterWebTorrent {
 							if(url !== torrent.sst_localBlobs[i]){
 								torrent.sst_nodeCont = torrent.sst_nodeCont.replace(torrent.sst_localBlobs[i], url);
 								URL.revokeObjectURL(torrent.sst_localBlobs[i]);
+								torrent.sst_localBlobs[i] = url;
 							}
 							// last file
 							if(i === torrent.files.length - 1){
@@ -453,6 +449,24 @@ export class MasterWebTorrent {
 			this.setNodes(torrent, node, torrent.sst_id);
 		});
 		return nodes;
+	}
+	findAllLocalBlobs(torrent) {
+		torrent.sst_localBlobs = torrent.sst_localBlobs || [];
+		torrent.sst_nodes.forEach(node => {
+			node.childNodes.forEach(child => {
+				const blob = child.getAttribute('src') ? child.getAttribute('src') : child.getAttribute('href');
+				if (blob && !torrent.sst_localBlobs.includes(blob)) torrent.sst_localBlobs.push(blob);
+			});
+		});
+		// generate blobs if there are no nodes with src/href referencing blobs found
+		if (!torrent.sst_localBlobs.length) {
+			torrent.files.forEach(file => {
+				file.getBlobURL((err, url) => {
+					if (err) return console.warn(err);
+					if (!torrent.sst_localBlobs.includes(url)) torrent.sst_localBlobs.push(url);
+				});
+			});
+		}
 	}
 	/**
 	 * remove - check whole body if node, to which the torrent got appended, is still existent => not delete entry in node and torrent and client.torrents (api hook)

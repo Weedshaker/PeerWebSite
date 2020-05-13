@@ -38,9 +38,9 @@ Give me a star on Github, which will motivate me to tide up the code and write D
 This beta application has been only tested in Chrome. Don't expect miracles, it's a pure hobby, side project and due to bleeding edge sometimes buggy.
 
 ### Road map
-1. Tide up Code, move UI to WebComponents based Event Driven Architecture
+1. Tide up Code, get rid of jspm, move UI to WebComponents based Event Driven Architecture
 
-2. Increase stability by more carefully handle webtorrent and webrtc events
+2. Add [IPFS](https://ipfs.io/) support and increase stability by more carefully handle webtorrent and webrtc events, likely with a [es6 Proxy Wrapper](https://weedshaker.github.io/ProxifyJS/)
 
 3. WebGL Drawing, drag and drop Grids Layouts, other TextEditors without Bootstrap and Jquery, better Video Player, rotate Images, WebTorrent Desktop preview, WebRTC one direction video broadcast
 
