@@ -28,13 +28,13 @@ export class RegexWorker extends MasterWorker {
 		// with tag name grab innerHTML
 		downloadedTorrents.forEach(e => {
 			let id = e[0], remoteBlobs = e[1][1][0], localBlobs = e[1][1][1], onerror = e[1][1][2];
-			if(remoteBlobs.length === localBlobs.length){
+			if(remoteBlobs.length <= localBlobs.length){
 				for(let i = 0; i < remoteBlobs.length; i++) {
 					const re = new RegExp(`${remoteBlobs[i].replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, '\\$&')}`, 'g'); // escape special characters
 					txt = txt.replace(re, localBlobs[i]);
 				}
 			}else{
-				console.warn('remoteBlobs and localBlobs length is uneven:', data);
+				console.warn('not enough localBlobs to replace all remoteBlobs:', data);
 			}
 			// replace onerror
 			// attributes = ['data-id', 'data-magnetURL', 'data-blobs', 'onerror']

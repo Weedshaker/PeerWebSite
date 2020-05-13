@@ -46,7 +46,8 @@ export class OptionRegex extends MasterOption {
 		magnetURLs.forEach(e => {
 			let torrent = this.client.get(e[1][0]);
 			if(torrent){
-				if (torrent.sst_localBlobs){
+				this.WebTorrent.findAllLocalBlobs(torrent);
+				if (torrent.sst_localBlobs.length > 0){
 					e[1][1][1] = torrent.sst_localBlobs;
 					e[1][1][2] = torrent.sst_onerror;
 					if (downloadedTorrents.indexOf(e) === -1) downloadedTorrents.push(e);
