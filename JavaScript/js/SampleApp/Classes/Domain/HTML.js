@@ -41,7 +41,7 @@ export class HTML extends MasterHTML {
 					e.target.blur();
 				});
 				controls.append(clipboard);
-				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Activate Live Session & Copy Link (unstable)</button>`);
+				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Activate Live Session & Copy Link</button>`);
 				let counterWebRTC = $('<span class="counter counterWebRTC">[0 connected]</span>');
 				if (isSender) {
 					button.append(counterWebRTC);
