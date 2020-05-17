@@ -49,7 +49,7 @@ This beta application has been only tested in Chrome. Don't expect miracles, it'
 5. Search Engine (by km/miles-radius, topic, etc., to opt in your peerwebsite.)
 
 ### Tests
-1. Simple pictures + text snapshot (webtorrent) hosting test site from my raspberry pi chromium at instant.io by one magnetURI for the peerWebSite.txt and two magnetURIs for pictures: https://peerweb.site/#magnet:?xt=urn:btih:123646487058d49b7d25d59842cd04862eee8822&dn=peerWebSite.txt&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&tr=wss%3A%2F%2Ftracker.fastcast.nz
+1. Simple pictures + text snapshot (webtorrent) hosting test site from my Ubuntu Webtorrent Desktop by one magnetURI for the peerWebSite.txt (html) and two magnetURIs for pictures: https://peerweb.site/#magnet:?xt=urn:btih:123646487058d49b7d25d59842cd04862eee8822&dn=peerWebSite.txt&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&tr=wss%3A%2F%2Ftracker.fastcast.nz up since May 17th 2020.
 
 ### Global Scope
 Type `App` in the dev-tools console to expose the whole peerweb.site application. Interesting is `App.WebTorrentReceiver.client` for debugging the WebTorrent client.
