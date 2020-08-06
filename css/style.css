@@ -50,6 +50,14 @@ header .headerReceiver {
     color: white;
     font-size: 10px;
 }
+header .headerReceiver.hasQr {
+    display: flex;
+    align-items: center;
+}
+header .headerReceiver.hasQr > .qr {
+    padding-left: 10px;
+    order: 2;
+}
 .tiny {
     font-size: 8px;
 }
@@ -148,15 +156,19 @@ body > *, body > .panel {
     #controls > button.hasQr > span.qr {
         padding-top: 5px;
     }
+
 }
-#controls > button > span.qr:empty {
+span.qr {
+    cursor: pointer;
+}
+span.qr:empty {
     display: none;
 }
-#controls > button > span.qr > img {
+span.qr > img {
     max-height: 50px;
     opacity: 0.8;
 }
-#controls > button > span.open {
+span.qr.open {
     background-color: darkslategrey;
     opacity: 0.95;
     display: flex;
@@ -168,7 +180,7 @@ body > *, body > .panel {
     margin: auto;
     z-index: 10000;
 }
-#controls > button > span.open > img {
+span.qr.open > img {
     margin: auto;
     max-height: 100%;
     max-width: 100%;
@@ -191,7 +203,7 @@ body > *, body > .panel {
     color: rgb(221, 195, 195);
 }
 #buttonWebTorrent .counter {
-    olor: rgb(198, 195, 221);
+    color: rgb(198, 195, 221);
 }
 /* EditorSummernote.js */
 :empty.blobLoading, :empty.torrentLoading{

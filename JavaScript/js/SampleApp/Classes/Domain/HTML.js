@@ -17,7 +17,7 @@ export class HTML extends MasterHTML {
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				this.containers = [$(`<header>
 					<div id="info" class="flex">
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.4.9; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.5.0; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 					<button class="mui-btn">
 						<div class="mui-checkbox useWebTorrent">
@@ -29,7 +29,8 @@ export class HTML extends MasterHTML {
 					</button>
 				</header>`)];
 				// specific only for receiver
-				const headerReceiver = $('<div class="headerReceiver"></div>');
+				const headerReceiver = $('<div class="headerReceiver"><span class="qr"></span></div>');
+				this.addQrCode(headerReceiver, location.href);
 				// controls
 				let controls = $('<div id="controls"></div>')
 				let input = $(`<input id="${this.idNames[0]}" class="mui-panel" placeholder="${connection.token()}">`);
