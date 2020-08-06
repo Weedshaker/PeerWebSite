@@ -158,6 +158,9 @@ export class HTML extends MasterHTML {
 		const $span = $el.find('.qr');
 		$span.html('').append(img);
 		$el.addClass('hasQr');
-		$span.off('click').click(event => $span.toggleClass('open'));
+		$span.off('click').click(event => {
+			if ($span.hasClass('open')) event.stopPropagation();
+			$span.toggleClass('open');
+		});
 	}
 }
