@@ -17,7 +17,7 @@ export class HTML extends MasterHTML {
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				this.containers = [$(`<header>
 					<div id="info" class="flex">
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.4.8; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.4.9; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 					<button class="mui-btn">
 						<div class="mui-checkbox useWebTorrent">
@@ -41,10 +41,10 @@ export class HTML extends MasterHTML {
 					e.target.blur();
 				});
 				controls.append(clipboard);
-				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary">Activate Live Session & Copy Link</button>`);
+				let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary"><span class="btnText">Activate Live Session & Copy Link</span><span class="qr"></span></button>`);
 				let counterWebRTC = $('<span class="counter counterWebRTC">[0 connected]</span>');
 				if (isSender) {
-					button.append(counterWebRTC);
+					$(button).find('.btnText').append(counterWebRTC);
 				}else{
 					headerReceiver.append(counterWebRTC);
 				}
@@ -64,23 +64,25 @@ export class HTML extends MasterHTML {
 					e.target.blur();
 				});
 				controls.append(inputWebTorrent);
-				let buttonWebTorrent = $(`<button id="buttonWebTorrent" class="mui-btn mui-btn--accent">Take Snapshot & Copy Link</button>`);
+				let buttonWebTorrent = $(`<button id="buttonWebTorrent" class="mui-btn mui-btn--accent"><span class="btnText">Take Snapshot & Copy Link</span><span class="qr"></span></button>`);
 				let counterWebTorrent = $('<span class="counter counterWebTorrent">[0 peers]</span>');
 				if (isSender) {
-					buttonWebTorrent.append(counterWebTorrent);
+					$(buttonWebTorrent).find('.btnText').append(counterWebTorrent);
 				}else{
 					headerReceiver.append(counterWebTorrent);
 				}
 				controls.append(buttonWebTorrent);
 				let webTorrentCounterID = null;
 				let torrentCreatedData = [];
-				buttonWebTorrent.click(() => {
+				buttonWebTorrent.click(event => {
 					this.copyToCipBoard('inputWebTorrent');
 					// must always be same file name 'peerWebSite' otherwise webtorrent gives us a new magicURI
 					const data = this.Editor.getData();
 					if (!torrentCreatedData.includes(data)) this.WebTorrentSeeder.api.seed(new File([data], 'peerWebSite.txt', { type: 'plain/text', endings: 'native' }), undefined, undefined, undefined, undefined, (torrent) => {
-						inputWebTorrent.val(`${location.href.replace(location.hash, '')}#${torrent.magnetURI}`);
+						const link = `${location.href.replace(location.hash, '')}#${torrent.magnetURI}`;
+						inputWebTorrent.val(link);
 						this.copyToCipBoard('inputWebTorrent');
+						this.addQrCode($(buttonWebTorrent), link);
 						clearInterval(webTorrentCounterID);
 						webTorrentCounterID = setInterval(() => {
 							counterWebTorrent[0].textContent = `[${torrent.numPeers} peer${torrent.numPeers === 1 ? '' : 's'}]`;
@@ -98,7 +100,7 @@ export class HTML extends MasterHTML {
 				this.containers.push(sender);
 				let receiver = $(`<div id="${this.idNames[3]}">${window.sst && window.sst.karma ? '' : !isSender ? localStorage.getItem(location.hash) || '<span class="blobLoading"></span>' : 'response...'}</div>`);
 				this.containers.push(receiver);
-				button.on('click', () => {
+				button.on('click', event => {
 					this.disabled = true;
 					$('#txt-roomid').val($('#txt-roomid').val().replace(/\s/g, '') || $('#txt-roomid').attr('placeholder'));
 					const hash = $('#txt-roomid').val();
@@ -108,6 +110,7 @@ export class HTML extends MasterHTML {
 					clipboard.show();
 					$('#clipboardInput').val(location.href);
 					this.copyToCipBoard('clipboardInput');
+					this.addQrCode($(button), location.href);
 					// persist site
 					const data = this.Editor.getData();
 					if (data.length >= 30) localStorage.setItem(location.hash, data);
@@ -143,5 +146,18 @@ export class HTML extends MasterHTML {
 
 		/* Copy the text inside the text field */
 		document.execCommand("copy");
+	}
+	addQrCode($el, text) {
+		const img = document.createElement('img');
+		img.src = `https://api.qrserver.com/v1/create-qr-code/?data="${encodeURI(text).replace('#', '%23').replace(/&/g, '%26')}"`.trim();
+		let errorCounter = 0;
+		img.onerror = error => {
+			if (errorCounter < 3) img.src = img.src;
+			errorCounter++;
+		};
+		const $span = $el.find('.qr');
+		$span.html('').append(img);
+		$el.addClass('hasQr');
+		$span.off('click').click(event => $span.toggleClass('open'));
 	}
 }
