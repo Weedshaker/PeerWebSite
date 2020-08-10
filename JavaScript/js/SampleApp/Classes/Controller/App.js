@@ -7,13 +7,12 @@ export class App extends MasterApp {
 		super();
 	}
 	createElements(name = 'open-or-join-room'){
-		const isSender = !location.hash || (localStorage.getItem('channels') || '').includes(`[${location.hash}]`);
-		this.isSender = isSender;
+		this.isSender = !location.hash || (localStorage.getItem('channels') || '').includes(`[${location.hash}]`);
 		this.originalHash = location.hash;
-		let htmlElements = super.createElements(name, isSender);
+		let htmlElements = super.createElements(name, this.isSender);
 		let sendCont = htmlElements[0];
 		this.receiveCont = htmlElements[1];
-		let button = htmlElements[2];
+		let button = htmlElements[2]; // WebRTC Button
 		this.counterWebTorrent = htmlElements[3];
 
 		this.Editor.add(sendCont); // initiate before .WebTorrentSeeder.container 
@@ -37,13 +36,13 @@ export class App extends MasterApp {
 				['attributes', ['none']],
 			])
 		]);*/
-		this.setReceiverOrSender(isSender);
+		this.setReceiverOrSender(this.isSender);
 		
-		this.WebRTC.api.isSender[0] = isSender;
+		this.WebRTC.api.isSender[0] = this.isSender;
 		// *** Events Triggert by DOM ***
 		// openOrJoinEvent(roomid, message = '', elID = '')
-		this.HTML.attachButtonEvent(button, sendCont, this.Editor.getData, this.WebRTC.api.openOrJoinEvent, isSender);
-		if (isSender) {
+		this.HTML.attachButtonEvent(button, sendCont, this.Editor.getData, this.WebRTC.api.openOrJoinEvent, this.isSender);
+		if (this.isSender) {
 			// Seeder/Sender
 			// sendEvent(message, elID = 'sst_all', remoteUserId = 'sst_toAll', requestID = '', options = new Map([['diffed', true], ['compressed', 'auto']])
 			this.Editor.attachChangeEvent(sendCont, this.WebRTC.api.sendEvent);
@@ -66,7 +65,8 @@ export class App extends MasterApp {
 		document.addEventListener('visibilitychange', () => {
 			clearTimeout(visibilityTimeOutID);
 			visibilityTimeOutID = setTimeout(() => {
-				if (document.visibilityState === 'visible' && location.hash && !location.hash.includes('magnet:')) {
+				// check if active webrtc session
+				if (document.visibilityState === 'visible' && this.checkHashType(location.hash) === 'webrtc') {
 					$('#open-or-join-room').click();
 				}
 			}, 200);
@@ -82,13 +82,13 @@ export class App extends MasterApp {
 			// persist site
 			const hash = this.originalHash || location.hash;
 			// TODO: consider to save magnet uris as well, but then loading at html l:99 has to be adjusted as well
-			if(hash && !hash.includes('magnet:')){
+			if(this.checkHashType(hash) === 'webrtc'){
 				// force DOM to update once receiving connect
-				if (!isSender) {
+				if (!this.isSender) {
 					document.querySelectorAll('[src]').forEach(element => (element.src += `?${Date.now()}`));
 					document.querySelectorAll('[href]').forEach(element => (element.href += `?${Date.now()}`));
 				}
-				const data = isSender ? this.Editor.getData() : this.receiveCont[0].innerHTML;
+				const data = this.isSender ? this.Editor.getData() : this.receiveCont[0].innerHTML;
 				if (data.length >= 30) localStorage.setItem(hash, data);
 			}
 		});
@@ -98,9 +98,10 @@ export class App extends MasterApp {
 	}
 	connectHash(reload = true){
 		if (location.hash) {
+			// reload if sender or new hash should be loaded
 			if (reload && (!(localStorage.getItem('channels') || '').includes(`[${location.hash}]`) || !this.isSender)) {
 				location.reload();
-			} else if (location.hash.includes('magnet:')) {
+			} else if (this.checkHashType(location.hash) === 'magnet') {
 				const torrent = this.WebTorrentReceiver.add(location.hash.substr(1), undefined, undefined, undefined, undefined, torrent => {
 					if (torrent.files && torrent.files[0] && torrent.files[0].name.includes('peerWebSite')) {
 						torrent.files[0].getBlob((err, blob) => {
@@ -151,5 +152,11 @@ export class App extends MasterApp {
 		}else {
 			$('.headerReceiver').hide();
 		}
+	}
+	checkHashType(hash){
+		if (!hash) return false;
+		if (hash.includes('magnet:')) return 'magnet'; // WebTorrent
+		if (hash.includes('ipfs:')) return 'ipfs'; // IPFS
+		return 'webrtc'
 	}
 }
