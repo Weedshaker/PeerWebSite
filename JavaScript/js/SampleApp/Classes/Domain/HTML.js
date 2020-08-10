@@ -33,6 +33,7 @@ export class HTML extends MasterHTML {
 				this.addQrCode(headerReceiver, location.href);
 				// controls
 				let controls = $('<div id="controls"></div>')
+				// webrtc
 				let input = $(`<input id="${this.idNames[0]}" class="mui-panel" placeholder="${connection.token()}">`);
 				controls.append(input);
 				// clipboard
