@@ -3,6 +3,7 @@
 ## Real Time Peer to Peer Web Site Host from your Browser
 
 ### Description
+TODO: Extend description to cover new IPFS support!!!
 Send Texts, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC in acquaintance of WebTorrents for files, live edited P2P as well as static Torrents. No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent snapshots. *(Saving in-site WebTorrents is not yet supported.)* **Note: Cellphone providers on 4g/5g possibly block your WebRTC or WebTorrent connections, which renders PeerWebSite unusable. To circumvent this use a VPN!**
 
 <img src="https://weedshaker.github.io/PeerWebSite/img/screenshot1.png" align="left" width="45%">
@@ -45,7 +46,7 @@ This beta application has been only tested in Chrome. Don't expect miracles, it'
 ### Road map
 1. Tide up Code, get rid of jspm, move UI to WebComponents based Event Driven Architecture, replace http://goqr.me/api/ with local qr code generator (this could be a privacy concern, if this ever gets high usage as well as github as a hoster itself, just to keep this in mind.)
 
-2. Add [IPFS](https://ipfs.io/) support and increase stability by more carefully handle webtorrent and webrtc events, likely with a [es6 Proxy Wrapper](https://weedshaker.github.io/ProxifyJS/)
+2. Increase stability by more carefully handle webtorrent and webrtc events, likely with a [es6 Proxy Wrapper](https://weedshaker.github.io/ProxifyJS/)
 
 3. WebGL Drawing, drag and drop Grids Layouts, other TextEditors without Bootstrap and Jquery, better Video Player, rotate Images, WebTorrent Desktop preview, WebRTC one direction video broadcast
 
