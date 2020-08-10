@@ -6,8 +6,8 @@
 TODO: Extend description to cover new IPFS support!!!
 Send Texts, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC in acquaintance of WebTorrents for files, live edited P2P as well as static Torrents. No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent snapshots. *(Saving in-site WebTorrents is not yet supported.)* **Note: Cellphone providers on 4g/5g possibly block your WebRTC or WebTorrent connections, which renders PeerWebSite unusable. To circumvent this use a VPN!**
 
-<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot1.png" align="left" width="45%">
-<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot2.png" align="right" width="45%">
+<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot1.png" align="left" width="40%">
+<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot2.png" align="right" width="40%">
 <br clear="right"/>
 
 ### Functionalities
