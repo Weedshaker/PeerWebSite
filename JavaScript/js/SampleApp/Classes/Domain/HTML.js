@@ -22,12 +22,15 @@ export class HTML extends MasterHTML {
 						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.6.1; Visit Github for more Infos! Use a VPN or IPFS, if your cell phone network blocks connections!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
-				if (!isSender) header.find('#info').append(`<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">Edit!</span></a>`).click(event => {
-					event.preventDefault();
-					this.setHash(location.hash.substr(1));
-					this.saveData();
-					location.reload();
-				});
+				if (!isSender) {
+					header.find('#info').append(`<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">Edit!</span></a>`);
+					header.find('.edit').click(event => {
+						event.preventDefault();
+						this.setHash(location.hash.substr(1));
+						this.saveData();
+						location.reload();
+					});
+				}
 				this.containers = [header];
 				// specific only for receiver
 				const headerReceiver = $('<div class="headerReceiver"><span class="qr"></span></div>');
