@@ -15,7 +15,7 @@ export class MasterApp {
 		this.WebTorrentSeeder = new WebTorrentSeeder();
 		this.IPFS = new IPFS();
 		this.Editor = new EditorSummernote(this.WebTorrentSeeder);
-		this.HTML = new HTML(this.WebTorrentReceiver, this.WebTorrentSeeder, this.Editor, this.WebRTC);
+		this.HTML = new HTML(this.WebTorrentReceiver, this.WebTorrentSeeder, this.Editor, this.WebRTC, this);
 		this.ServiceWorker = new ServiceWorker(undefined, undefined, [this.WebTorrentReceiver.getBlobByFileName.bind(this.WebTorrentReceiver), this.WebTorrentSeeder.getBlobByFileName.bind(this.WebTorrentSeeder)]);
 		this.ServiceWorker.run();
 

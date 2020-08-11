@@ -89,7 +89,7 @@ export class App extends MasterApp {
 					document.querySelectorAll('[href]').forEach(element => (element.href += `?${Date.now()}`));
 				}
 				const data = this.isSender ? this.Editor.getData() : this.receiveCont[0].innerHTML;
-				if (data.length >= 30) localStorage.setItem(hash, data);
+				this.HTML.saveData(hash, data);
 			}
 		});
 		// connect by hash
@@ -97,9 +97,9 @@ export class App extends MasterApp {
 		window.addEventListener('hashchange', () => this.connectHash());
 	}
 	connectHash(reload = true){
-		if (location.hash) {
-			// reload if sender or new hash should be loaded
-			if (reload && (!(localStorage.getItem('channels') || '').includes(`[${location.hash}]`) || !this.isSender)) {
+		// logic for receiver
+		if (!this.isSender) {
+			if (reload) {
 				location.reload();
 			} else if (this.checkHashType(location.hash) === 'magnet') {
 				const torrent = this.WebTorrentReceiver.add(location.hash.substr(1), undefined, undefined, undefined, undefined, torrent => {
@@ -157,7 +157,7 @@ export class App extends MasterApp {
 			$('.headerReceiver').hide();
 		}
 	}
-	checkHashType(hash){
+	checkHashType(hash = location.hash){
 		if (!hash) return false;
 		if (hash.includes('magnet:')) return 'magnet'; // WebTorrent
 		if (hash.includes('ipfs:')) return 'ipfs'; // IPFS
