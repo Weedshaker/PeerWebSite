@@ -176,6 +176,14 @@ export class EditorSummernote extends MasterEditor {
 				// https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/FILES.md#returns
 				this.IPFS.add(result.name, result.content).then(file => {
 					result.node[result.type] = file.link;
+					this.changeEvent(this.getData(), container[0].id);
+					let errorCounter = 0;
+					result.node.onerror = error => {
+						if (errorCounter < 3) {
+							result.node[result.type] = result.node[result.type];
+						}
+						errorCounter++;
+					};
 				});
 			}));
 		}else{
