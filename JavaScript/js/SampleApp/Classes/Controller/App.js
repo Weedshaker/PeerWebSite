@@ -81,16 +81,13 @@ export class App extends MasterApp {
 			*/
 			// persist site
 			const hash = this.originalHash || location.hash;
-			// TODO: consider to save magnet uris as well, but then loading at html l:99 has to be adjusted as well
-			if(this.checkHashType(hash) === 'webrtc'){
-				// force DOM to update once receiving connect
-				if (!this.isSender) {
-					document.querySelectorAll('[src]').forEach(element => (element.src += `?${Date.now()}`));
-					document.querySelectorAll('[href]').forEach(element => (element.href += `?${Date.now()}`));
-				}
-				const data = this.isSender ? this.Editor.getData() : this.receiveCont[0].innerHTML;
-				this.HTML.saveData(hash, data);
+			// force DOM to update once receiving connect
+			if (!this.isSender) {
+				document.querySelectorAll('[src]').forEach(element => (element.src += `?${Date.now()}`));
+				document.querySelectorAll('[href]').forEach(element => (element.href += `?${Date.now()}`));
 			}
+			const data = this.isSender ? this.Editor.getData() : this.receiveCont[0].innerHTML;
+			this.HTML.saveData(hash, data);
 		});
 		// connect by hash
 		this.connectHash(false);
@@ -127,12 +124,14 @@ export class App extends MasterApp {
 					clearInterval(webTorrentCounterID);
 					this.counterWebTorrent[0].textContent = `[ERROR! Please, reload.]`;
 				});
-				const progressBarNode = document.createElement('span');
-				$('#receiver').html(progressBarNode);
-				torrent.sst_nodes = [progressBarNode];
 				torrent.sst_id = 'peerWebSite';
-				this.WebTorrentReceiver.findAllNodes(torrent); // to have nodes where the progressbar can attach to
-				this.WebTorrentReceiver.ProgressBar.start();
+				if (!localStorage.getItem(location.hash)) {
+					const progressBarNode = document.createElement('span');
+					$('#receiver').html(progressBarNode);
+					torrent.sst_nodes = [progressBarNode];
+					this.WebTorrentReceiver.findAllNodes(torrent); // to have nodes where the progressbar can attach to
+					this.WebTorrentReceiver.ProgressBar.start();
+				}
 				$('.headerReceiver > .counterWebRTC').hide();
 			} else if (this.checkHashType(location.hash) === 'ipfs') {
 				this.IPFS.cat(location.hash.substr(6)).then(text => this.HTML.setData(this.receiveCont, {message: text})).catch(error => $('#receiver').text(`An Error occured! ${error}`));

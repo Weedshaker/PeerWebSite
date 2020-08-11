@@ -3,12 +3,13 @@
 import {MasterHTML} from 'SampleApp/Prototype/Domain/MasterHTML.js';
 
 export class HTML extends MasterHTML {
-	constructor(WebTorrentReceiver, WebTorrentSeeder, Editor, WebRTC, parent){
+	constructor(WebTorrentReceiver, WebTorrentSeeder, Editor, WebRTC, IPFS, parent){
 		super(WebTorrentReceiver);
 
 		this.WebTorrentSeeder = WebTorrentSeeder;
 		this.Editor = Editor;
 		this.WebRTC = WebRTC;
+		this.IPFS = IPFS;
 		this.parent = parent; // ref to App.js
 	}
 	createElements(name, attach = '#body', connection = null, isSender = true){
@@ -31,10 +32,11 @@ export class HTML extends MasterHTML {
 				</header>`)];
 				// specific only for receiver
 				const headerReceiver = $('<div class="headerReceiver"><span class="qr"></span></div>');
-				this.addQrCode(headerReceiver, location.href);
+				this.addQrCode(headerReceiver);
 				// controls
 				let controls = $('<div id="controls"></div>')
 				const webrtcButton = this.createWebrtcControls(controls, connection, isSender, headerReceiver);
+				this.createIpfsControls(controls);
 				const counterWebTorrent = this.createWebtorrentControls(controls, isSender, headerReceiver);
 				this.containers.push(controls);
 				// main containers
@@ -79,7 +81,7 @@ export class HTML extends MasterHTML {
 			e.target.blur();
 		});
 		controls.append(clipboard);
-		let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--primary"><span class="btnText">Activate Live Session & Copy Link</span><span class="qr"></span></button>`);
+		let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--webRTC"><span class="btnText">WebRTC:<br>Activate Live Session & Copy Link</span><span class="qr"></span></button>`);
 		let counterWebRTC = $('<span class="counter counterWebRTC">[0 connected]</span>');
 		if (isSender) {
 			$(button).find('.btnText').append(counterWebRTC);
@@ -95,30 +97,55 @@ export class HTML extends MasterHTML {
 			}
 		});
 		controls.append(button);
-		button.click(event => {
+		if (isSender) button.click(event => {
 			// fix and define roomid aka link aka hash
 			$('#txt-roomid').val($('#txt-roomid').val().replace(/\s/g, '') || $('#txt-roomid').attr('placeholder'));
-			$('#clipboardInput').val(location.href);
 			// switch input field with clipboard field
 			input.hide();
 			clipboard.show();
 			// default behavior
-			this.copyToCipBoard('clipboardInput');
-			this.addQrCode($(button), location.href);
 			this.setHash($('#txt-roomid').val());
 			this.saveData();
+			this.addQrCode($(button));
+			// update the clipboard
+			clipboard.val(location.href);
+			this.copyToClipBoard('clipboardInput');
+		});
+		return button;
+	}
+	createIpfsControls(controls) {
+		// ipfs
+		let input = $(`<input tabindex="-1" id="inputIPFS" class="mui-panel" placeholder="CID...">`);
+		input.keypress(function (e) {
+			e.preventDefault();
+			e.target.blur();
+		});
+		controls.append(input);
+		let button = $(`<button id="buttonIPFS" class="mui-btn mui-btn--primary"><span class="btnText">IPFS:<br>Take Snapshot & Copy Link</span><span class="qr"></span></button>`);
+		controls.append(button);
+		button.click(event => {
+			const data = this.Editor.getData();
+			this.IPFS.add('peerWebSite.txt', data).then(file => {
+				// default behavior
+				this.setHash(`ipfs:${file.cid}`);
+				this.saveData();
+				this.addQrCode($(button));
+				// update the clipboard
+				input.val(location.href);
+				this.copyToClipBoard('inputIPFS');
+			});
 		});
 		return button;
 	}
 	createWebtorrentControls(controls, isSender, headerReceiver) {
 		// webtorrent
-		let inputWebTorrent = $(`<input tabindex="-1" id="inputWebTorrent" class="mui-panel" placeholder="WebTorrent MagnetURI...">`);
+		let inputWebTorrent = $(`<input tabindex="-1" id="inputWebTorrent" class="mui-panel" placeholder="MagnetURI...">`);
 		inputWebTorrent.keypress(function (e) {
 			e.preventDefault();
 			e.target.blur();
 		});
 		controls.append(inputWebTorrent);
-		let buttonWebTorrent = $(`<button id="buttonWebTorrent" class="mui-btn mui-btn--accent"><span class="btnText">Take Snapshot & Copy Link</span><span class="qr"></span></button>`);
+		let buttonWebTorrent = $(`<button id="buttonWebTorrent" class="mui-btn mui-btn--accent"><span class="btnText">WebTorrent:<br>Take Snapshot & Copy Link</span><span class="qr"></span></button>`);
 		let counterWebTorrent = $('<span class="counter counterWebTorrent">[0 peers]</span>');
 		if (isSender) {
 			$(buttonWebTorrent).find('.btnText').append(counterWebTorrent);
@@ -129,12 +156,10 @@ export class HTML extends MasterHTML {
 		let webTorrentCounterID = null;
 		let torrentCreatedData = [];
 		buttonWebTorrent.click(event => {
+			this.copyToClipBoard('inputWebTorrent'); // must kopie when multiple times clicked on same button
 			// must always be same file name 'peerWebSite' otherwise webtorrent gives us a new magicURI
 			const data = this.Editor.getData();
 			if (!torrentCreatedData.includes(data)) this.WebTorrentSeeder.api.seed(new File([data], 'peerWebSite.txt', { type: 'plain/text', endings: 'native' }), undefined, undefined, undefined, undefined, (torrent) => {
-				// define roomid aka link aka hash
-				const link = `${location.href.replace(location.hash, '')}#${torrent.magnetURI}`;
-				inputWebTorrent.val(link);
 				// clear interval
 				clearInterval(webTorrentCounterID);
 				webTorrentCounterID = setInterval(() => {
@@ -143,10 +168,12 @@ export class HTML extends MasterHTML {
 				// avoid creating the torrent twice
 				torrentCreatedData.push(data);
 				// default behavior
-				this.copyToCipBoard('inputWebTorrent');
-				this.addQrCode($(buttonWebTorrent), link);
 				this.setHash(torrent.magnetURI);
 				this.saveData();
+				this.addQrCode($(buttonWebTorrent));
+				// update the clipboard
+				inputWebTorrent.val(location.href);
+				this.copyToClipBoard('inputWebTorrent');
 			});
 		});
 		this.WebTorrentSeeder.client.on('error', () => {
@@ -164,7 +191,7 @@ export class HTML extends MasterHTML {
 	saveData(key = location.hash, data = this.Editor.getData()){
 		if (key && data && data.length >= 20) localStorage.setItem(key, data);
 	}
-	copyToCipBoard(name) {
+	copyToClipBoard(name) {
 		var copyText = document.getElementById(name);
 		/* Select the text field */
 		copyText.select();
@@ -173,7 +200,7 @@ export class HTML extends MasterHTML {
 		/* Copy the text inside the text field */
 		document.execCommand("copy");
 	}
-	addQrCode($el, text) {
+	addQrCode($el, text = location.href) {
 		const img = document.createElement('img');
 		img.src = `https://api.qrserver.com/v1/create-qr-code/?data="${encodeURI(text).replace('#', '%23').replace(/&/g, '%26')}"`.trim();
 		let errorCounter = 0;
@@ -186,7 +213,7 @@ export class HTML extends MasterHTML {
 			errorCounter++;
 		};
 		const $span = $el.find('.qr');
-		$span.html('').append(img);
+		$span.html(img);
 		$el.addClass('hasQr');
 		$span.off('click').click(event => {
 			if ($span.hasClass('open')) event.stopPropagation();

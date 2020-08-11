@@ -23,6 +23,7 @@ export class MasterEditor {
 			Reader.addEventListener('load', () => {
 				const type = file.type.includes('image') ? ['img', 'src'] : file.type.includes('video') ? ['video', 'src'] : ['a', 'href']
 				let node = document.createElement(type[0]);
+				node.id = this.Helper.getRandomString(); // give each node an id, so that virtual-dom doesn't mix up things
 				if (type[0] === 'video') {
 					node.controls = true;
 					const source = document.createElement('source');

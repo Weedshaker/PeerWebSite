@@ -50,9 +50,7 @@ This beta application has been only tested in Chrome. Don't expect miracles, it'
 
 3. WebGL Drawing, drag and drop Grids Layouts, other TextEditors without Bootstrap and Jquery, better Video Player, rotate Images, WebTorrent Desktop preview, WebRTC one direction video broadcast
 
-4. Load/Save including WebTorrents + IPFS
-
-5. Search Engine based on [OrbitDB](https://github.com/orbitdb/orbit-db) (by km/miles-radius, topic, etc., to opt in your peerwebsite.)
+4. Search Engine based on [OrbitDB](https://github.com/orbitdb/orbit-db) (by km/miles-radius, topic, etc., to opt in your peerwebsite.)
 
 ### Tests
 1. Simple pictures + text snapshot (webtorrent) hosting test from my Raspberry Pi 3b+ by [webtorrent-hybrid](https://github.com/webtorrent/webtorrent-hybrid). Step 1: peerweb.site console: `getAllTorrents()`. Step 2: copy/paste magnetURI for the peerWebSite.txt (html) and two magnetURIs for pictures into webtorrent-hybrid to download the files. Step 3: `webtorrent-hybrid seed [path/file]` to host it permanently at: https://peerweb.site/#magnet:?xt=urn:btih:123646487058d49b7d25d59842cd04862eee8822&dn=peerWebSite.txt&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&tr=wss%3A%2F%2Ftracker.fastcast.nz ~~up since May 16th 2020~~ failed after 8 hours. Trying to resolve the issue at [webtorrent-hybrid/issues](https://github.com/webtorrent/webtorrent-hybrid/issues/67). Update: After using `--verbose` flag it has been Up since the 27th of May.

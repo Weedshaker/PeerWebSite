@@ -40,6 +40,9 @@ header button.mui-btn {
     line-height: 15px;
     background-color: #adadad;
 }
+.mui-btn--webRTC{
+    background-color: lightyellow;
+}
 header button.mui-btn:hover label {
     color: black;
 }
