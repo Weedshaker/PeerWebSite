@@ -8,6 +8,20 @@ export class IPFS {
         return this.node.then(node => node.add({path, content}));
     }
     get(cid){
-        return fetch(this.baseUrl + cid);
+        return fetch(this.baseUrl + cid).then(response => response.text());
+    }
+    cat(cid){
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of
+        // for await alternative
+        return this.node.then(node => {
+            const chunksIterator = node.cat(cid);
+            const chunks = [];
+            const consume = obj => {
+                if (obj.done) return chunks.toString();
+                chunks.push(obj.value);
+                return chunksIterator.next().then(consume);
+            };
+            return chunksIterator.next().then(consume); // kick off the recursive function
+        });
     }
 }

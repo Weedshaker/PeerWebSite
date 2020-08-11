@@ -135,12 +135,9 @@ export class App extends MasterApp {
 				this.WebTorrentReceiver.ProgressBar.start();
 				$('.headerReceiver > .counterWebRTC').hide();
 			} else if (this.checkHashType(location.hash) === 'ipfs') {
-				// http://127.0.0.1:3000/index_debug.html#ipfs:QmYUpUyrLNaeBBA9oHizeXsXFZjJV7KCWVMkZS4nvHcCTR
-				this.IPFS.get(location.hash.substr(6)).then(response => {
-					console.log('changed', response);
-					this.HTML.setData(this.receiveCont, {message:response.text})
-				});
-				//$('#receiver').text('An Error occured!');
+				this.IPFS.cat(location.hash.substr(6)).then(text => this.HTML.setData(this.receiveCont, {message: text})).catch(error => $('#receiver').text(`An Error occured! ${error}`));
+				$('.headerReceiver > .counterWebRTC').hide();
+				$('.headerReceiver > .counterWebTorrent').hide();
 			} else {
 				$('#txt-roomid').val(location.hash.substr(1));
 				// don't change on button click change hash, since this double triggers
