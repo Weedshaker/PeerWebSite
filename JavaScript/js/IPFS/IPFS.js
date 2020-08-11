@@ -5,7 +5,7 @@ export class IPFS {
         this.node = window.Ipfs.create();
     }
     add(path, content){
-        return this.node.then(node => node.add({path, content}));
+        return this.node.then(node => node.add({path, content})).then(file => Object.assign({link: this.baseUrl + file.cid}, file));
     }
     get(cid){
         return fetch(this.baseUrl + cid).then(response => response.text());

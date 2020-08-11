@@ -83,8 +83,8 @@ export class App extends MasterApp {
 			const hash = this.originalHash || location.hash;
 			// force DOM to update once receiving connect
 			if (!this.isSender) {
-				document.querySelectorAll('[src]').forEach(element => (element.src += `?${Date.now()}`));
-				document.querySelectorAll('[href]').forEach(element => (element.href += `?${Date.now()}`));
+				this.WebTorrentReceiver.container.querySelectorAll('[src]').forEach(element => (element.src += `?${Date.now()}`));
+				this.WebTorrentReceiver.container.querySelectorAll('[href]').forEach(element => (element.href += `?${Date.now()}`));
 			}
 			const data = this.isSender ? this.Editor.getData() : this.receiveCont[0].innerHTML;
 			this.HTML.saveData(hash, data);
@@ -149,7 +149,7 @@ export class App extends MasterApp {
 	setReceiverOrSender(isSender){
 		if (!isSender) {
 			// it is assumed that this is a viewer only
-			$('#controls, #sender, .note-editor, .useWebTorrent, .mui-btn').hide();
+			$('#controls, #sender, .note-editor, .mui-btn').hide();
 			$('body').addClass('viewer');
 			return true;
 		}else {

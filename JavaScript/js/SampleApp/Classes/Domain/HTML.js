@@ -17,19 +17,18 @@ export class HTML extends MasterHTML {
 		switch(name){
 			case 'open-or-join-room':
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
-				this.containers = [$(`<header>
+				const header = $(`<header>
 					<div id="info" class="flex">
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.6.0; Visit Github for more Infos! Use a VPN, if your cell phone network blocks connections or use IPFS!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.6.0; Visit Github for more Infos! Use a VPN or IPFS, if your cell phone network blocks connections!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
-					<button class="mui-btn">
-						<div class="mui-checkbox useWebTorrent">
-							<label>
-							<input id="useWebTorrent" type="checkbox" value="" ${localStorage.getItem('useWebTorrent') ? localStorage.getItem('useWebTorrent') === 'true' ? 'checked' : '' : 'checked'}>
-							<span>Use WebTorrent for files</span><span class="tiny">(supports video streaming, big files plus multiple files. Preferably use Chrome with this feature!)</span>
-							</label>
-						</div>
-					</button>
-				</header>`)];
+				</header>`);
+				if (!isSender) header.find('#info').append(`<a href="#" class="recycle red">&#9851;&nbsp;<span class="tiny">Edit!</span></a>`).click(event => {
+					event.preventDefault();
+					this.setHash(location.hash.substr(1));
+					this.saveData();
+					location.reload();
+				});
+				this.containers = [header];
 				// specific only for receiver
 				const headerReceiver = $('<div class="headerReceiver"><span class="qr"></span></div>');
 				this.addQrCode(headerReceiver);
@@ -62,10 +61,6 @@ export class HTML extends MasterHTML {
 
 				$('#info').append(headerReceiver);
 
-				$('#useWebTorrent').on('click', (e) => {
-					localStorage.setItem('useWebTorrent', e.target.checked);
-				});
-
 				return [sender, receiver, webrtcButton, counterWebTorrent];
 		}
 		return false;
@@ -81,7 +76,7 @@ export class HTML extends MasterHTML {
 			e.target.blur();
 		});
 		controls.append(clipboard);
-		let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--webRTC"><span class="btnText">WebRTC:<br>Activate Live Session & Copy Link</span><span class="qr"></span></button>`);
+		let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--webRTC"><span class="btnText">WebRTC (temporary):<br>Activate Live Session & Copy Link</span><span class="qr"></span></button>`);
 		let counterWebRTC = $('<span class="counter counterWebRTC">[0 connected]</span>');
 		if (isSender) {
 			$(button).find('.btnText').append(counterWebRTC);
@@ -121,7 +116,7 @@ export class HTML extends MasterHTML {
 			e.target.blur();
 		});
 		controls.append(input);
-		let button = $(`<button id="buttonIPFS" class="mui-btn mui-btn--primary"><span class="btnText">IPFS:<br>Take Snapshot & Copy Link</span><span class="qr"></span></button>`);
+		let button = $(`<button id="buttonIPFS" class="mui-btn mui-btn--primary"><span class="btnText">IPFS (permanent):<br>Take Snapshot & Copy Link</span><span class="qr"></span></button>`);
 		controls.append(button);
 		button.click(event => {
 			const data = this.Editor.getData();
@@ -145,7 +140,7 @@ export class HTML extends MasterHTML {
 			e.target.blur();
 		});
 		controls.append(inputWebTorrent);
-		let buttonWebTorrent = $(`<button id="buttonWebTorrent" class="mui-btn mui-btn--accent"><span class="btnText">WebTorrent:<br>Take Snapshot & Copy Link</span><span class="qr"></span></button>`);
+		let buttonWebTorrent = $(`<button id="buttonWebTorrent" class="mui-btn mui-btn--accent"><span class="btnText">WebTorrent (transitory):<br>Take Snapshot & Copy Link</span><span class="qr"></span></button>`);
 		let counterWebTorrent = $('<span class="counter counterWebTorrent">[0 peers]</span>');
 		if (isSender) {
 			$(buttonWebTorrent).find('.btnText').append(counterWebTorrent);

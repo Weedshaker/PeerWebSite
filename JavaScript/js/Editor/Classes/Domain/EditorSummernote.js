@@ -12,16 +12,17 @@ import 'Editor/lib/codemirror/htmlmixed.js';
 import 'Editor/lib/codemirror/formatting.js';
 import 'summernote/summernote';
 // plugins
-import 'hockic/summernote-ext-filedialog';
+import 'Editor/lib/summernote-ext-filedialog.js';
 import 'Editor/Classes/Helper/summernote-image-shapes.js';
 import 'Editor/Classes/Helper/summernote-plugin-image-download.js';
 
 // summernote uses this icons: https://fontawesome.com/icons [jspm_packages/github/summernote/summernote@0.8.16/summernote-bs4.css]
 
 export class EditorSummernote extends MasterEditor {
-	constructor(WebTorrent = null){
+	constructor(WebTorrent, IPFS){
 		super();
 		this.WebTorrent = WebTorrent;
+		this.IPFS = IPFS;
 		this.torrentNodeName = 'span';
 
 		this.container = null;
@@ -54,8 +55,8 @@ export class EditorSummernote extends MasterEditor {
 			// catch drag and drop file
 			callbacks: {
 				// If no WebTorrent remove the onImageUpload callback and let default handle it
-				onImageload: (files) => {
-					if(files.length > 0) this.loadFileInit(files);
+				onImageload: (files, text) => {
+					if(files.length > 0) this.loadFileInit(files, text);
 				},
 				onFileUpload: (files, text) => {
 					if(files.length > 0) this.loadFileInit(files, text, undefined, false);
@@ -161,7 +162,8 @@ export class EditorSummernote extends MasterEditor {
 		$('.note-btn-group.btn-group.note-insert').prepend(button.render());
 	}
 	loadFileInit(files, text, container = this.container, image = true){
-		if (this.WebTorrent && $('#useWebTorrent')[0].checked){
+		const type = localStorage.getItem('fileType');
+		if (type === 'webtorrent'){
 			// check for doublicated video, this has a browser bug, which eventuelly looses the blob
 			let torrent;
 			// TODO: adding videos twice breaks the blob link, this is most likely a bug in browsers
@@ -169,6 +171,13 @@ export class EditorSummernote extends MasterEditor {
 				return;
 			}
 			this.loadFile(files, text, container);
+		}else if (type === 'ipfs') {
+			super.loadFile(files, text, container, false).then(results => results.forEach(result => {
+				// https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/FILES.md#returns
+				this.IPFS.add(result.name, result.content).then(file => {
+					result.node[result.type] = file.link;
+				});
+			}));
 		}else{
 			super.loadFile(files, text, container);
 		}
