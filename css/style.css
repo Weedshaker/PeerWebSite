@@ -14,12 +14,19 @@ header > div.flex {
 header > div.flex iframe {
     border-radius: unset !important;
 }
+header > div.flex a {
+    padding: 2px 0;
+    text-align: center;
+}
 header > div.flex .recycle {
     color: green;
     display: flex;
     align-items: center;
     font-size: 30px;
     padding: 0 10px;
+}
+header > div.flex .recycle.red {
+    color: red;
 }
 header > div.flex .recycle:hover {
     text-decoration: none;
@@ -36,6 +43,9 @@ header button.mui-btn {
     white-space: normal;
     line-height: 15px;
     background-color: #adadad;
+}
+.mui-btn--webRTC{
+    background-color: lightyellow;
 }
 header button.mui-btn:hover label {
     color: black;
@@ -236,4 +246,21 @@ body.viewer {
 }
 body.viewer #receiver {
     min-height: 100vh;
+}
+/* file picker form */
+.form-check {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.form-check:last-child {
+    margin-bottom: 0;
+}
+.form-check label {
+    font-weight: normal;
+    margin: 0;
+    padding: 0 0 0 5px;
+}
+.form-check input {
+    margin: 0;
 }

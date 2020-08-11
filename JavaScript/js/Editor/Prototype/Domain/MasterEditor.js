@@ -13,34 +13,42 @@ export class MasterEditor {
 			window.emojiUrls = data; 
 		});
 	}
-	loadFile(files, text, container = this.container){
-		$.each(files, (i, file) => {
-			let name = file.name;
-			if(text){
-				name = files.length > 1 ? `${text}_${i}` : text;
-			}
-			let Reader  = new FileReader();
-			Reader.addEventListener('load', () => {
-				const type = file.type.includes('image') ? ['img', 'src'] : file.type.includes('video') ? ['video', 'src'] : ['a', 'href']
-				let node = document.createElement(type[0]);
-				if (type[0] === 'video') {
-					node.controls = true;
-					const source = document.createElement('source');
-					source[type[1]] = Reader.result;
-					source.type = file.type;
-					node.appendChild(source);
-				} else {
-					node[type[1]] = Reader.result;
-					node.text = name;
+	loadFile(files, text, container = this.container, doRead = true){
+		return new Promise(resolve => {
+			const results = [];
+			$.each(files, (i, file) => {
+				let name = file.name;
+				if(text){
+					name = files.length > 1 ? `${text}_${i}` : text;
 				}
-				node.setAttribute('download', name);
-				node.setAttribute('data-filename', name);
-				if(i > 0){
-					this.setData(container, ', ');
-				}
-				this.setData(container, node, 'insertNode');
-			}, false);
-			Reader.readAsDataURL(file);
+				const Reader = new FileReader();
+				const setData = () => {
+					const type = file.type.includes('image') ? ['img', 'src'] : file.type.includes('video') ? ['video', 'src'] : ['a', 'href']
+					let node = document.createElement(type[0]);
+					node.id = this.Helper.getRandomString(); // give each node an id, so that virtual-dom doesn't mix up things
+					let source = null;
+					if (type[0] === 'video') {
+						node.controls = true;
+						source = document.createElement('source');
+						source[type[1]] = Reader.result;
+						source.type = file.type;
+						node.appendChild(source);
+					} else {
+						node[type[1]] = Reader.result;
+						node.text = name;
+					}
+					results.push({name, content: file, node: source || node, type: type[1]});
+					if (i + 1 === files.length) resolve(results);
+					node.setAttribute('download', name);
+					node.setAttribute('data-filename', name);
+					if(i > 0){
+						this.setData(container, ', ');
+					}
+					this.setData(container, node, 'insertNode');
+				};
+				doRead ? Reader.addEventListener('load', setData, false) : setData();
+				Reader.readAsDataURL(file);
+			});
 		});
 	}
 }
