@@ -19,7 +19,7 @@ export class HTML extends MasterHTML {
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				const header = $(`<header>
 					<div id="info" class="flex">
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.6.7; Visit Github for more Infos! Use a VPN or IPFS, if your cell phone network blocks connections!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.6.8; Visit Github for more Infos! Use a VPN or IPFS, if your cell phone network blocks connections!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
 				if (!isSender) {
@@ -137,7 +137,7 @@ export class HTML extends MasterHTML {
 				// update the clipboard
 				input.val(location.href);
 				this.copyToClipBoard('inputIPFS');
-			});
+			}).catch(error => input.val(`IPFS failed: ${error}`));
 		});
 		return button;
 	}
@@ -178,6 +178,7 @@ export class HTML extends MasterHTML {
 				// update the clipboard
 				inputWebTorrent.val(location.href);
 				this.copyToClipBoard('inputWebTorrent');
+				torrent.on('error', error => inputWebTorrent.val(`WebTorrent failed: ${error}`));
 			});
 		});
 		this.WebTorrentSeeder.client.on('error', () => {

@@ -192,6 +192,11 @@ export class EditorSummernote extends MasterEditor {
 						result.video.classList.remove('ipfsLoading');
 					}
 					this.changeEvent(this.getData(), container[0].id);
+				}).catch(error => {
+					const errorMessageEl = document.createElement('span');
+					errorMessageEl.textContent = `IPFS failed: ${error}`;
+					node.replaceWith(errorMessageEl);
+					this.changeEvent(this.getData(), container[0].id);
 				});
 			}));
 		}else{
@@ -206,11 +211,15 @@ export class EditorSummernote extends MasterEditor {
 		$('.btn-codeview').first().addClass('disabled').attr('disabled', true);
 		// console.log(App.Editor.areTorrentsLoading()); console.log(App.Editor.WebTorrent.torrents);  console.log(App.Editor.WebTorrent.client.torrents); console.log(App.Editor.WebTorrent.nodes);
 		this.WebTorrent.api.seed(files, text, node, undefined, undefined, undefined, (torrent) => {
-				this.changeEvent(this.getData(), container[0].id);
 				// enable codeview
 				if(!this.WebTorrent.api.areTorrentsLoading()){
 					$('.btn-codeview').first().removeClass('disabled').removeAttr('disabled', true);
 				}
+				this.changeEvent(this.getData(), container[0].id);
+				torrent.on('error', error => {
+					node.textContent = `WebTorrent failed: ${error}`;
+					this.changeEvent(this.getData(), container[0].id);
+				});
 			}
 		);
 		this.setData(container, document.createElement('span'), 'insertNode'); // trying to get cursor focus after node
