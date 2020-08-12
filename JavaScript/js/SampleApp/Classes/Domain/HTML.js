@@ -19,7 +19,7 @@ export class HTML extends MasterHTML {
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				const header = $(`<header>
 					<div id="info" class="flex">
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.6.4; Visit Github for more Infos! Use a VPN or IPFS, if your cell phone network blocks connections!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.6.5; Visit Github for more Infos! Use a VPN or IPFS, if your cell phone network blocks connections!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
 				if (!isSender) {
@@ -127,6 +127,7 @@ export class HTML extends MasterHTML {
 		let button = $(`<button id="buttonIPFS" class="mui-btn mui-btn--primary"><span class="btnText">IPFS (permanent):<br>Take Snapshot & Copy Link</span><span class="qr"></span></button>`);
 		controls.append(button);
 		button.click(event => {
+			this.copyToClipBoard('inputIPFS');
 			const data = this.Editor.getData();
 			this.IPFS.add('peerWebSite.txt', data).then(file => {
 				// default behavior
