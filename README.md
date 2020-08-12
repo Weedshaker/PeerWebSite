@@ -3,8 +3,8 @@
 ## Real Time Peer to Peer Web Site Host from your Browser
 
 ### Description
-TODO: Extend description to cover new IPFS support!!!
-Send Texts, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC in acquaintance of WebTorrents for files, live edited P2P as well as static Torrents. No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent snapshots. *(Saving in-site WebTorrents is not yet supported.)* **Note: Cellphone networks on 4g/5g possibly block your WebRTC or WebTorrent connections, which renders PeerWebSite unusable, except you use the IPFS option!!! or you could circumvent this by using a VPN, which I generally recommend.**
+TODO: Extend description to cover new IPFS support!!!\
+Send Texts, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC, WebTorrents or IPFS, live edited P2P as well as static Torrents + IPFS. With WebRTC/WebTorrent (NOT IPFS) - No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent/IPFS snapshots. *(Saving in-site WebTorrents is not yet supported.)* **Note: Cellphone networks on 4g/5g possibly block your WebRTC or WebTorrent connections, which renders PeerWebSite unusable, except you use the IPFS option!!! or you could circumvent network restrictions by using a VPN.**
 
 <img src="https://weedshaker.github.io/PeerWebSite/img/screenshot1.png" align="left" width="40%">
 <img src="https://weedshaker.github.io/PeerWebSite/img/screenshot2.png" align="right" width="40%">
@@ -15,7 +15,7 @@ Send Texts, Pictures and Videos embedded in HTML with CSS and JavaScript through
 
 2. **Activate Live Session & Copy Link**: *(Sometimes unstable due to causes of ICE failed or other issues with WebRTC, require a reload or use Webtorrent/Snapshot.)* This opens a session/peer to peer room where your audience can join and see your changes in real time. Your site will not be reachable, once you close your browser tab. *You could have a two way communication, if you join the room/site not through the link with hash but manually put the channel name into the input field.*
 
-3. **Take Snapshot & Copy Link**: This bundles all your text and files into a WebTorrent. Which is like a snapshot of your site to share. Your link with the content stays accessible as long as at least one person has your sites WebTorrent active. More info about WebTorrents can be found [here](https://webtorrent.io/). In case you need to memorize a generated snapshot link, simply use [tinyurl](https://tinyurl.com/), there you can convert your long https://peerweb.site/#magnet:?xt=urn:btih:a... url into a tiny url, which is easy to remember.
+3. **Take Snapshot & Copy Link**: This bundles all your text and files into a WebTorrent or IPFS depending which you choose. This is like a snapshot of your site to share. Your link with the content stays accessible as long as at least one person has your sites WebTorrent active ([IPFS](https://ipfs.io/)S will spread it into the blockchain). More info about WebTorrents can be found [here](https://webtorrent.io/). In case you need to memorize a generated snapshot link, simply use [tinyurl](https://tinyurl.com/), there you can convert your long https://peerweb.site/#magnet:?xt=urn:btih:a... url into a tiny url, which is easy to remember.
 
 4. **Download Files**: To download a picture -> double click. To download a video -> long press. (Default behaviors vary between different browsers and devices. *These possibly conflict.*)
 
@@ -51,6 +51,8 @@ This beta application has been only tested in Chrome. Don't expect miracles, it'
 3. WebGL Drawing, drag and drop Grids Layouts, other TextEditors without Bootstrap and Jquery, better Video Player, rotate Images, WebTorrent Desktop preview, WebRTC one direction video broadcast
 
 4. Search Engine based on [OrbitDB](https://github.com/orbitdb/orbit-db) (by km/miles-radius, topic, etc., to opt in your peerwebsite.)
+
+5. Better IPFS video support [Example](https://github.com/ipfs/js-ipfs/tree/master/examples/browser-video-streaming)
 
 ### Tests
 1. Simple pictures + text snapshot (webtorrent) hosting test from my Raspberry Pi 3b+ by [webtorrent-hybrid](https://github.com/webtorrent/webtorrent-hybrid). Step 1: peerweb.site console: `getAllTorrents()`. Step 2: copy/paste magnetURI for the peerWebSite.txt (html) and two magnetURIs for pictures into webtorrent-hybrid to download the files. Step 3: `webtorrent-hybrid seed [path/file]` to host it permanently at: https://peerweb.site/#magnet:?xt=urn:btih:123646487058d49b7d25d59842cd04862eee8822&dn=peerWebSite.txt&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&tr=wss%3A%2F%2Ftracker.fastcast.nz ~~up since May 16th 2020~~ failed after 8 hours. Trying to resolve the issue at [webtorrent-hybrid/issues](https://github.com/webtorrent/webtorrent-hybrid/issues/67). Update: After using `--verbose` flag it has been Up since the 27th of May.

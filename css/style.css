@@ -47,7 +47,11 @@ header button.mui-btn {
     background-color: #adadad;
 }
 .mui-btn--webRTC{
-    background-color: lightyellow;
+    background-color: lightgreen;
+}
+.mui-btn--webRTC:hover, .mui-btn--webRTC:focus, .mui-btn--webRTC:active {
+    color: #FFF;
+    background-color: rgb(168, 248, 168);
 }
 header button.mui-btn:hover label {
     color: black;
@@ -204,7 +208,7 @@ span.qr.open > img {
 #controls > button:active {
     background-color: darkcyan;
 }
-#controls > #inputWebTorrent, #controls > #clipboardInput {
+#controls > #inputWebTorrent, #controls > #inputIPFS, #controls > #clipboardInput {
     cursor: not-allowed;
 }
 .counter {
@@ -218,7 +222,7 @@ span.qr.open > img {
     color: rgb(198, 195, 221);
 }
 /* EditorSummernote.js */
-:empty.blobLoading, :empty.torrentLoading{
+:empty.blobLoading, :empty.torrentLoading, :empty.ipfsLoading, .ipfsLoading {
     display: inline-block;
 	width: 30px;
 	height: 30px;
@@ -231,6 +235,10 @@ span.qr.open > img {
 :empty.torrentLoading{
     border-color: red;
     box-shadow: 0 0 25px 2px lightcoral;
+}
+:empty.ipfsLoading, .ipfsLoading {
+    border-color: blue;
+    box-shadow: 0 0 25px 2px lightblue;
 }
 @keyframes spin{
     from{transform: rotate(0deg); opacity: 0.2;}
