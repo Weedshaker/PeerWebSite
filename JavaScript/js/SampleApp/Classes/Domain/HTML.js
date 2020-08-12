@@ -19,7 +19,7 @@ export class HTML extends MasterHTML {
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				const header = $(`<header>
 					<div id="info" class="flex">
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.6.2; Visit Github for more Infos! Use a VPN or IPFS, if your cell phone network blocks connections!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.6.4; Visit Github for more Infos! Use a VPN or IPFS, if your cell phone network blocks connections!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
 				if (!isSender) {
@@ -27,8 +27,13 @@ export class HTML extends MasterHTML {
 					header.find('.edit').click(event => {
 						event.preventDefault();
 						this.setHash(location.hash.substr(1));
-						this.saveData();
-						location.reload();
+						this.saveData(undefined, this.parent.receiveCont[0].innerHTML);
+						if(this.confirmData(undefined, this.parent.receiveCont[0].innerHTML)){
+							location.reload();
+						}else{
+							this.removeHashFromChannels(location.hash.substr(1));
+							header.find('.edit').remove();
+						}
 					});
 				}
 				this.containers = [header];
@@ -182,12 +187,20 @@ export class HTML extends MasterHTML {
 	}
 	setHash(hash){
 		if (hash) {
-			if (!(localStorage.getItem('channels') || '').includes(`[${hash}]`)) localStorage.setItem('channels', `[#${hash}]` + (localStorage.getItem('channels') || ''));
+			if (!(localStorage.getItem('channels') || '').includes(`[#${hash}]`)) localStorage.setItem('channels', `[#${hash}]` + (localStorage.getItem('channels') || ''));
 			location.hash = hash;
+		}
+	}
+	removeHashFromChannels(hash){
+		if (hash && (localStorage.getItem('channels') || '').includes(`[#${hash}]`)) {
+			localStorage.setItem('channels', (localStorage.getItem('channels') || '').replace(`[#${hash}]`, ''));
 		}
 	}
 	saveData(key = location.hash, data = this.Editor.getData()){
 		if (key && data && data.length >= 20) localStorage.setItem(key, data);
+	}
+	confirmData(key = location.hash, data = this.Editor.getData()){
+		return localStorage.getItem(key) === data;
 	}
 	copyToClipBoard(name) {
 		var copyText = document.getElementById(name);
