@@ -173,21 +173,25 @@ export class EditorSummernote extends MasterEditor {
 			this.loadFile(files, text, container);
 		}else if (type === 'ipfs') {
 			super.loadFile(files, text, container, false).then(results => results.forEach(result => {
-				(result.video || result.source).classList.add('ipfsLoading');
+				const node = (result.video || result.source);
+				node.classList.add('ipfsLoading');
 				// https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/FILES.md#returns
 				this.IPFS.add(result.name, result.content).then(file => {
-					result.source[result.type] = file.link;
-					// video wouldn't play on seeder if not newly set
-					if (result.video) result.video.innerHTML = result.video.innerHTML;
-					(result.video || result.source).classList.remove('ipfsLoading');
-					this.changeEvent(this.getData(), container[0].id);
+					node.addEventListener('load', event => node.classList.remove('ipfsLoading'));
 					let errorCounter = 0;
-					(result.video || result.source).onerror = error => {
+					node.onerror = error => {
 						if (errorCounter < 3) {
-							(result.video || result.source)[result.type] = (result.video || result.source)[result.type];
+							node[result.type] = node[result.type];
 						}
 						errorCounter++;
 					};
+					result.source[result.type] = file.link;
+					// video wouldn't play on seeder if not newly set
+					if (result.video) {
+						result.video.innerHTML = result.video.innerHTML;
+						result.video.classList.remove('ipfsLoading');
+					}
+					this.changeEvent(this.getData(), container[0].id);
 				});
 			}));
 		}else{
