@@ -219,6 +219,9 @@ span.qr.open > img {
     font-weight: bold;
     color: rgb(182, 53, 53);
 }
+#buttonWebTorrent .counter {
+    color: rgb(153, 79, 79);
+}
 /* EditorSummernote.js */
 :empty.blobLoading, :empty.torrentLoading, :empty.ipfsLoading, .ipfsLoading {
     display: inline-block;
