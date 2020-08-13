@@ -47,6 +47,7 @@ header button.mui-btn {
     background-color: #adadad;
 }
 .mui-btn--webRTC{
+    color: #FFF;
     background-color: lightgreen;
 }
 .mui-btn--webRTC:hover, .mui-btn--webRTC:focus, .mui-btn--webRTC:active {
@@ -216,7 +217,7 @@ span.qr.open > img {
     white-space: nowrap;
     font-style: italic;
     font-weight: bold;
-    color: rgb(221, 195, 195);
+    color: rgb(168, 145, 145);
 }
 #buttonWebTorrent .counter {
     color: rgb(198, 195, 221);
