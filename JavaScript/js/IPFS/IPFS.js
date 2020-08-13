@@ -1,7 +1,8 @@
 export class IPFS {
 	constructor(){
         // https://ipfs.io/ipfs/QmYUpUyrLNaeBBA9oHizeXsXFZjJV7KCWVMkZS4nvHcCTR
-        this.baseUrl = 'https://ipfs.io/ipfs/';
+        // should be 'ipfs://' but browsers do not yet support that url scheme, once this gateway would get blocked or overloaded the files have to be fixed through the service worker
+        this.baseUrl = 'https://gateway.ipfs.io/ipfs/';
         this.node = window.Ipfs.create();
     }
     add(path, content){
