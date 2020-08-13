@@ -220,7 +220,7 @@ span.qr.open > img {
     color: rgb(182, 53, 53);
 }
 #buttonWebTorrent .counter {
-    color: rgb(153, 79, 79);
+    color: rgb(198, 195, 221);
 }
 /* EditorSummernote.js */
 :empty.blobLoading, :empty.torrentLoading, :empty.ipfsLoading, .ipfsLoading {
