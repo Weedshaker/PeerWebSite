@@ -177,7 +177,10 @@ export class EditorSummernote extends MasterEditor {
 				node.classList.add('ipfsLoading');
 				// https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/FILES.md#returns
 				this.IPFS.add(result.name, result.content).then(file => {
-					node.addEventListener('load', event => node.classList.remove('ipfsLoading'));
+					node.addEventListener('load', event => {
+						node.classList.remove('ipfsLoading');
+						this.changeEvent(this.getData(), container[0].id);
+					});
 					let errorCounter = 0;
 					node.onerror = error => {
 						if (errorCounter < 3) {
