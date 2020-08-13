@@ -48,11 +48,11 @@ header button.mui-btn {
 }
 .mui-btn--webRTC{
     color: #FFF;
-    background-color: lightgreen;
+    background-color: rgb(73, 233, 73);
 }
 .mui-btn--webRTC:hover, .mui-btn--webRTC:focus, .mui-btn--webRTC:active {
     color: #FFF;
-    background-color: rgb(168, 248, 168);
+    background-color: rgb(122, 226, 122);
 }
 header button.mui-btn:hover label {
     color: black;
@@ -217,10 +217,7 @@ span.qr.open > img {
     white-space: nowrap;
     font-style: italic;
     font-weight: bold;
-    color: rgb(168, 145, 145);
-}
-#buttonWebTorrent .counter {
-    color: rgb(198, 195, 221);
+    color: rgb(182, 53, 53);
 }
 /* EditorSummernote.js */
 :empty.blobLoading, :empty.torrentLoading, :empty.ipfsLoading, .ipfsLoading {
