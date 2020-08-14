@@ -8,6 +8,7 @@ class MasterServiceWorker {
 		this.messageChannel = null;
 		this.doNotIntercept = ['socket.io', 'ipfs.io', 'api.qrserver.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
 		this.doIntercept = ['magnet:', 'magnet/']; // + location.origin added below on message
+		this.justInform = ['gateway.ipfs.io'];
 		this.resolveMap = new Map(); // used to resolve after the message response
 		this.clientId = {
 			approved: -1,
@@ -80,6 +81,7 @@ class MasterServiceWorker {
 					});
 				} else {
 					//console.log('@serviceworker donot-intercept', event.request.url);
+					if (this.justInform.some(url => event.request.url.includes(url))) this.messageChannel.postMessage(['info', event.request.url]);
 					return fetch(event.request);
 				}
 			})());

@@ -4,6 +4,7 @@ export class IPFS {
         // should be 'ipfs://' but browsers do not yet support that url scheme, once this gateway would get blocked or overloaded the files have to be fixed through the service worker
         this.baseUrl = 'https://gateway.ipfs.io/ipfs/';
         this.node = window.Ipfs.create();
+        this.isIdle = new Promise(resolve => document.readyState !== 'complete' ? window.addEventListener('load', event => setTimeout(() => resolve(), 60000)) : setTimeout(() => resolve(), 60000));
     }
     add(path, content){
         return this.node.then(node => node.add({path, content})).then(file => Object.assign({link: this.baseUrl + file.cid}, file));
@@ -24,5 +25,10 @@ export class IPFS {
             };
             return chunksIterator.next().then(consume); // kick off the recursive function
         });
+    }
+    pin(url){
+        let match = null;
+        if (url.includes(this.baseUrl) && (match = url.match(/([^\/]+$)/))) return Promise.all([this.isIdle, this.node]).then(results => results[1].pin.add(match[0]));
+        return null;
     }
 }

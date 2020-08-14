@@ -3,11 +3,12 @@
 import { Helper } from 'WebTorrent/Classes/Helper/Helper.js';
 
 export class ServiceWorker {
-	constructor(serviceWorkerPath = 'MasterServiceWorker.js', serviceWorkerScope = './', getBlobByFileNameArray){
+	constructor(serviceWorkerPath = 'MasterServiceWorker.js', serviceWorkerScope = './', getBlobByFileNameArray, infoFuncs = []){
 		this.serviceWorkerPath = serviceWorkerPath;
 		this.serviceWorkerScope = serviceWorkerScope;
 		// array of getBlobByFileName of webtorrent receiver [0] and seeder [1]
 		this.getBlobByFileNameArray = getBlobByFileNameArray;
+		this.infoFuncs = infoFuncs;
 		
 		this.name = 'ServiceWorker';
 		this.Worker = null;
@@ -69,6 +70,8 @@ export class ServiceWorker {
 					this.getBlobByFileNameArray[0](name).then(blob => resolve(blob));
 					this.getBlobByFileNameArray[1](name).then(blob => resolve(blob));
 				}
+			} else if (Array.isArray(event.data) && event.data[0] === 'info') {
+				this.infoFuncs.forEach(func => func(event.data[1]));
 			} else {
 				this.Worker.postMessage([event.data, false]);
 			}
