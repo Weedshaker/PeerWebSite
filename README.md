@@ -45,7 +45,7 @@ This beta application has been only tested in Chrome. Don't expect miracles, it'
 
 ### Road map
 0. get independence of gateway.ipfs.io node by static written error handling selecting an other node [see ipfs docs](https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/DHT.md)\
-** added a possible solution with dts.query at branch ipfsUrlErrorHandling but somehow dht.query never found any addresses, for that no test was able to be successfull **
+**added a possible solution with dht.query at branch ipfsUrlErrorHandling but somehow dht.query never found any addresses, for that reason the ipfsUrlErrorHandling branch could not be fully tested**
 
 1. Tide up Code, get rid of jspm, fix Tests, move hosting to [IPFS](https://ipfs.io/), move UI to WebComponents based Event Driven Architecture, replace http://goqr.me/api/ with local qr code generator (this could be a privacy concern, if this ever gets high usage as well as github as a hoster itself, just to keep this in mind.)
 
