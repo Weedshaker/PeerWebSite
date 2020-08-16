@@ -44,7 +44,7 @@ Give me a star on Github, which will motivate me to tide up the code and write D
 This beta application has been only tested in Chrome. Don't expect miracles, it's a pure hobby, side project and due to bleeding edge sometimes buggy.
 
 ### Road map
-0. get independence of gateway.ipfs.io node by requesting closest or fastest node at service worker fetch interruption to ipfs on dom threat message [ipfs docs](https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/DHT.md)
+0. get independence of gateway.ipfs.io node by requesting closest or fastest node at service worker fetch interruption to ipfs on dom threat message to [ipfs see docs](https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/DHT.md) or smart static written error handling analog webtorrent video error fix
 
 1. Tide up Code, get rid of jspm, fix Tests, move hosting to [IPFS](https://ipfs.io/), move UI to WebComponents based Event Driven Architecture, replace http://goqr.me/api/ with local qr code generator (this could be a privacy concern, if this ever gets high usage as well as github as a hoster itself, just to keep this in mind.)
 
