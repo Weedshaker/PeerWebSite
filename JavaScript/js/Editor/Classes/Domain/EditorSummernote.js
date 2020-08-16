@@ -181,13 +181,8 @@ export class EditorSummernote extends MasterEditor {
 						node.classList.remove('ipfsLoading');
 						this.changeEvent(this.getData(), container[0].id);
 					});
-					let errorCounter = 0;
-					node.onerror = error => {
-						if (errorCounter < 3) {
-							node[result.type] = node[result.type];
-						}
-						errorCounter++;
-					};
+					// static error handling which also works at receiver
+					node.setAttribute('onerror', `${this.IPFS.ipfs_onerror}('${file.link}', '${result.type}', this);`);
 					result.source[result.type] = file.link;
 					// video wouldn't play on seeder if not newly set
 					if (result.video) {
