@@ -39,7 +39,7 @@ export class HTML extends MasterHTML {
 				this.containers = [header];
 				// specific only for receiver
 				const headerReceiver = $('<div class="headerReceiver"><span class="qr"></span></div>');
-				this.addQrCode(headerReceiver);
+				if (!isSender) this.addQrCode(headerReceiver, undefined, 'receiverLoading');
 				// controls
 				let controls = $('<div id="controls"></div>')
 				const webrtcButton = this.createWebrtcControls(controls, connection, isSender, headerReceiver);
@@ -214,27 +214,29 @@ export class HTML extends MasterHTML {
 		document.execCommand("copy");
 	}
 	addQrCode($el, text = location.href, loadingClass = 'blobLoading') {
-		const img = document.createElement('img');
-		img.src = `https://api.qrserver.com/v1/create-qr-code/?data="${encodeURI(text).replace('#', '%23').replace(/&/g, '%26')}"`.trim();
-		img.classList.add(loadingClass);
-		img.addEventListener('load', event => {
-			img.classList.remove(loadingClass);
-		});
-		let errorCounter = 0;
-		img.onerror = error => {
-			if (errorCounter < 3) {
-				img.src = img.src;
-			} else {
-				$span.html('');
-			}
-			errorCounter++;
-		};
-		const $span = $el.find('.qr');
-		$span.html(img);
-		$el.addClass('hasQr');
-		$span.off('click').click(event => {
-			if ($span.hasClass('open')) event.stopPropagation();
-			$span.toggleClass('open');
-		});
+		const $oldImg = $el.find('img');
+		const src = `https://api.qrserver.com/v1/create-qr-code/?data="${encodeURI(text).replace('#', '%23').replace(/&/g, '%26')}"`.trim();
+		if (!$oldImg || !$oldImg.length || $oldImg.attr('src') !== src) {
+			const img = document.createElement('img');
+			img.src = src;
+			img.classList.add(loadingClass);
+			img.addEventListener('load', event => img.classList.remove(loadingClass));
+			let errorCounter = 0;
+			img.onerror = error => {
+				if (errorCounter < 3) {
+					img.src = img.src;
+				} else {
+					$span.html('');
+				}
+				errorCounter++;
+			};
+			const $span = $el.find('.qr');
+			$span.html(img);
+			$el.addClass('hasQr');
+			$span.off('click').click(event => {
+				if ($span.hasClass('open')) event.stopPropagation();
+				$span.toggleClass('open');
+			});
+		}
 	}
 }

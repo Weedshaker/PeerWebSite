@@ -223,7 +223,7 @@ span.qr.open > img {
     color: rgb(198, 195, 221);
 }
 /* EditorSummernote.js */
-:empty.blobLoading, :empty.torrentLoading, :empty.ipfsLoading, .ipfsLoading {
+:empty.blobLoading, :empty.torrentLoading, :empty.ipfsLoading, .ipfsLoading, :empty.receiverLoading, .receiverLoading {
     display: inline-block;
 	width: 30px;
 	height: 30px;
@@ -240,6 +240,10 @@ span.qr.open > img {
 :empty.ipfsLoading, .ipfsLoading {
     border-color: blue;
     box-shadow: 0 0 25px 2px lightblue;
+}
+:empty.receiverLoading, .receiverLoading {
+    border-color: rgb(88, 88, 88);
+    box-shadow: none;
 }
 @keyframes spin{
     from{transform: rotate(0deg); opacity: 0.2;}
