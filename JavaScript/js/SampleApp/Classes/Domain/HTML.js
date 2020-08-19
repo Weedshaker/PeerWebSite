@@ -133,7 +133,7 @@ export class HTML extends MasterHTML {
 				// default behavior
 				this.setHash(`ipfs:${file.cid}`);
 				this.saveData();
-				this.addQrCode($(button));
+				this.addQrCode($(button), undefined, 'ipfsLoading');
 				// update the clipboard
 				input.val(location.href);
 				this.copyToClipBoard('inputIPFS');
@@ -174,7 +174,7 @@ export class HTML extends MasterHTML {
 				// default behavior
 				this.setHash(torrent.magnetURI);
 				this.saveData();
-				this.addQrCode($(buttonWebTorrent));
+				this.addQrCode($(buttonWebTorrent), undefined, 'torrentLoading');
 				// update the clipboard
 				inputWebTorrent.val(location.href);
 				this.copyToClipBoard('inputWebTorrent');
@@ -213,9 +213,13 @@ export class HTML extends MasterHTML {
 		/* Copy the text inside the text field */
 		document.execCommand("copy");
 	}
-	addQrCode($el, text = location.href) {
+	addQrCode($el, text = location.href, loadingClass = 'blobLoading') {
 		const img = document.createElement('img');
 		img.src = `https://api.qrserver.com/v1/create-qr-code/?data="${encodeURI(text).replace('#', '%23').replace(/&/g, '%26')}"`.trim();
+		img.classList.add(loadingClass);
+		img.addEventListener('load', event => {
+			img.classList.remove(loadingClass);
+		});
 		let errorCounter = 0;
 		img.onerror = error => {
 			if (errorCounter < 3) {
