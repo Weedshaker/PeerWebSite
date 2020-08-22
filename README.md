@@ -55,7 +55,7 @@ This beta application has been only tested in Chrome. Don't expect miracles, it'
 
 4. Search Engine based on [OrbitDB](https://github.com/orbitdb/orbit-db) (by km/miles-radius, topic, etc., to opt in your peerwebsite.)
 
-5. Better IPFS support: video [Example](https://github.com/ipfs/js-ipfs/tree/master/examples/browser-video-streaming), consider deep integration analog webtorrent, check out if pinning also starts sharing the file at receiver
+5. Better IPFS support: video [Example](https://github.com/ipfs/js-ipfs/tree/master/examples/browser-video-streaming), consider deep integration analog webtorrent, check out if pinning also starts sharing the file at receiver, unpin when deleting ipfs content node, add static cid (ipns) for changeable profile/site with key export 
 
 ### Vision
 1. Best user experience of creating content. WYSIWYG, Grid and other Layouts, Markdown, Video, Pics, Data, Data (Folder) Structures, Frontend Code
