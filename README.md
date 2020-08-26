@@ -24,6 +24,8 @@ TODO: Extend README to cover new IPFS support!!!
     2. open the browsers console and type: `getAllTorrentFiles()`. Save the files and load each of the files separately into your [WebTorrent Desktop](https://webtorrent.io/desktop/) client. To re-up your site, just reload the same files into [WebTorrent Desktop](https://webtorrent.io/desktop/).
 After this is done, you can close your tab at peerweb and your site stays online as long as WebTorrent Desktop hosts it or other people start seeding your peerweb.site.
 
+6. **Tools for Videos and Gifs** [Convert videos to mp4, gif from local or remote file](https://ezgif.com/) & [download video from youtube or twitter](https://www.downloadhelper.net/)
+
 
 ### Use Cases
 1. **Quickly and directly transfer data from one device to an other** without the need of sending an e-mail or texting yourself and feeding content to the big data servers from facebook, google, aws or companions. I often have pictures and texts on the smartphone or second computer and need to share them fast and uncomplicated, without login and logging, to my other device(s).
