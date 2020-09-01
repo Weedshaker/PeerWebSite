@@ -24,6 +24,8 @@ TODO: Extend README to cover new IPFS support!!!
     2. open the browsers console and type: `getAllTorrentFiles()`. Save the files and load each of the files separately into your [WebTorrent Desktop](https://webtorrent.io/desktop/) client. To re-up your site, just reload the same files into [WebTorrent Desktop](https://webtorrent.io/desktop/).
 After this is done, you can close your tab at peerweb and your site stays online as long as WebTorrent Desktop hosts it or other people start seeding your peerweb.site.
 
+6. **Tools for Videos and Gifs** [Convert videos to mp4, gif from local or remote file](https://ezgif.com/) & [download video from youtube or twitter](https://www.downloadhelper.net/)
+
 
 ### Use Cases
 1. **Quickly and directly transfer data from one device to an other** without the need of sending an e-mail or texting yourself and feeding content to the big data servers from facebook, google, aws or companions. I often have pictures and texts on the smartphone or second computer and need to share them fast and uncomplicated, without login and logging, to my other device(s).
@@ -55,7 +57,7 @@ This beta application has been only tested in Chrome. Don't expect miracles, it'
 
 4. Search Engine based on [OrbitDB](https://github.com/orbitdb/orbit-db) (by km/miles-radius, topic, etc., to opt in your peerwebsite.)
 
-5. Better IPFS support: video [Example](https://github.com/ipfs/js-ipfs/tree/master/examples/browser-video-streaming), consider deep integration analog webtorrent, check out if pinning also starts sharing the file at receiver
+5. Better IPFS support: video [Example](https://github.com/ipfs/js-ipfs/tree/master/examples/browser-video-streaming), consider deep integration analog webtorrent, check out if pinning also starts sharing the file at receiver, unpin when deleting ipfs content node, add static cid (ipns) for changeable profile/site with key export, key sharing
 
 ### Vision
 1. Best user experience of creating content. WYSIWYG, Grid and other Layouts, Markdown, Video, Pics, Data, Data (Folder) Structures, Frontend Code
