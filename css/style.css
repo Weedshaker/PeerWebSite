@@ -1,4 +1,4 @@
-img:not([download$=".png"]) {
+img:not([download$=".png"]):not([alt$=".png"]) {
     background-image: url("../img/image.svg");
     min-height: 24px;
     min-width: 24px;
