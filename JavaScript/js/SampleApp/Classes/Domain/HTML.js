@@ -49,7 +49,7 @@ export class HTML extends MasterHTML {
 				// main containers
 				let sender = $(`<div id="${this.idNames[2]}">${window.sst && window.sst.karma ? '' : isSender ? localStorage.getItem(location.hash) || '' : ''}</div>`);
 				this.containers.push(sender);
-				let receiver = $(`<div id="${this.idNames[3]}">${window.sst && window.sst.karma ? '' : !isSender ? localStorage.getItem(location.hash) || `<span class="blobLoading ${this.parent.checkHashType(location.hash) === 'magnet' ? 'torrentLoading' : this.parent.checkHashType(location.hash) === 'ipfs' ? 'ipfsLoading' : ''}"></span>` : 'response...'}</div>`);
+				let receiver = $(`<div id="${this.idNames[3]}">${window.sst && window.sst.karma ? '' : !isSender ? localStorage.getItem(location.hash) || `<span class="blobLoading ${this.parent.checkHashType(location.hash) === 'magnet' ? 'torrentLoading' : this.parent.checkHashType(location.hash) === 'ipfs' ? 'ipfsLoading' : ''}"></span>` : 'WEBRTC response...'}</div>`);
 				this.containers.push(receiver);
 				// hot-reloader
 				/*
