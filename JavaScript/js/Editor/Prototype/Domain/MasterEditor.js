@@ -37,7 +37,7 @@ export class MasterEditor {
 						if (Reader.result) node[type[1]] = Reader.result;
 						node.text = name;
 					}
-					results.push({name, content: file, source: source || node, type: type[1], video: source ? node : null});
+					results.push({name, content: file, source: source || node, type, video: source ? node : null});
 					if (i + 1 === files.length) resolve(results);
 					node.setAttribute('download', name);
 					node.setAttribute('data-filename', name);

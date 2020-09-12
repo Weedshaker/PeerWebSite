@@ -177,18 +177,22 @@ export class EditorSummernote extends MasterEditor {
 				node.classList.add('ipfsLoading');
 				// https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/FILES.md#returns
 				this.IPFS.add(result.name, result.content).then(file => {
-					node.addEventListener('load', event => {
+					if (result.type[0] === 'img') {
+						node.addEventListener('load', event => {
+							node.classList.remove('ipfsLoading');
+							this.changeEvent(this.getData(), container[0].id);
+						});
+					} else {
 						node.classList.remove('ipfsLoading');
-						this.changeEvent(this.getData(), container[0].id);
-					});
+					}
 					let errorCounter = 0;
 					node.onerror = error => {
 						if (errorCounter < 3) {
-							node[result.type] = node[result.type];
+							node[result.type[1]] = node[result.type[1]];
 						}
 						errorCounter++;
 					};
-					result.source[result.type] = file.link;
+					result.source[result.type[1]] = file.link;
 					// video wouldn't play on seeder if not newly set
 					if (result.video) {
 						result.video.innerHTML = result.video.innerHTML;

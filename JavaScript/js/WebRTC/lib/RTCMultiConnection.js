@@ -1,9 +1,9 @@
 'use strict';
 
-// Last time updated: 2019-06-15 4:26:11 PM UTC
+// Last time updated: 2020-08-26 8:55:13 AM UTC
 
 // _________________________
-// RTCMultiConnection v3.6.9
+// RTCMultiConnection v3.7.0
 
 // Open-Sourced: https://github.com/muaz-khan/RTCMultiConnection
 
@@ -14,7 +14,7 @@
 
 // sst: expose to global
 window.RTCMultiConnection = function(roomid, forceOptions) {
-    var isNegotiating = false;
+
     var browserFakeUserAgent = 'Fake/5.0 (FakeOS) AppleWebKit/123 (KHTML, like Gecko) Fake/12.3.4567.89 Fake/123.45';
 
     (function(that) {
@@ -471,9 +471,9 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
                 }
                 return allPeers;
             },
-            forEach: function(callbcak) {
+            forEach: function(callback) {
                 this.getAllParticipants().forEach(function(participant) {
-                    callbcak(connection.peers[participant]);
+                    callback(connection.peers[participant]);
                 });
             },
             send: function(data, remoteUserId) {
@@ -2654,10 +2654,6 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
         });
 
         peer.oniceconnectionstatechange = peer.onsignalingstatechange = function() {
-            if(self.signalingState != "stable") {
-                console.log("Negotiation skipped in stable");
-                return;
-            }
             var extra = self.extra;
             if (connection.peers[self.userid]) {
                 extra = connection.peers[self.userid].extra || extra;
@@ -3000,6 +2996,7 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
     // CodecsHandler.js
 
     var CodecsHandler = (function() {
+        // use "RTCRtpTransceiver.setCodecPreferences"
         function preferCodec(sdp, codecName) {
             var info = splitLines(sdp);
 
@@ -4091,6 +4088,9 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
                 if (typeof StreamsHandler !== 'undefined') {
                     StreamsHandler.setHandlers(stream, true, connection);
                 }
+                var isAudioMuted = stream.getAudioTracks().filter(function(track) {
+                    return track.enabled;
+                }).length === 0;
 
                 connection.streamEvents[stream.streamid] = {
                     stream: stream,
@@ -4099,7 +4099,7 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
                     userid: connection.userid,
                     extra: connection.extra,
                     streamid: stream.streamid,
-                    isAudioMuted: true
+                    isAudioMuted: isAudioMuted
                 };
 
                 try {
@@ -5843,7 +5843,7 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
         };
 
         connection.trickleIce = true;
-        connection.version = '3.6.9';
+        connection.version = '3.7.0';
 
         connection.onSettingLocalDescription = function(event) {
             if (connection.enableLogs) {
