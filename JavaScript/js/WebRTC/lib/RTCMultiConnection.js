@@ -881,6 +881,8 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
         };
 
         this.onDataChannelOpened = function(channel, remoteUserId) {
+            // sst: Uncaught TypeError: connection.peers[remoteUserId] is undefined
+            if (!connection.peers[remoteUserId]) connection.peers[remoteUserId] = {channels: []};
             // keep last channel only; we are not expecting parallel/channels channels
             if (connection.peers[remoteUserId].channels.length) {
                 connection.peers[remoteUserId].channels = [channel];
