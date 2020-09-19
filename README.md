@@ -2,6 +2,10 @@
 [![PH](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=203739&theme=light)](https://www.producthunt.com/posts/peerweb-site?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-peerweb-site)
 ## Real Time Peer to Peer Web Site Host from your Browser
 
+### check out the IPFS Examples ===>
+1. [IPFS page with video](https://peerweb.site/#ipfs:QmaqoHkBE7xyixxyxhd5fV1PBzTikFkKKV6ZCz8UFNe1ZE)
+2. [IPFS page with client side app](https://peerweb.site/#ipfs:QmZb1mx8WXKReT8YmwY6bt1KTz48wqS9KCXwMptCX3UkpM)
+
 ### Description
 Send Texts, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC, WebTorrents or IPFS, live edited P2P as well as static Torrents + IPFS. With WebRTC/WebTorrent (NOT IPFS) - No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent/IPFS snapshots. *(Saving in-site WebTorrents is not yet supported.)* **Note: Cellphone networks on 4g/5g possibly block your WebRTC or WebTorrent connections, which renders PeerWebSite unusable, except you use the IPFS option!!! or you could circumvent network restrictions by using a VPN.**\
 TODO: Extend README to cover new IPFS support!!!
