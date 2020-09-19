@@ -27,25 +27,25 @@ export class MasterWebRTC {
 		this.connection.iceServers = [
 			{
 				urls: [
+					'stun:stun01.sipphone.com',
+					'stun:stun.l.google.com:19302?transport=udp',
+					'turn:turn.anyfirewall.com:443?transport=tcp'/*,
 					'stun:stun.schlund.de',
 					'stun:stun.l.google.com:19302',
 					'stun:stun1.l.google.com:19302',
 					'stun:stun2.l.google.com:19302',
-					'stun:stun.l.google.com:19302?transport=udp',
-					'turn:turn.anyfirewall.com:443?transport=tcp',
-					'stun:stun01.sipphone.com',
+					'stun:stunserver.org',
 					'stun:stun.ekiga.net',
 					'stun:stun.fwdnet.net',
 					'stun:stun.ideasip.com',
 					'stun:stun.iptel.org',
 					'stun:stun.rixtelecom.se',
-					'stun:stunserver.org',
 					'stun:stun.softjoys.com',
 					'stun:stun.voiparound.com',
 					'stun:stun.voipbuster.com',
 					'stun:stun.voipstunt.com',
 					'stun:stun.voxgratia.org',
-					'stun:stun.xten.com'
+					'stun:stun.xten.com'*/
 				]
 			},
 			{
