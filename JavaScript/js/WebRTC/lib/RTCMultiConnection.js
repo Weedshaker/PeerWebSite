@@ -2662,6 +2662,11 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
             if (!peer) {
                 return;
             }
+            // sst: taken from version 3.6.9 (testing this after experiencing lost of connections)
+            if(peer.signalingState != "stable") {
+                console.log("Negotiation skipped in stable");
+                return;
+            }
 
             config.onPeerStateChanged({
                 iceConnectionState: peer.iceConnectionState,
