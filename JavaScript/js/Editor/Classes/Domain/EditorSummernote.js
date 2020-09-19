@@ -14,7 +14,7 @@ import 'summernote/summernote';
 // plugins
 import 'Editor/lib/summernote-ext-filedialog.js';
 import 'Editor/Classes/Helper/summernote-image-shapes.js';
-import 'Editor/Classes/Helper/summernote-plugin-image-download.js';
+//import 'Editor/Classes/Helper/summernote-plugin-image-download.js';
 
 // summernote uses this icons: https://fontawesome.com/icons [jspm_packages/github/summernote/summernote@0.8.16/summernote-bs4.css]
 
