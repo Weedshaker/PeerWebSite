@@ -22,19 +22,47 @@ export class MasterWebRTC {
 		//https://github.com/muaz-khan/RTCMultiConnection-Server
 		//this.connection.socketURL = 'https://webrtcweb.com:9002/';
 		this.connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/'; // cd into repo: npm install --production / node server.js
-		this.connection.iceServers = [{
-			'urls': [
-				'stun:stun.l.google.com:19302',
-				'stun:stun1.l.google.com:19302',
-				'stun:stun2.l.google.com:19302',
-				'stun:stun.l.google.com:19302?transport=udp',
-			]
-		},
-		{
-			url: 'turn:numb.viagenie.ca',
-			credential: 'muazkh',
-			username: 'webrtc@live.com'
-		}];
+		//https://gist.github.com/yetithefoot/7592580
+		// test at> https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/
+		this.connection.iceServers = [
+			{
+				// stun:numb.viagenie.ca [weedshaker@gmail.com:peerwebsite]
+				urls: 'stun:numb.viagenie.ca',
+				credential: 'peerwebsite',
+				username: 'weedshaker@gmail.com'
+			},
+			{
+				urls: [
+					'stun:stun.l.google.com:19302',
+					'stun:stun1.l.google.com:19302',
+					'stun:stun2.l.google.com:19302',
+					'stun:stun.l.google.com:19302?transport=udp'
+				]
+			},
+			{url:'stun:stun.schlund.de'},
+			{
+				urls: 'turn:turn.anyfirewall.com:443?transport=tcp',
+				credential: 'webrtc',
+				username: 'webrtc'
+			},
+			{url:'stun:stun01.sipphone.com'},
+			{url:'stun:stun.ekiga.net'},
+			{url:'stun:stun.fwdnet.net'},
+			{url:'stun:stun.ideasip.com'},
+			{url:'stun:stun.iptel.org'},
+			{url:'stun:stun.rixtelecom.se'},
+			{url:'stun:stunserver.org'},
+			{url:'stun:stun.softjoys.com'},
+			{url:'stun:stun.voiparound.com'},
+			{url:'stun:stun.voipbuster.com'},
+			{url:'stun:stun.voipstunt.com'},
+			{url:'stun:stun.voxgratia.org'},
+			{url:'stun:stun.xten.com'}
+		];
+		this.connection.sdpConstraints.mandatory = {
+			OfferToReceiveAudio: false,
+			OfferToReceiveVideo: false
+		};
 		this.connection.session = {
 			data: true,
 			audio: false,
