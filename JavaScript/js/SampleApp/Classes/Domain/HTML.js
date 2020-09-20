@@ -19,7 +19,7 @@ export class HTML extends MasterHTML {
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				const header = $(`<header>
 					<div id="info" class="flex">
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.7; Visit Github for more Infos! Use a VPN or IPFS, if your cell phone network blocks connections!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.7; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
 				if (!isSender) {
@@ -42,8 +42,8 @@ export class HTML extends MasterHTML {
 				if (!isSender) this.addQrCode(headerReceiver, undefined, 'receiverLoading');
 				// controls
 				let controls = $('<div id="controls"></div>')
-				const webrtcButton = this.createWebrtcControls(controls, connection, isSender, headerReceiver);
 				this.createIpfsControls(controls);
+				const webrtcButton = this.createWebrtcControls(controls, connection, isSender, headerReceiver);
 				const counterWebTorrent = this.createWebtorrentControls(controls, isSender, headerReceiver);
 				this.containers.push(controls);
 				// main containers
@@ -113,6 +113,7 @@ export class HTML extends MasterHTML {
 			// update the clipboard
 			clipboard.val(location.href);
 			this.copyToClipBoard('clipboardInput');
+			this.informOnce('buttonWebRTC');
 		});
 		return button;
 	}
@@ -124,7 +125,7 @@ export class HTML extends MasterHTML {
 			e.target.blur();
 		});
 		controls.append(input);
-		let button = $(`<button id="buttonIPFS" class="mui-btn mui-btn--primary"><span class="btnText">IPFS (permanent):<br>Take Snapshot & Copy Link</span><span class="qr"></span></button>`);
+		let button = $(`<button id="buttonIPFS" class="mui-btn mui-btn--primary"><span class="btnText">IPFS (rather permanent):<br>Take Snapshot & Copy Link</span><span class="qr"></span></button>`);
 		controls.append(button);
 		button.click(event => {
 			this.copyToClipBoard('inputIPFS');
@@ -179,6 +180,7 @@ export class HTML extends MasterHTML {
 				inputWebTorrent.val(location.href);
 				this.copyToClipBoard('inputWebTorrent');
 				torrent.on('error', error => inputWebTorrent.val(`WebTorrent failed: ${error}`));
+				this.informOnce('buttonWebTorrent');
 			});
 		});
 		this.WebTorrentSeeder.client.on('error', () => {
@@ -226,7 +228,7 @@ export class HTML extends MasterHTML {
 	}
 	addQrCode($el, text = location.href, loadingClass = 'blobLoading') {
 		const $oldImg = $el.find('img');
-		const src = `https://api.qrserver.com/v1/create-qr-code/?data="${encodeURI(text).replace('#', '%23').replace(/&/g, '%26')}"`.trim();
+		const src = `https://api.qrserver.com/v1/create-qr-code/?data="${this.encode(text)}"`;
 		if (!$oldImg || !$oldImg.length || $oldImg.attr('src') !== src) {
 			const img = document.createElement('img');
 			img.src = src;
@@ -252,6 +254,30 @@ export class HTML extends MasterHTML {
 				}
 				$span.toggleClass('open');
 			});
+			this.addTinyUrl($el, text);
+		}
+	}
+	addTinyUrl($el, text = location.href) {
+		const $oldLink = $el.find('a');
+		const resource = `https://tinyurl.com/api-create.php?url=${this.encode(text)}`;
+		if (!$oldLink || !$oldLink.length || $oldLink.attr('resource') !== resource) {
+			fetch(resource).then(res => res.text()).then(tinyUrl => {
+				const link = document.createElement('a');
+				link.href = tinyUrl;
+				link.setAttribute('resource', resource);
+				link.textContent = tinyUrl;
+				const $span = $el.find('.qr');
+				$span.append(link);
+			});
+		}
+	}
+	encode(text) {
+		return encodeURIComponent(text.trim());
+	}
+	informOnce(name = 'warn', text = 'Use a VPN or IPFS, if your network blocks WebRTC/WebTorrent connections! Especially 3g/4g networks tend to block ice servers.') {
+		if (!localStorage.getItem(name)) {
+			alert(text)
+			localStorage.setItem(name, 'informed')
 		}
 	}
 }
