@@ -197,7 +197,7 @@ span.qr.open {
     background-color: darkslategrey;
     opacity: 0.95;
     display: flex;
-    flex-flow: column;
+    flex-flow: column-reverse;
     position: fixed;
     top: 0;
     left: 0;
@@ -218,7 +218,7 @@ span.qr.open > a {
     font-size: clamp(0.9rem, 3vw + 1rem, 7.2rem);
     line-height: 1;
     word-break: break-all;
-    padding-bottom: 10px;
+    padding-top: 10px;
 }
 @keyframes blinker {
     50% {
