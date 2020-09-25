@@ -149,6 +149,8 @@ export class App extends MasterApp {
 		// logic for sender
 		} else if (reload && location.hash && !(localStorage.getItem('channels') || '').includes(`[${location.hash}]`)) {
 			location.reload();
+		} else if (this.checkHashType(location.hash) === 'ipfs') {
+			this.IPFS.cat(location.hash.substr(6)).then(text => this.Editor.setData(undefined, text, 'code')).catch(error => $('#sender').text(`An Error occured! ${error}`));
 		}
 	}
 	setReceiverOrSender(isSender){

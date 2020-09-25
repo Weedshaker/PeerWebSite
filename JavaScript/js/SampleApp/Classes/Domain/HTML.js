@@ -19,7 +19,7 @@ export class HTML extends MasterHTML {
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				const header = $(`<header>
 					<div id="info" class="flex">
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.7; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.8; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
 				if (!isSender) {
@@ -28,7 +28,7 @@ export class HTML extends MasterHTML {
 						event.preventDefault();
 						this.setHash(location.hash.substr(1));
 						this.saveData(undefined, this.parent.receiveCont[0].innerHTML);
-						if(this.confirmData(undefined, this.parent.receiveCont[0].innerHTML)){
+						if(this.parent.checkHashType(location.hash) === 'ipfs' || this.confirmData(undefined, this.parent.receiveCont[0].innerHTML)){
 							location.reload();
 						}else{
 							this.removeHashFromChannels(location.hash.substr(1));
@@ -201,7 +201,7 @@ export class HTML extends MasterHTML {
 		}
 	}
 	saveData(key = location.hash, data = this.Editor.getData()){
-		if (key && data && data.length >= 20) localStorage.setItem(key, data);
+		if (key && data && data.length >= 10) localStorage.setItem(key, data);
 	}
 	confirmData(key = location.hash, data = this.Editor.getData()){
 		return localStorage.getItem(key) === data;
