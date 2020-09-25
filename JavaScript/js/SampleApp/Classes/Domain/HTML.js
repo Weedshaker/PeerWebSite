@@ -19,7 +19,7 @@ export class HTML extends MasterHTML {
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				const header = $(`<header>
 					<div id="info" class="flex">
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.8; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.0; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
 				if (!isSender) {
@@ -119,12 +119,30 @@ export class HTML extends MasterHTML {
 	}
 	createIpfsControls(controls) {
 		// ipfs
-		let input = $(`<input tabindex="-1" id="inputIPFS" class="mui-panel" placeholder="CID...">`);
-		input.keypress(function (e) {
-			e.preventDefault();
-			e.target.blur();
+		// https://www.muicss.com/docs/v1/css-js/dropdowns
+		const dropwDown = $(`<script src="//cdn.muicss.com/mui-0.10.3/js/mui.js"></script>
+			<div id="dropDownIPFS" class="mui-dropdown">
+				<input id="inputIPFS" tabindex="-1" data-mui-toggle="dropdown" class="mui-panel" placeholder="CID..." type="text">
+				<ul class="mui-dropdown__menu">
+					<li><a href="#">Option 1</a></li>
+					<li><a href="baaahhhh">Option 2</a></li>
+					<li><a href="#">Option 3</a></li>
+					<li><a href="#">Option 4</a></li>
+				</ul>
+				<span class="mui-caret"></span>
+			</div>`);
+		const input = dropwDown.find('input');
+		const ul = dropwDown.find('ul');
+		console.log('changed', this.IPFS);
+		//this.IPFS.key.list().then(keys => console.log('key', keys)).catch(error => console.warn('could not get keys from ipfs'));
+		controls.append(dropwDown);
+		dropwDown.click(event => {
+			if (event.target.tagName === 'A') {
+				event.preventDefault();
+				console.log('changed', event.target.href, event.target.textContent);
+				input.val(event.target.textContent)
+			}
 		});
-		controls.append(input);
 		let button = $(`<button id="buttonIPFS" class="mui-btn mui-btn--primary"><span class="btnText">IPFS (rather permanent):<br>Take Snapshot & Copy Link</span><span class="qr"></span></button>`);
 		controls.append(button);
 		button.click(event => {

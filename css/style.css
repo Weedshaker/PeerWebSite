@@ -148,7 +148,7 @@ body > *, body > .panel {
     margin-bottom: 5px;
     min-height: 5vh;
 }
-#controls > * {
+#controls > *, #controls > * > #inputIPFS {
     height: auto;
     min-height: 54px;
     width: 50%;
@@ -232,8 +232,31 @@ span.qr.open > a {
 #controls > button:active {
     background-color: darkcyan;
 }
-#controls > #inputWebTorrent, #controls > #inputIPFS, #controls > #clipboardInput {
+#controls > #inputWebTorrent, #controls > #clipboardInput {
     cursor: not-allowed;
+}
+#controls > #dropDownIPFS > #inputIPFS {
+    cursor: pointer;
+    height: 100%;
+    margin-top: 0;
+    width: 100%;
+
+}
+#controls > #dropDownIPFS > .mui-dropdown__menu {
+    width: 100%;
+}
+#controls > #dropDownIPFS > .mui-dropdown__menu li a {
+    color: #2196F3;
+}
+#controls > #dropDownIPFS > .mui-dropdown__menu.mui--is-open ~ .mui-caret {
+    transform: rotate(180deg);
+}
+#controls > #dropDownIPFS > .mui-caret {
+    color: #2196F3;
+    position: relative;
+    top: -85%;
+    float: right;
+    margin-right: 5px;
 }
 .counter {
     display: block;
