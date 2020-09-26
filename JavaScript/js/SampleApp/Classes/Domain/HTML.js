@@ -133,8 +133,8 @@ export class HTML extends MasterHTML {
 			</div>`);
 		const input = dropwDown.find('input');
 		const ul = dropwDown.find('ul');
-		console.log('changed', this.IPFS);
-		//this.IPFS.key.list().then(keys => console.log('key', keys)).catch(error => console.warn('could not get keys from ipfs'));
+		// TODO: write the list of keys and add option to add new keys
+		//this.IPFS.key().then(key => key.list().then(keys => console.log('key', keys)).catch(error => console.warn('could not get keys from ipfs')));
 		controls.append(dropwDown);
 		dropwDown.click(event => {
 			if (event.target.tagName === 'A') {
@@ -149,14 +149,27 @@ export class HTML extends MasterHTML {
 			this.copyToClipBoard('inputIPFS');
 			const data = this.Editor.getData();
 			this.IPFS.add('peerWebSite.txt', data).then(file => {
-				// default behavior
-				this.setHash(`ipfs:${file.cid}`);
-				this.saveData();
-				this.addQrCode($(button), undefined, 'ipfsLoading');
-				// update the clipboard
-				input.val(location.href);
-				this.copyToClipBoard('inputIPFS');
-			}).catch(error => input.val(`IPFS failed: ${error}`));
+				// TODO: could not resolve at https://gateway.ipfs.io/ipns/QmSFo8isLbStgQaKEw8rMaG9tjD4HzwqiUrJ57sNUSFdFe
+				//http://localhost:3000/index_debug.html#ipfs:QmSFo8isLbStgQaKEw8rMaG9tjD4HzwqiUrJ57sNUSFdFe
+				//http://localhost:3000/index_debug.html#ipfs:Qmah5Q179iu7ZQn1DoUCy5f8vYkjdDty64BsMzhsL9j3Zv
+				// always got: ipfs resolve -r /ipns/QmSFo8isLbStgQaKEw8rMaG9tjD4HzwqiUrJ57sNUSFdFe: could not resolve name
+				// for this I stopped development on this branch until I can have a working example running here
+				//https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/NAME.md#ipfsnameresolvevalue-options
+				//https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/KEY.md
+				this.IPFS.name().then(name => {
+					name.publish(file.cid, {allowOffline: false}).then(ipnsObj => {
+						console.log('publish', file.cid, ipnsObj);
+						name.sst_resolve(ipnsObj.name, {nocache: true}).then(cid => console.log('resolve', cid))
+						// default behavior
+						this.setHash(`ipfs:${ipnsObj.name}`);
+						this.saveData();
+						this.addQrCode($(button), undefined, 'ipfsLoading');
+						// update the clipboard
+						input.val(location.href);
+						this.copyToClipBoard('inputIPFS');
+					}).catch(error => input.val(`IPFS publish failed: ${error}`));
+				});
+			}).catch(error => input.val(`IPFS add failed: ${error}`));
 		});
 		return button;
 	}

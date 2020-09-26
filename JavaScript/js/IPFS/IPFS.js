@@ -31,4 +31,21 @@ export class IPFS {
         if (url.includes(this.baseUrl) && (match = url.match(/([^\/]+$)/))) return Promise.all([this.isIdle, this.node]).then(results => results[1].pin.add(match[0]));
         return null;
     }
+    key(){
+        return this.node.then(node => node.key);
+    }
+    name(){
+        return this.node.then(node => Object. assign(node.name, {
+            sst_resolve: (value, options) => {
+                const chunksIterator = node.name.resolve(value, options);
+                const chunks = [];
+                const consume = obj => {
+                    if (obj.done) return chunks.toString();
+                    chunks.push(obj.value);
+                    return chunksIterator.next().then(consume);
+                };
+                return chunksIterator.next().then(consume); // kick off the recursive function
+            }
+        }));
+    }
 }

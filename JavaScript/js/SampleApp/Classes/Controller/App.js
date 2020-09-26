@@ -136,7 +136,10 @@ export class App extends MasterApp {
 				}
 				$('.headerReceiver > .counterWebRTC').hide();
 			} else if (this.checkHashType(location.hash) === 'ipfs') {
-				this.IPFS.cat(location.hash.substr(6)).then(text => this.HTML.setData(this.receiveCont, {message: text})).catch(error => $('#receiver').text(`An Error occured! ${error}`));
+				// TODO: only resolve for ipns cids
+				this.IPFS.name().then(name => {
+					name.sst_resolve(location.hash.substr(6), {nocache: true}).then(cid => this.IPFS.cat(cid).then(text => this.HTML.setData(this.receiveCont, {message: text})).catch(error => $('#receiver').text(`An Error occured! ${error}`))).catch(error => $('#receiver').text(`An Error occured! ${error}`));
+				});
 				$('.headerReceiver > .counterWebRTC').hide();
 				$('.headerReceiver > .counterWebTorrent').hide();
 			} else {
