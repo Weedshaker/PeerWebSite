@@ -14,7 +14,7 @@ import 'summernote/summernote';
 // plugins
 import 'Editor/lib/summernote-ext-filedialog.js';
 import 'Editor/Classes/Helper/summernote-image-shapes.js';
-import 'Editor/Classes/Helper/summernote-plugin-image-download.js';
+//import 'Editor/Classes/Helper/summernote-plugin-image-download.js';
 
 // summernote uses this icons: https://fontawesome.com/icons [jspm_packages/github/summernote/summernote@0.8.16/summernote-bs4.css]
 
@@ -177,13 +177,17 @@ export class EditorSummernote extends MasterEditor {
 				node.classList.add('ipfsLoading');
 				// https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/FILES.md#returns
 				this.IPFS.add(result.name, result.content).then(file => {
-					node.addEventListener('load', event => {
+					if (result.type[0] === 'img') {
+						node.addEventListener('load', event => {
+							node.classList.remove('ipfsLoading');
+							this.changeEvent(this.getData(), container[0].id);
+						});
+					} else {
 						node.classList.remove('ipfsLoading');
-						this.changeEvent(this.getData(), container[0].id);
-					});
-					// static error handling which also works at receiver
-					node.setAttribute('onerror', `${this.IPFS.ipfs_onerror}('${file.link}', '${result.type}', this);`);
-					result.source[result.type] = file.link;
+					}
+                    // static error handling which also works at receiver
+                    node.setAttribute('onerror', `${this.IPFS.ipfs_onerror}('${file.link}', '${result.type}', this);`);
+					result.source[result.type[1]] = file.link;
 					// video wouldn't play on seeder if not newly set
 					if (result.video) {
 						result.video.innerHTML = result.video.innerHTML;

@@ -50,7 +50,7 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="fileType" id="fileType2" value="ipfs" ${fileType === 'ipfs' || !fileType ? 'checked' : ''}>
                                 <label class="form-check-label" for="fileType2">
-                                IPFS: Distributed file system (permanent)
+                                IPFS: Distributed file system (rather permanent)
                                 </label>
                             </div>
                             <div class="form-check">

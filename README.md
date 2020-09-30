@@ -2,9 +2,13 @@
 [![PH](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=203739&theme=light)](https://www.producthunt.com/posts/peerweb-site?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-peerweb-site)
 ## Real Time Peer to Peer Web Site Host from your Browser
 
+### check out the IPFS Examples ===>
+1. [IPFS page with video](https://peerweb.site/#ipfs:QmaqoHkBE7xyixxyxhd5fV1PBzTikFkKKV6ZCz8UFNe1ZE)
+2. [IPFS page with client side app](https://peerweb.site/#ipfs:QmZb1mx8WXKReT8YmwY6bt1KTz48wqS9KCXwMptCX3UkpM)
+
 ### Description
-TODO: Extend description to cover new IPFS support!!!\
-Send Texts, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC, WebTorrents or IPFS, live edited P2P as well as static Torrents + IPFS. With WebRTC/WebTorrent (NOT IPFS) - No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent/IPFS snapshots. *(Saving in-site WebTorrents is not yet supported.)* **Note: Cellphone networks on 4g/5g possibly block your WebRTC or WebTorrent connections, which renders PeerWebSite unusable, except you use the IPFS option!!! or you could circumvent network restrictions by using a VPN.**
+Send Texts, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC, WebTorrents or IPFS, live edited P2P as well as static Torrents + IPFS. With WebRTC/WebTorrent (NOT IPFS) - No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent/IPFS snapshots. *(Saving in-site WebTorrents is not yet supported.)* **Note: Cellphone networks on 4g/5g possibly block your WebRTC or WebTorrent connections, which renders PeerWebSite unusable, except you use the IPFS option!!! or you could circumvent network restrictions by using a VPN.**\
+TODO: Extend README to cover new IPFS support!!!
 
 <img src="https://weedshaker.github.io/PeerWebSite/img/screenshot1.png" align="left" width="40%">
 <img src="https://weedshaker.github.io/PeerWebSite/img/screenshot2.png" align="right" width="40%">
@@ -23,6 +27,8 @@ Send Texts, Pictures and Videos embedded in HTML with CSS and JavaScript through
     1. Open the browsers console and type: `getAllTorrents()`. Save the text file and copy/paste each of the magnetURIs to your [WebTorrent Desktop](https://webtorrent.io/desktop/) client. Wait until WebTorrent Desktop has downloaded all magnetURI/files.
     2. open the browsers console and type: `getAllTorrentFiles()`. Save the files and load each of the files separately into your [WebTorrent Desktop](https://webtorrent.io/desktop/) client. To re-up your site, just reload the same files into [WebTorrent Desktop](https://webtorrent.io/desktop/).
 After this is done, you can close your tab at peerweb and your site stays online as long as WebTorrent Desktop hosts it or other people start seeding your peerweb.site.
+
+6. **Tools for Videos and Gifs** [Convert videos to mp4, gif from local or remote file](https://ezgif.com/) & [download video from youtube or twitter](https://www.downloadhelper.net/)
 
 
 ### Use Cases
@@ -44,7 +50,10 @@ Give me a star on Github, which will motivate me to tide up the code and write D
 This beta application has been only tested in Chrome. Don't expect miracles, it's a pure hobby, side project and due to bleeding edge sometimes buggy.
 
 ### Road map
-1. Tide up Code, get rid of jspm, fix Tests, move hosting to [IPFS](https://ipfs.io/), move UI to WebComponents based Event Driven Architecture, replace http://goqr.me/api/ with local qr code generator (this could be a privacy concern, if this ever gets high usage as well as github as a hoster itself, just to keep this in mind.)
+0. get independence of gateway.ipfs.io node by static written error handling selecting an other node [see ipfs docs](https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/DHT.md)\
+**added a possible solution with dht.query at branch ipfsUrlErrorHandling but somehow dht.query never found any addresses, for that reason the ipfsUrlErrorHandling branch could not be fully tested**
+
+1. Tide up Code, make font-sizes variable (expl. style.css:249), get rid of jspm, fix Tests, move hosting to [IPFS](https://ipfs.io/), move UI to WebComponents based Event Driven Architecture, replace http://goqr.me/api/ with local qr code generator (this could be a privacy concern, if this ever gets high usage as well as github as a hoster itself and tinyurl... just to keep this in mind.)
 
 2. Increase stability by more carefully handle webtorrent and webrtc events, likely with a [es6 Proxy Wrapper](https://weedshaker.github.io/ProxifyJS/)
 
@@ -52,7 +61,20 @@ This beta application has been only tested in Chrome. Don't expect miracles, it'
 
 4. Search Engine based on [OrbitDB](https://github.com/orbitdb/orbit-db) (by km/miles-radius, topic, etc., to opt in your peerwebsite.)
 
-5. Better IPFS support: video [Example](https://github.com/ipfs/js-ipfs/tree/master/examples/browser-video-streaming), consider deep integration analog webtorrent, check out if pinning also starts sharing the file at receiver
+5. Better IPFS support: video [Example](https://github.com/ipfs/js-ipfs/tree/master/examples/browser-video-streaming), consider deep integration analog webtorrent, check out if pinning also starts sharing the file at receiver, unpin when deleting ipfs content node, add static cid (ipns) for changeable profile/site with key export, key sharing
+
+6. IPFS + IPNS for static addresses, which would allow comments, chat or email type communication
+
+### Vision
+1. Best user experience of creating content. WYSIWYG, Grid and other Layouts, Markdown, Video, Pics, Data, Data (Folder) Structures, Frontend Code
+
+2. Best experience and choice of transferring or store content.
+
+3. Best choice of how to be discovered/searched
+
+4. Best experience of receiving/viewing content
+
+5. Chance of being rewarded for valuable content on a democratic level
 
 ### Tests
 ~~1. Simple pictures + text snapshot (webtorrent) hosting test from my Raspberry Pi 3b+ by [webtorrent-hybrid](https://github.com/webtorrent/webtorrent-hybrid). Step 1: peerweb.site console: `getAllTorrents()`. Step 2: copy/paste magnetURI for the peerWebSite.txt (html) and two magnetURIs for pictures into webtorrent-hybrid to download the files. Step 3: `webtorrent-hybrid seed [path/file]` to host it permanently at: https://peerweb.site/#magnet:?xt=urn:btih:123646487058d49b7d25d59842cd04862eee8822&dn=peerWebSite.txt&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&tr=wss%3A%2F%2Ftracker.fastcast.nz ~~up since May 16th 2020~~ failed after 8 hours. Trying to resolve the issue at [webtorrent-hybrid/issues](https://github.com/webtorrent/webtorrent-hybrid/issues/67). Update: After using `--verbose` flag it has been Up since the 27th of May.~~
@@ -61,6 +83,6 @@ This beta application has been only tested in Chrome. Don't expect miracles, it'
 Type `App` in the dev-tools console to expose the whole peerweb.site application. Interesting is `App.WebTorrentReceiver.client` for debugging the WebTorrent client.
 
 ### Big Thanks to
-Muaz Khan, Feross and all others who contributed to this repo and this repos dependencies! Also thanks for your support, using this application, spreading the word and a github star ;-)
+Muaz Khan, Juan Benet, Feross and all others who contributed to this repo and this repos dependencies! Also thanks for your support, using this application, spreading the word and a github star ;-)
 
 *PeerWebSite is released under MIT License . Copyright (c) Silvan Strübi.*

@@ -1,3 +1,8 @@
+img[download$=".jpg"], img[alt$=".jpg"], img[download$=".jpeg"], img[alt$=".jpeg"] {
+    background-image: url("../img/image.svg");
+    min-height: 24px;
+    min-width: 24px;
+}
 body > header {
     margin: 5px 0;
     display: flex;
@@ -185,10 +190,14 @@ span.qr > img {
     max-height: 50px;
     opacity: 0.8;
 }
+span.qr > a {
+    display: none;
+}
 span.qr.open {
     background-color: darkslategrey;
     opacity: 0.95;
     display: flex;
+    flex-flow: column-reverse;
     position: fixed;
     top: 0;
     left: 0;
@@ -201,6 +210,20 @@ span.qr.open > img {
     margin: auto;
     max-height: 100%;
     max-width: 100%;
+}
+span.qr.open > a {
+    animation: blinker 1.2s linear 1;
+    display: block;
+    color: white;
+    font-size: clamp(0.9rem, 3vw + 1rem, 7.2rem);
+    line-height: 1;
+    word-break: break-all;
+    padding-top: 10px;
+}
+@keyframes blinker {
+    50% {
+        opacity: 0.1;
+    }
 }
 #controls > input {
     color: green;
@@ -223,7 +246,12 @@ span.qr.open > img {
     color: rgb(198, 195, 221);
 }
 /* EditorSummernote.js */
-:empty.blobLoading, :empty.torrentLoading, :empty.ipfsLoading, .ipfsLoading {
+/* TODO: make font-sizes variable
+span[style="font-size: 36px;"] {
+    font-size: clamp(1rem, 5vw, 36px) !important;
+}
+*/
+:empty.blobLoading, :empty.torrentLoading, :empty.ipfsLoading, .ipfsLoading, :empty.receiverLoading, .receiverLoading {
     display: inline-block;
 	width: 30px;
 	height: 30px;
@@ -232,6 +260,7 @@ span.qr.open > img {
 	border-radius: 50%;
 	box-shadow: 0 0 25px 2px lightgreen;
     animation: spin 1s linear infinite;
+    background-image: none;
 }
 :empty.torrentLoading{
     border-color: red;
@@ -240,6 +269,10 @@ span.qr.open > img {
 :empty.ipfsLoading, .ipfsLoading {
     border-color: blue;
     box-shadow: 0 0 25px 2px lightblue;
+}
+:empty.receiverLoading, .receiverLoading {
+    border-color: rgb(88, 88, 88);
+    box-shadow: none;
 }
 @keyframes spin{
     from{transform: rotate(0deg); opacity: 0.2;}

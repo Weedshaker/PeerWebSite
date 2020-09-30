@@ -96,8 +96,10 @@ export class App extends MasterApp {
 	connectHash(reload = true){
 		// logic for receiver
 		if (!this.isSender) {
+			// triggered by hashchange
 			if (reload) {
 				location.reload();
+			// manually triggered
 			} else if (this.checkHashType(location.hash) === 'magnet') {
 				const torrent = this.WebTorrentReceiver.add(location.hash.substr(1), undefined, undefined, undefined, undefined, torrent => {
 					if (torrent.files && torrent.files[0] && torrent.files[0].name.includes('peerWebSite')) {
@@ -144,6 +146,11 @@ export class App extends MasterApp {
 				this.originalHash = location.hash;
 				$('.headerReceiver > .counterWebTorrent').hide();
 			}
+		// logic for sender
+		} else if (reload && location.hash && !(localStorage.getItem('channels') || '').includes(`[${location.hash}]`)) {
+			location.reload();
+		} else if (this.checkHashType(location.hash) === 'ipfs') {
+			this.IPFS.cat(location.hash.substr(6)).then(text => this.Editor.setData(undefined, text, 'code')).catch(error => $('#sender').text(`An Error occured! ${error}`));
 		}
 	}
 	setReceiverOrSender(isSender){
