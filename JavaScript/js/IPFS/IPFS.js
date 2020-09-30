@@ -3,7 +3,11 @@ export class IPFS {
         // https://ipfs.io/ipfs/QmYUpUyrLNaeBBA9oHizeXsXFZjJV7KCWVMkZS4nvHcCTR
         // should be 'ipfs://' but browsers do not yet support that url scheme, once this gateway would get blocked or overloaded the files have to be fixed through the service worker
         this.baseUrl = 'https://gateway.ipfs.io/ipfs/';
-        this.node = window.Ipfs.create();
+        // https://github.com/ipfs/js-ipfs/blob/master/examples/browser-ipns-publish/index.js
+        this.node = window.Ipfs.create({
+            pass: "01234567890123456789",
+            EXPERIMENTAL: { ipnsPubsub: true },
+          });
         this.isIdle = new Promise(resolve => document.readyState !== 'complete' ? window.addEventListener('load', event => setTimeout(() => resolve(), 60000)) : setTimeout(() => resolve(), 60000));
     }
     add(path, content){
