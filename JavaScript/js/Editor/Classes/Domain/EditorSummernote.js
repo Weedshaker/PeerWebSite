@@ -185,13 +185,13 @@ export class EditorSummernote extends MasterEditor {
 					} else {
 						node.classList.remove('ipfsLoading');
 					}
-					let errorCounter = 0;
-					node.onerror = error => {
-						if (errorCounter < 3) {
-							node[result.type[1]] = node[result.type[1]];
-						}
-						errorCounter++;
-					};
+					// static error handling which also works at receiver
+					if (result.type[0] === 'a') {
+						node.setAttribute('download', result.name);
+						node.setAttribute('onclick', `${this.IPFS.ipfs_onerror}(event, '${file.link}', '${result.name}', '${result.type}', '${!!result.video}', this);`);
+					} else {
+						result.source.setAttribute('onerror', `${this.IPFS.ipfs_onerror}(null, '${file.link}', '${result.name}', '${result.type}', '${!!result.video}', this);`);
+					}
 					result.source[result.type[1]] = file.link;
 					// video wouldn't play on seeder if not newly set
 					if (result.video) {

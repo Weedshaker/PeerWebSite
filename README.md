@@ -50,9 +50,6 @@ Give me a star on Github, which will motivate me to tide up the code and write D
 This beta application has been only tested in Chrome. Don't expect miracles, it's a pure hobby, side project and due to bleeding edge sometimes buggy.
 
 ### Road map
-0. get independence of gateway.ipfs.io node by static written error handling selecting an other node [see ipfs docs](https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/DHT.md)\
-**added a possible solution with dht.query at branch ipfsUrlErrorHandling but somehow dht.query never found any addresses, for that reason the ipfsUrlErrorHandling branch could not be fully tested**
-
 1. Tide up Code, make font-sizes variable (expl. style.css:249), get rid of jspm, fix Tests, move hosting to [IPFS](https://ipfs.io/), move UI to WebComponents based Event Driven Architecture, replace http://goqr.me/api/ with local qr code generator (this could be a privacy concern, if this ever gets high usage as well as github as a hoster itself and tinyurl... just to keep this in mind.)
 
 2. Increase stability by more carefully handle webtorrent and webrtc events, likely with a [es6 Proxy Wrapper](https://weedshaker.github.io/ProxifyJS/)
@@ -63,7 +60,7 @@ This beta application has been only tested in Chrome. Don't expect miracles, it'
 
 5. Better IPFS support: video [Example](https://github.com/ipfs/js-ipfs/tree/master/examples/browser-video-streaming), consider deep integration analog webtorrent, check out if pinning also starts sharing the file at receiver, unpin when deleting ipfs content node, add static cid (ipns) for changeable profile/site with key export, key sharing
 
-6. IPFS + IPNS for static addresses, which would allow comments, chat or email type communication
+6. IPNS for static addresses, which would allow team editing, chat or email type communication (NOTE: IPNS is very slow, see ipnsSupport branch)
 
 ### Vision
 1. Best user experience of creating content. WYSIWYG, Grid and other Layouts, Markdown, Video, Pics, Data, Data (Folder) Structures, Frontend Code
@@ -72,7 +69,7 @@ This beta application has been only tested in Chrome. Don't expect miracles, it'
 
 3. Best choice of how to be discovered/searched
 
-4. Best experience of receiving/viewing content 
+4. Best experience of receiving/viewing content
 
 5. Chance of being rewarded for valuable content on a democratic level
 
