@@ -33,6 +33,22 @@ export class IPFS {
             return chunksIterator.next().then(consume); // kick off the recursive function
         });
     }
+    getBlobByFileCID(url) {
+        //QmQKaoJcU9QoHHgaSMZ4htAoSXHwBBx25oShbk2f5W1bh1
+        // <img src="https://gateway.ipfs.io/ipfs/QmQKaoJcU9QoHHgaSMZ4htAoSXHwBBx25oShbk2f5W1bh1#svg"></img>
+        return new Promise(resolve => {
+            const match = url.split('#');
+            let type = '';
+            if (match[0] && match[1] && (type = mime.getType(match[1], false))) {
+                this.cat(match[0], true).then(chunks => resolve(new Blob(chunks, { type }))).catch(error => {
+                    console.error(`SST_IPFS_onFetchError: Could not find ${url} nor findPeer at el:`, error);
+                    resolve(null)
+                });
+            } else {
+                resolve(null);
+            }
+        });
+    }
     pin(url){
         let match = null;
         if (url.includes(this.baseUrl) && (match = url.match(/([^\/]+$)/))) return Promise.all([this.isIdle, this.node]).then(results => results[1].pin.add(match[0]));

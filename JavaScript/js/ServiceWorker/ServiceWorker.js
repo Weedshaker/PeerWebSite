@@ -3,11 +3,12 @@
 import { Helper } from 'WebTorrent/Classes/Helper/Helper.js';
 
 export class ServiceWorker {
-	constructor(serviceWorkerPath = 'MasterServiceWorker.js', serviceWorkerScope = './', getBlobByFileNameArray, infoFuncs = []){
+	constructor(serviceWorkerPath = 'MasterServiceWorker.js', serviceWorkerScope = './', webTorrentGetBlobByFileNameArray, ipfsGetBlobByCidArray, infoFuncs = []){
 		this.serviceWorkerPath = serviceWorkerPath;
 		this.serviceWorkerScope = serviceWorkerScope;
 		// array of getBlobByFileName of webtorrent receiver [0] and seeder [1]
-		this.getBlobByFileNameArray = getBlobByFileNameArray;
+		this.webTorrentGetBlobByFileNameArray = webTorrentGetBlobByFileNameArray;
+		this.ipfsGetBlobByCidArray = ipfsGetBlobByCidArray;
 		this.infoFuncs = infoFuncs;
 		
 		this.name = 'ServiceWorker';
@@ -44,13 +45,13 @@ export class ServiceWorker {
 		this.messageChannel.port1.onmessage = (event) => {
 			if (event.data === '!!!ready') {
 				//console.log('@sw_helper Intercept is ready!');
-			} else if (Array.isArray(event.data) && event.data[0].includes('.')){
+			} else if (Array.isArray(event.data) && event.data[0].includes('/')){
 				let name = event.data[0].split('/').slice(-1)[0];
 				// Promise.all is not supported by jspm "buildConfig": { "transpileES6": true
 				const blobs = [];
-				const resolve = (newBlob) => {
+				const resolve = (newBlob, needsTwo = false) => {
 					blobs.push(newBlob);
-					if (blobs[0] === undefined || blobs[1] === undefined) return false;
+					if (needsTwo && (blobs[0] === undefined || blobs[1] === undefined)) return false;
 					const blob = blobs[0] || blobs[1];
 					if (!blob) {
 						this.Worker.postMessage([event.data, false]);
@@ -61,14 +62,15 @@ export class ServiceWorker {
 					return !!blob;
 				};
 				// only ask one instance of webtorrent when there is a magnetURI to resolve !!!if you change this, change equal at JavaScript/js/WebTorrent/Prototype/Domain/MasterWebTorrent.js.getBlobByFileName!!!
-				if(name.includes('magnet:') || name.includes('magnet/') || name.includes('?xt=urn:')){
+				if(name.includes('magnet:') || event.data[0].includes('magnet/') || name.includes('?xt=urn:')){
 					// promise returns null or blob
-					this.getBlobByFileNameArray[0](name).then(blob => resolve(blob));
-					resolve(null);
+					this.webTorrentGetBlobByFileNameArray[0](name).then(blob => resolve(blob));
+				}else if (event.data[0].includes('ipfs/')) {
+					this.ipfsGetBlobByCidArray[0](name).then(blob => resolve(blob));
 				}else{
 					// promise returns null or blob
-					this.getBlobByFileNameArray[0](name).then(blob => resolve(blob));
-					this.getBlobByFileNameArray[1](name).then(blob => resolve(blob));
+					this.webTorrentGetBlobByFileNameArray[0](name).then(blob => resolve(blob, true));
+					this.webTorrentGetBlobByFileNameArray[1](name).then(blob => resolve(blob, true));
 				}
 			} else if (Array.isArray(event.data) && event.data[0] === 'info') {
 				this.infoFuncs.forEach(func => func(event.data[1]));

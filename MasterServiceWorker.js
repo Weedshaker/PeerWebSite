@@ -6,8 +6,8 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.messageChannel = null;
-		this.doNotIntercept = ['socket.io', 'ipfs.io', 'api.qrserver.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
-		this.doIntercept = ['magnet:', 'magnet/']; // + location.origin added below on message
+		this.doNotIntercept = ['socket.io', 'tinyurl.com', '#ipfsVideo', 'api.qrserver.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
+		this.doIntercept = ['magnet:', 'magnet/', 'ipfs/']; // + location.origin added below on message
 		this.justInform = ['gateway.ipfs.io'];
 		this.resolveMap = new Map(); // used to resolve after the message response
 		this.clientId = {
