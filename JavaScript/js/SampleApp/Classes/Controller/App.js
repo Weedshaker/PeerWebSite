@@ -82,7 +82,7 @@ export class App extends MasterApp {
 			// persist site
 			const hash = this.originalHash || location.hash;
 			// force DOM to update once receiving connect
-			if (!this.isSender) {
+			if (!this.isSender && this.checkHashType(location.hash) === 'magnet') {
 				this.WebTorrentReceiver.container.querySelectorAll('[src]').forEach(element => (element.src += `?${Date.now()}`));
 				this.WebTorrentReceiver.container.querySelectorAll('[href]').forEach(element => (element.href += `?${Date.now()}`));
 			}
@@ -108,7 +108,7 @@ export class App extends MasterApp {
 							reader.onload = (reader => {
 								return () => {
 									const contents = reader.result;
-									this.HTML.setData(this.receiveCont, {message:contents});
+									this.HTML.setData(this.receiveCont, {message:contents}, false);
 								}
 							})(reader);
 							reader.readAsText(blob);
@@ -136,7 +136,7 @@ export class App extends MasterApp {
 				}
 				$('.headerReceiver > .counterWebRTC').hide();
 			} else if (this.checkHashType(location.hash) === 'ipfs') {
-				this.IPFS.cat(location.hash.substr(6)).then(text => this.HTML.setData(this.receiveCont, {message: text})).catch(error => $('#receiver').text(`An Error occured! ${error}`));
+				this.IPFS.cat(location.hash.substr(6)).then(text => this.HTML.setData(this.receiveCont, {message: text}, false)).catch(error => $('#receiver').text(`An Error occured! ${error}`));
 				$('.headerReceiver > .counterWebRTC').hide();
 				$('.headerReceiver > .counterWebTorrent').hide();
 			} else {
@@ -150,6 +150,7 @@ export class App extends MasterApp {
 		} else if (reload && location.hash && !(localStorage.getItem('channels') || '').includes(`[${location.hash}]`)) {
 			location.reload();
 		} else if (this.checkHashType(location.hash) === 'ipfs') {
+			if (this.Editor.getData().length < 12) this.Editor.setData(undefined, this.HTML.loadingAnimation, 'code')
 			this.IPFS.cat(location.hash.substr(6)).then(text => this.Editor.setData(undefined, text, 'code')).catch(error => $('#sender').text(`An Error occured! ${error}`));
 		}
 	}

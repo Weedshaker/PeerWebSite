@@ -19,7 +19,7 @@ export class HTML extends MasterHTML {
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				const header = $(`<header>
 					<div id="info" class="flex">
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.9; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.10; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
 				if (!isSender) {
@@ -47,9 +47,10 @@ export class HTML extends MasterHTML {
 				const counterWebTorrent = this.createWebtorrentControls(controls, isSender, headerReceiver);
 				this.containers.push(controls);
 				// main containers
-				let sender = $(`<div id="${this.idNames[2]}">${window.sst && window.sst.karma ? '' : isSender ? localStorage.getItem(location.hash) || '' : ''}</div>`);
+				this.loadingAnimation = `<span class="blobLoading ${this.parent.checkHashType(location.hash) === 'magnet' ? 'torrentLoading' : this.parent.checkHashType(location.hash) === 'ipfs' ? 'ipfsLoading' : ''}"></span>`;
+				let sender = $(`<div id="${this.idNames[2]}">${window.sst && window.sst.karma ? '' : isSender && (this.parent.checkHashType(location.hash) !== 'ipfs' || !/="http.*?gateway\.ipfs\.io.*?#js.*?"/g.test(localStorage.getItem(location.hash)) /* ipfs javascript does not get triggered else */) ? localStorage.getItem(location.hash) || '' : ''}</div>`);
 				this.containers.push(sender);
-				let receiver = $(`<div id="${this.idNames[3]}">${window.sst && window.sst.karma ? '' : !isSender ? localStorage.getItem(location.hash) || `<span class="blobLoading ${this.parent.checkHashType(location.hash) === 'magnet' ? 'torrentLoading' : this.parent.checkHashType(location.hash) === 'ipfs' ? 'ipfsLoading' : ''}"></span>` : 'WEBRTC response...'}</div>`);
+				let receiver = $(`<div id="${this.idNames[3]}">${window.sst && window.sst.karma ? '' : isSender ? 'WEBRTC response...' : this.parent.checkHashType(location.hash) !== 'ipfs' || !/="http.*?gateway\.ipfs\.io.*?#js.*?"/g.test(localStorage.getItem(location.hash)) /* ipfs javascript does not get triggered else */ ? localStorage.getItem(location.hash) || this.loadingAnimation : this.loadingAnimation}</div>`);
 				this.containers.push(receiver);
 				// hot-reloader
 				/*

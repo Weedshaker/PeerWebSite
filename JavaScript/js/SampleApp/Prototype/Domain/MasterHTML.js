@@ -16,10 +16,10 @@ export class MasterHTML {
 	getData(container){
 		return container.html();
 	}
-	setData(container, dataPack){
+	setData(container, dataPack, domDiffing = true){
 		this.lastData = [container, dataPack];
 		// don't dom diff if it is not already webrtc diffed, send empty string to set full html without dom diffing
-		let oldMessage = dataPack.result && dataPack.result.includes('receiveDiff:true') ? this.getData(container) : '';
+		let oldMessage = domDiffing ? dataPack.result && dataPack.result.includes('receiveDiff:true') ? this.getData(container) : '' : '';
 		this.WebTorrent.api.addByText(dataPack.message, [
 			// trigger the following, when the worker returns with dataPack.message -> this.Dom.setData(container, oldMessage, dataPack.message);
 			new Map([
