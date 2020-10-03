@@ -4,10 +4,24 @@ export class IPFS {
         // should be 'ipfs://' but browsers do not yet support that url scheme, once this gateway would get blocked or overloaded the files have to be fixed through the service worker
         this.baseUrl = 'https://gateway.ipfs.io/ipfs/';
         // https://github.com/ipfs/js-ipfs/blob/master/examples/browser-ipns-publish/index.js
+        // TODO: wait for name publish and resolve DHT fixes: https://github.com/ipfs/js-ipfs/issues/2921
+        /*this.node = window.Ipfs.create({
+            libp2p: {
+                config: {
+                    dht: {
+                        enabled: true,
+                        clientMode: true
+                    }
+                }
+            }
+        });*/
         this.node = window.Ipfs.create({
-            pass: "01234567890123456789",
-            EXPERIMENTAL: { ipnsPubsub: true },
-          });
+            config: {
+                dht: {
+                    enabled: true,
+                }
+            }
+        });
         this.isIdle = new Promise(resolve => document.readyState !== 'complete' ? window.addEventListener('load', event => setTimeout(() => resolve(), 60000)) : setTimeout(() => resolve(), 60000));
     }
     add(path, content){
