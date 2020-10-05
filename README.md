@@ -1,9 +1,6 @@
 # [peerweb.site](https://peerweb.site/) ![Twitter Follow](https://img.shields.io/twitter/follow/Weedshaker?style=social)
 ## Real Time Peer to Peer Web Site Host from your Browser
 
-### [peerweb.site hosted@ipfs](https://gateway.ipfs.io/ipfs/QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b)
-This is the CID: QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b to use the peerweb.site directly from your ipfs client: `/ipfs/QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b`
-
 ### check out the IPFS Examples ===>
 1. [IPFS page with video](https://peerweb.site/#ipfs:QmaqoHkBE7xyixxyxhd5fV1PBzTikFkKKV6ZCz8UFNe1ZE)
 2. [IPFS page with client side app](https://peerweb.site/#ipfs:QmZb1mx8WXKReT8YmwY6bt1KTz48wqS9KCXwMptCX3UkpM)
@@ -16,6 +13,10 @@ TODO: Extend README to cover new IPFS support!!!
 <img src="https://weedshaker.github.io/PeerWebSite/img/screenshot1.png" align="left" width="40%">
 <img src="https://weedshaker.github.io/PeerWebSite/img/screenshot2.png" align="right" width="40%">
 <br clear="right"/>
+
+### peerweb.site hosted@ipfs
+This is the CID: QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b to use the peerweb.site directly from your ipfs client: `/ipfs/QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b
+[peerweb.site hosted@ipfs](https://gateway.ipfs.io/ipfs/QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b)
 
 ### Functionalities
 1. **Use WebTorrent for files**: This will enable WebTorrent for added files. It allows video steaming and will perform better in case your site is file heavy. It is mandatory for multiple files to load efficiently. Although, it may not work well with other browsers but Chrome.
