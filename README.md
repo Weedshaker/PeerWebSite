@@ -7,7 +7,7 @@
 3. [IPFS page with client side app (js + css fed through service worker)](https://peerweb.site/#ipfs:QmSR4HEkMf2ZDeYdioQnqTm8wrFmz91aBbfXqh1u4pz2do)
 
 ### Description
-Send Texts, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC, WebTorrents or IPFS, live edited P2P as well as static Torrents + IPFS. With WebRTC/WebTorrent (NOT IPFS) - No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent/IPFS snapshots. *(Saving in-site WebTorrents is not yet supported.)* **Note: Cellphone networks on 4g/5g possibly block your WebRTC or WebTorrent connections, which renders PeerWebSite unusable, except you use the IPFS option!!! or you could circumvent network restrictions by using a VPN.**\
+Send Texts, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC, WebTorrents or IPFS, live edited P2P as well as static Torrents + IPFS. With WebRTC/WebTorrent (NOT IPFS) - No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent/IPFS snapshots. *(Saving in-site WebTorrents is not yet supported.)* **Note: Cellphone networks on 4g/5g possibly block your WebRTC or WebTorrent connections, which renders PeerWebSite unusable, except you use the IPFS option!!! or you could circumvent network restrictions by using a VPN.**
 
 <img src="https://weedshaker.github.io/PeerWebSite/img/screenshot1.png" align="left" width="40%">
 <img src="https://weedshaker.github.io/PeerWebSite/img/screenshot2.png" align="right" width="40%">
