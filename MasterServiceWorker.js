@@ -70,6 +70,7 @@ class MasterServiceWorker {
 			this.clientId.recent = event.clientId;
 			// feed a selfexecuting function
 			event.respondWith((() => {
+				if (!this.messageChannel) return fetch(event.request);
 				const intercept = this.clientId.isApproved() && this.doNotIntercept.every(url => !event.request.url.includes(url)) && this.doIntercept.some(url => event.request.url.includes(url))
 				console.info(`@serviceworker intercept ${intercept}:`, event.request.url);
 				if (intercept) {
