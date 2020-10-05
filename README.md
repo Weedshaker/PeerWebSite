@@ -1,6 +1,8 @@
 # [peerweb.site](https://peerweb.site/) ![Twitter Follow](https://img.shields.io/twitter/follow/Weedshaker?style=social)
-[![PH](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=203739&theme=light)](https://www.producthunt.com/posts/peerweb-site?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-peerweb-site)
 ## Real Time Peer to Peer Web Site Host from your Browser
+
+### [peerweb.site hosted@ipfs](https://gateway.ipfs.io/ipfs/QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b)
+This is the CID: QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b to use the peerweb.site directly from your ipfs client: `/ipfs/QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b`
 
 ### check out the IPFS Examples ===>
 1. [IPFS page with video](https://peerweb.site/#ipfs:QmaqoHkBE7xyixxyxhd5fV1PBzTikFkKKV6ZCz8UFNe1ZE)
