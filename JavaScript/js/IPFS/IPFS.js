@@ -37,10 +37,10 @@ export class IPFS {
         //QmQKaoJcU9QoHHgaSMZ4htAoSXHwBBx25oShbk2f5W1bh1
         // <img src="https://gateway.ipfs.io/ipfs/QmQKaoJcU9QoHHgaSMZ4htAoSXHwBBx25oShbk2f5W1bh1#svg"></img>
         return new Promise(resolve => {
-            const match = url.split('#');
+            url = this.digestUrl(url);
             let type = '';
-            if (match[0] && match[1] && (type = mime.getType(match[1], false))) {
-                this.cat(match[0], true).then(chunks => resolve(new Blob(chunks, { type }))).catch(error => {
+            if (url.cid && url.filename && (type = mime.getType(url.filename, false))) {
+                this.cat(url.cid, true).then(chunks => resolve(new Blob(chunks, { type }))).catch(error => {
                     console.error(`SST_IPFS_onFetchError: Could not find ${url} nor findPeer at el:`, error);
                     resolve(null)
                 });
@@ -50,11 +50,11 @@ export class IPFS {
         });
     }
     pin(url){
-        let match = null;
-        if (url.includes(this.baseUrl) && (match = url.match(/([^\/]+$)/))) return Promise.all([this.isIdle, this.node]).then(results => results[1].pin.add(match[0]));
+        url = this.digestUrl(url);
+        if (url.urlString.includes(this.baseUrl) && url.cid) return Promise.all([this.isIdle, this.node]).then(results => results[1].pin.add(url.cid));
         return null;
     }
-    onFetchError(event, url, name, type, isVideo, el){
+    onFetchError(event, url, name, type, isAudioVideo, el){
         const sanitize = () => {
             type = type.split(',');
             // findPeer and don't be dependend on this.baserUrl
@@ -62,15 +62,14 @@ export class IPFS {
                 el[type[1]] = el[type[1]]
                 console.error(`SST_IPFS_onFetchError: Could not find ${url} nor findPeer at el:`, el, error);
             };
-            const match = url.match(/([^\/]+$)/);
-            if (!match) return errorFunc('NO cid found!');
-            const cid = match[0];
+            url = this.digestUrl(url);
+            if (!url.cid) return errorFunc('NO cid found!');
             el.classList.add('ipfsLoading');
-            if (isVideo && el.parentElement) el.parentElement.classList.add('ipfsLoading');
-            return this.cat(cid, true).then(chunks => {
-                el[type[1]] = URL.createObjectURL(new Blob(chunks, { type: mime.getType(name.split('.').splice(-1)[0]) }));
+            if (isAudioVideo && el.parentElement) el.parentElement.classList.add('ipfsLoading');
+            return this.cat(url.cid, true).then(chunks => {
+                el[type[1]] = URL.createObjectURL(new Blob(chunks, { type: mime.getType(name) }));
                 el.classList.remove('ipfsLoading');
-                if (isVideo && el.parentElement) {
+                if (isAudioVideo && el.parentElement) {
                     el.parentElement.classList.remove('ipfsLoading');
                     el.parentElement.innerHTML = el.parentElement.innerHTML;
                 }
@@ -91,5 +90,15 @@ export class IPFS {
         } else {
             sanitize();
         }
+    }
+    digestUrl(url = '') {
+        const urlString = url;
+        url = new URL(url);
+        return {
+            cid: url.pathname.split('/').splice(-1)[0] || null,
+            filename: url.searchParams.get('filename') || null,
+            urlString,
+            url
+        };
     }
 }

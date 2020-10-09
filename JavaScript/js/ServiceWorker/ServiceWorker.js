@@ -66,7 +66,7 @@ export class ServiceWorker {
 					// promise returns null or blob
 					this.webTorrentGetBlobByFileNameArray[0](name).then(blob => resolve(blob));
 				}else if (event.data[0].includes('ipfs/')) {
-					this.ipfsGetBlobByCidArray[0](name).then(blob => resolve(blob));
+					this.ipfsGetBlobByCidArray[0](event.data[0]).then(blob => resolve(blob));
 				}else{
 					// promise returns null or blob
 					this.webTorrentGetBlobByFileNameArray[0](name).then(blob => resolve(blob, true));

@@ -23,11 +23,11 @@ export class MasterEditor {
 				}
 				const Reader = new FileReader();
 				const setData = () => {
-					const type = file.type.includes('image') ? ['img', 'src'] : file.type.includes('video') ? ['video', 'src'] : ['a', 'href'];
+					const type = file.type.includes('image') ? ['img', 'src'] : file.type.includes('video') ? ['video', 'src'] : file.type.includes('audio') ? ['audio', 'src'] : ['a', 'href'];
 					let node = document.createElement(type[0]);
 					node.id = this.Helper.getRandomString(); // give each node an id, so that virtual-dom doesn't mix up things
 					let source = null;
-					if (type[0] === 'video') {
+					if (type[0] === 'video' || type[0] === 'audio') {
 						node.controls = true;
 						source = document.createElement('source');
 						if (Reader.result) source[type[1]] = Reader.result;
@@ -37,7 +37,7 @@ export class MasterEditor {
 						if (Reader.result) node[type[1]] = Reader.result;
 						node.text = name;
 					}
-					results.push({name, content: file, source: source || node, type, video: source ? node : null});
+					results.push({name, content: file, source: source || node, type, audioVideo: source ? node : null});
 					if (i + 1 === files.length) resolve(results);
 					node.setAttribute('download', name);
 					node.setAttribute('data-filename', name);
