@@ -1,23 +1,25 @@
 # [peerweb.site](https://peerweb.site/) ![Twitter Follow](https://img.shields.io/twitter/follow/Weedshaker?style=social)
 ## Real Time Peer to Peer Web Site Host from your Browser
 
-### [peerweb.site hosted@ipfs](https://gateway.ipfs.io/ipfs/QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b)
-This is the CID: QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b to use the peerweb.site directly from your ipfs client: `/ipfs/QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b`
-
 ### check out the IPFS Examples ===>
 1. [IPFS page with video](https://peerweb.site/#ipfs:QmaqoHkBE7xyixxyxhd5fV1PBzTikFkKKV6ZCz8UFNe1ZE)
 2. [IPFS page with client side app](https://peerweb.site/#ipfs:QmZb1mx8WXKReT8YmwY6bt1KTz48wqS9KCXwMptCX3UkpM)
 3. [IPFS page with client side app (js + css fed through service worker)](https://peerweb.site/#ipfs:QmSR4HEkMf2ZDeYdioQnqTm8wrFmz91aBbfXqh1u4pz2do)
 
 ### Description
-Send Texts, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC, WebTorrents or IPFS, live edited P2P as well as static Torrents + IPFS. With WebRTC/WebTorrent (NOT IPFS) - No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent/IPFS snapshots. *(Saving in-site WebTorrents is not yet supported.)* **Note: Cellphone networks on 4g/5g possibly block your WebRTC or WebTorrent connections, which renders PeerWebSite unusable, except you use the IPFS option!!! or you could circumvent network restrictions by using a VPN.**\
-TODO: Extend README to cover new IPFS support!!!
+Send Texts, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC, WebTorrents or IPFS, live edited P2P as well as static Torrents + IPFS. With WebRTC/WebTorrent (NOT IPFS) - No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent/IPFS snapshots. *(Saving in-site WebTorrents is not yet supported.)* **Note: Cellphone networks on 4g/5g possibly block your WebRTC or WebTorrent connections, which renders PeerWebSite unusable, except you use the IPFS option!!! or you could circumvent network restrictions by using a VPN.**
 
 <img src="https://weedshaker.github.io/PeerWebSite/img/screenshot1.png" align="left" width="40%">
 <img src="https://weedshaker.github.io/PeerWebSite/img/screenshot2.png" align="right" width="40%">
 <br clear="right"/>
 
+### peerweb.site hosted@ipfs
+This is the CID: QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b to use the peerweb.site directly from your ipfs client: `/ipfs/QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b
+[peerweb.site hosted@ipfs](https://gateway.ipfs.io/ipfs/QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b)
+
 ### Functionalities
+TODO: Extend README to cover new IPFS support!!!
+
 1. **Use WebTorrent for files**: This will enable WebTorrent for added files. It allows video steaming and will perform better in case your site is file heavy. It is mandatory for multiple files to load efficiently. Although, it may not work well with other browsers but Chrome.
 
 2. **Activate Live Session & Copy Link**: *(Sometimes unstable due to causes of ICE failed or other issues with WebRTC, require a reload or use Webtorrent/Snapshot.)* This opens a session/peer to peer room where your audience can join and see your changes in real time. Your site will not be reachable, once you close your browser tab. *You could have a two way communication, if you join the room/site not through the link with hash but manually put the channel name into the input field.*
