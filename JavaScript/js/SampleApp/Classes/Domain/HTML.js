@@ -232,8 +232,10 @@ export class HTML extends MasterHTML {
 		document.title = text || document.title;
 	}
 	getFirstText(text = this.Editor.getData()) {
-		text = text.match(/>([a-zA-Z\s\d&nbsp;]{1}.*?)</);
-		return text[1].split('&nbsp;').join(' ');
+		const textNode = document.createElement('textarea');
+    	textNode.innerHTML = text;
+		text = textNode.textContent.match(/>.*?([^>]*?)</);
+		return text && text.length && text[1] ? text[1] : '';
 	}
 	addQrCode($el, text = location.href, loadingClass = 'blobLoading') {
 		const $oldImg = $el.find('img');
