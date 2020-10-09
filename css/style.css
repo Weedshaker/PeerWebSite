@@ -3,17 +3,17 @@ img[download$=".jpg"], img[alt$=".jpg"], img[download$=".jpeg"], img[alt$=".jpeg
     min-height: 24px;
     min-width: 24px;
 }
-figure {
+body figure {
     border: thin #c0c0c0 solid;
     border-radius: 10px;
     display: flex;
     align-items: center;
     flex-flow: column;
     padding: 5px;
-    margin: auto;
+    margin: 5px auto;
     width: fit-content;
 }
-figcaption {
+body figcaption {
     background-color: #474747;
     border-radius: 0 0 10px 10px;
     color: #fff;
@@ -116,9 +116,9 @@ header .headerReceiver.hasQr > .qr {
     height: auto;
 }
 input.note-file-input.form-control::after {
-    content: 'Only choose one file at a time to avoid glitches!!!';
+    content: 'Choose one file at a time to avoid glitches!!!';
     font-size: 10px;
-    color: red;
+    color: lightcoral;
     white-space: normal;
     padding-top: 2px;
     display: block;

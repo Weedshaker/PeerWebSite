@@ -42,7 +42,7 @@ export class MasterEditor {
 					node.setAttribute('download', name);
 					node.setAttribute('data-filename', name);
 					if(i > 0){
-						this.setData(container, ', ');
+						this.setData(container, ' ');
 					}
 					this.setData(container, node, 'insertNode');
 				};

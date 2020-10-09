@@ -19,7 +19,7 @@ export class HTML extends MasterHTML {
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				const header = $(`<header>
 					<div id="info" class="flex">
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.12; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.13; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
 				if (!isSender) {
@@ -111,6 +111,7 @@ export class HTML extends MasterHTML {
 			this.setHash($('#txt-roomid').val());
 			this.saveData();
 			this.addQrCode($(button));
+			this.setTitle();
 			// update the clipboard
 			clipboard.val(location.href);
 			this.copyToClipBoard('clipboardInput');
@@ -136,6 +137,7 @@ export class HTML extends MasterHTML {
 				this.setHash(`ipfs:${file.cid}`);
 				this.saveData();
 				this.addQrCode($(button), undefined, 'ipfsLoading');
+				this.setTitle();
 				// update the clipboard
 				input.val(location.href);
 				this.copyToClipBoard('inputIPFS');
@@ -177,6 +179,7 @@ export class HTML extends MasterHTML {
 				this.setHash(torrent.magnetURI);
 				this.saveData();
 				this.addQrCode($(buttonWebTorrent), undefined, 'torrentLoading');
+				this.setTitle();
 				// update the clipboard
 				inputWebTorrent.val(location.href);
 				this.copyToClipBoard('inputWebTorrent');
@@ -216,16 +219,21 @@ export class HTML extends MasterHTML {
 		/* Copy the text inside the text field */
 		document.execCommand("copy");
 	}
-	shareApi(url = location.href, text = this.Editor.getData()) {
-		text = text.match(/>([a-zA-Z\s\d&nbsp;]{1}.*?)</);
+	shareApi(url = location.href, text = this.getFirstText()) {
 		if (text && navigator.share) {
-			text = text[1].split('&nbsp;').join(' ');
 			navigator.share({
 				title: 'PeerWebSite',
 				text,
 				url,
 			}).then(() => console.log('Share was successful.')).catch(error => console.log('Sharing failed', error));
 		}
+	}
+	setTitle(text = this.getFirstText()) {
+		document.title = text || document.title;
+	}
+	getFirstText(text = this.Editor.getData()) {
+		text = text.match(/>([a-zA-Z\s\d&nbsp;]{1}.*?)</);
+		return text[1].split('&nbsp;').join(' ');
 	}
 	addQrCode($el, text = location.href, loadingClass = 'blobLoading') {
 		const $oldImg = $el.find('img');
