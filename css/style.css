@@ -3,6 +3,25 @@ img[download$=".jpg"], img[alt$=".jpg"], img[download$=".jpeg"], img[alt$=".jpeg
     min-height: 24px;
     min-width: 24px;
 }
+figure {
+    border: thin #c0c0c0 solid;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+    padding: 5px;
+    margin: auto;
+    width: fit-content;
+}
+figcaption {
+    background-color: #474747;
+    border-radius: 0 0 10px 10px;
+    color: #fff;
+    font: italic smaller sans-serif;
+    padding: 3px;
+    text-align: center;
+    width: 100%;
+}
 body > header {
     margin: 5px 0;
     display: flex;

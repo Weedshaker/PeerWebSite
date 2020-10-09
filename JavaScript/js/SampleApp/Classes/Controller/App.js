@@ -89,6 +89,14 @@ export class App extends MasterApp {
 			const data = this.isSender ? this.Editor.getData() : this.receiveCont[0].innerHTML;
 			this.HTML.saveData(hash, data);
 		});
+		// loop all audio + video
+		document.body.addEventListener('ended', event => {
+			if (event.target && event.target.controls) {
+				const media = Array.from(document.querySelectorAll('[controls]')); //Array.from(document.querySelectorAll('audio')).concat(Array.from(document.querySelectorAll('video')));
+				let index = -1;
+				if ((index = media.indexOf(event.target)) !== -1) media[index + 1 >= media.length ? 0 : index + 1].play();
+			}
+		}, true);
 		// connect by hash
 		this.connectHash(false);
 		window.addEventListener('hashchange', () => this.connectHash());
