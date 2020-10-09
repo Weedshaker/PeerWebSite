@@ -97,6 +97,12 @@ export class App extends MasterApp {
 				if ((index = media.indexOf(event.target)) !== -1) media[index + 1 >= media.length ? 0 : index + 1].play();
 			}
 		}, true);
+		// stop other audios playing
+		document.body.addEventListener('play', event => {
+			if (event.target && event.target.controls) Array.from(document.querySelectorAll('[controls]')).forEach(media => {
+				if (media !== event.target) media.pause();
+			});
+		}, true);
 		// connect by hash
 		this.connectHash(false);
 		window.addEventListener('hashchange', () => this.connectHash());
