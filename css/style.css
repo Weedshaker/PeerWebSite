@@ -53,6 +53,10 @@ header > div.flex .recycle {
 }
 header > div.flex .edit {
     color: red;
+    display: none;
+}
+body[type="ipfs"] header > div.flex .edit, body[type="magnet"] header > div.flex .edit, body[issender="false"] header > div.flex .edit {
+    display: block;
 }
 header > div.flex .recycle:hover, header > div.flex .edit:hover {
     text-decoration: none;

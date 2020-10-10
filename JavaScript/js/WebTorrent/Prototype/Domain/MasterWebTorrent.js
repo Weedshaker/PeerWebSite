@@ -84,8 +84,8 @@ export class MasterWebTorrent {
 			controls: Boolean, // Show video/audio player controls (default: true)
 			maxBlobLength: Number, // Files above this size will skip the "blob" strategy and fail (default: 200 * 1000 * 1000 bytes)
 			*/
-			autoplay: true,
-			muted: true,
+			autoplay: false,
+			muted: false,
 			controls: true
 		};
 		// !!! Important !!! set the attributes in the same order as in the array below

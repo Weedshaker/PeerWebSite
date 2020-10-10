@@ -19,13 +19,13 @@ export class HTML extends MasterHTML {
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				const header = $(`<header>
 					<div id="info" class="flex">
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.16; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.17; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
-				if (!isSender) {
-					header.find('#info').append(`<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">Edit!</span></a>`);
-					header.find('.edit').click(event => {
-						event.preventDefault();
+				header.find('#info').append(`<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">${!isSender ? 'Edit!' : 'Abort Editing!'}</span></a>`);
+				header.find('.edit').click(event => {
+					event.preventDefault();
+					if (!isSender) {
 						this.setHash(location.hash.substr(1));
 						this.saveData(undefined, this.parent.receiveCont[0].innerHTML);
 						if(this.parent.checkHashType(location.hash) === 'ipfs' || this.confirmData(undefined, this.parent.receiveCont[0].innerHTML)){
@@ -34,8 +34,11 @@ export class HTML extends MasterHTML {
 							this.removeHashFromChannels(location.hash.substr(1));
 							header.find('.edit').remove();
 						}
-					});
-				}
+					} else {
+						this.removeHashFromChannels(location.hash.substr(1));
+						location.reload();
+					}
+				});
 				this.containers = [header];
 				// specific only for receiver
 				const headerReceiver = $('<div class="headerReceiver"><span class="qr"></span></div>');
@@ -197,6 +200,7 @@ export class HTML extends MasterHTML {
 		if (hash) {
 			if (!(localStorage.getItem('channels') || '').includes(`[#${hash}]`)) localStorage.setItem('channels', `[#${hash}]` + (localStorage.getItem('channels') || ''));
 			location.hash = hash;
+			this.parent.checkHashType(); // sets attribute for hash type magnet, ipfs, webrtc
 		}
 	}
 	removeHashFromChannels(hash){
@@ -204,8 +208,16 @@ export class HTML extends MasterHTML {
 			localStorage.setItem('channels', (localStorage.getItem('channels') || '').replace(`[#${hash}]`, ''));
 		}
 	}
-	saveData(key = location.hash, data = this.Editor.getData()){
-		if (key && data && data.length >= 10) localStorage.setItem(key, data);
+	saveData(key = location.hash, data = this.Editor.getData(), retry = true){
+		if (key && data && data.length >= 10) {
+			try {
+				localStorage.setItem(key, data);
+			} catch (error) {
+				localStorage.clear();
+				if (retry) this.saveData(key, data, false);
+				console.warn(`SST: LocalStorage ran ${!retry ? 'a second time ' : ''}into error and got cleared:` + error);
+			}
+		}
 	}
 	confirmData(key = location.hash, data = this.Editor.getData()){
 		return localStorage.getItem(key) === data;

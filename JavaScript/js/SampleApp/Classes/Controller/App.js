@@ -8,6 +8,8 @@ export class App extends MasterApp {
 	}
 	createElements(name = 'open-or-join-room'){
 		this.isSender = !location.hash || (localStorage.getItem('channels') || '').includes(`[${location.hash}]`);
+		document.body.setAttribute('isSender', this.isSender);
+		this.checkHashType(location.hash); // sets attribute for hash type magnet, ipfs, webrtc
 		this.originalHash = location.hash;
 		let htmlElements = super.createElements(name, this.isSender);
 		let sendCont = htmlElements[0];
@@ -186,9 +188,19 @@ export class App extends MasterApp {
 		}
 	}
 	checkHashType(hash = location.hash){
-		if (!hash) return false;
-		if (hash.includes('magnet:')) return 'magnet'; // WebTorrent
-		if (hash.includes('ipfs:')) return 'ipfs'; // IPFS
+		if (!hash) {
+			document.body.removeAttribute('type');
+			return false;
+		}
+		if (hash.includes('magnet:')) {
+			document.body.setAttribute('type', 'magnet');
+			return 'magnet'; // WebTorrent
+		}
+		if (hash.includes('ipfs:')) {
+			document.body.setAttribute('type', 'ipfs');
+			return 'ipfs'; // IPFS
+		}
+		document.body.setAttribute('type', 'webrtc');
 		return 'webrtc'
 	}
 }
