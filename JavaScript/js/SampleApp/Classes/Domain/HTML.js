@@ -19,7 +19,7 @@ export class HTML extends MasterHTML {
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				const header = $(`<header>
 					<div id="info" class="flex">
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.15; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.16; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
 				if (!isSender) {
@@ -234,7 +234,7 @@ export class HTML extends MasterHTML {
 	getFirstText(text = this.Editor.getData()) {
 		const textNode = document.createElement('textarea');
     	textNode.innerHTML = text;
-		text = textNode.textContent.match(/>.*?([^>]*?)</);
+		text = textNode.textContent.match(/>.*?([a-zA-Z\d]{1}[^>]*?)</);
 		return text && text.length && text[1] ? text[1] : '';
 	}
 	addQrCode($el, text = location.href, loadingClass = 'blobLoading') {
