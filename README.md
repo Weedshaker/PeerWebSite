@@ -3,7 +3,7 @@
 
 ### check out the IPFS Examples ===>
 1. [IPFS page with video](https://peerweb.site/#ipfs:QmaqoHkBE7xyixxyxhd5fV1PBzTikFkKKV6ZCz8UFNe1ZE)
-2. [IPFS page with audio - Grateful Dead Live borrowed from archive.org](https://peerweb.site/#ipfs:QmcspUuwZLGLTfbUTGKjHA25uCYCvJGG12SmrDVhB4hqMK)
+2. [IPFS page with audio - Grateful Dead Live borrowed from archive.org](https://peerweb.site/#ipfs:Qme7h3pX3QGhvhoveqBJjEV2jjBvGUaRXdADr4DbH6d2ib)
 3. [IPFS page with client side app](https://peerweb.site/#ipfs:QmZb1mx8WXKReT8YmwY6bt1KTz48wqS9KCXwMptCX3UkpM)
 4. [IPFS page with client side app (js + css fed through service worker)](https://peerweb.site/#ipfs:QmSR4HEkMf2ZDeYdioQnqTm8wrFmz91aBbfXqh1u4pz2do)
 
