@@ -91,20 +91,89 @@ export class App extends MasterApp {
 			const data = this.isSender ? this.Editor.getData() : this.receiveCont[0].innerHTML;
 			this.HTML.saveData(hash, data);
 		});
+		// ******************************************************************
+		// below has to be moved into a shared player object*****************
+		const checkEvent = event => event.target && event.target.controls;
+		const querySelectorAllControls = () => Array.from(document.querySelectorAll('[controls]'));
+		const setVolumeAll = (volume = Number(localStorage.getItem('lastVolume')) || 1) => {
+			volume = volume > 1 ? 1 : volume < 0 ? 0 : volume;
+			querySelectorAllControls().forEach(media => media.volume = volume);
+			localStorage.setItem('lastVolume', volume);
+		};
 		// loop all audio + video
 		document.body.addEventListener('ended', event => {
-			if (event.target && event.target.controls) {
-				const media = Array.from(document.querySelectorAll('[controls]')); //Array.from(document.querySelectorAll('audio')).concat(Array.from(document.querySelectorAll('video')));
+			if (checkEvent(event)) {
+				const media = querySelectorAllControls(); //Array.from(document.querySelectorAll('audio')).concat(Array.from(document.querySelectorAll('video')));
 				let index = -1;
 				if ((index = media.indexOf(event.target)) !== -1) media[index + 1 >= media.length ? 0 : index + 1].play();
 			}
 		}, true);
 		// stop other audios playing
 		document.body.addEventListener('play', event => {
-			if (event.target && event.target.controls) Array.from(document.querySelectorAll('[controls]')).forEach(media => {
-				if (media !== event.target) media.pause();
+			if (checkEvent(event)) querySelectorAllControls().forEach((media, index) => {
+				if (media !== event.target) {
+					 media.pause();
+				} else {
+					localStorage.setItem(`lastPlayed_${location.hash}`, index);
+				}
+				setVolumeAll();
 			});
 		}, true);
+		// keep all at same volume
+		document.body.addEventListener('volumechange', event => {
+			if (checkEvent(event)) setVolumeAll(event.target.volume);
+		}, true);
+		if (!this.isSender) {
+			// keyboard
+			document.body.addEventListener('keydown', event => {
+				if (event.keyCode === 32 || event.keyCode === 37 || event.keyCode === 39 || event.keyCode === 38 || event.keyCode === 40) {
+					event.preventDefault();
+					const media = querySelectorAllControls();
+					// volume change
+					if (event.keyCode === 38 || event.keyCode === 40) {
+						setVolumeAll((Number(localStorage.getItem('lastVolume') || 1) + (event.keyCode === 38 ? 0.1 : -0.1)).toFixed(4));
+					// prev, next, pause, play
+					} else {
+						const index = Number(localStorage.getItem(`lastPlayed_${location.hash}`)) || 0;
+						let allWerePaused = true;
+						// pause all
+						media.forEach(el => {
+							if (!el.paused) {
+								el.pause();
+								allWerePaused = false;
+							}
+						});
+						// spacebar
+						if (event.keyCode === 32) {
+							const lastPlayed = media[index];
+							if (lastPlayed) {
+								// if all were already paused play last or first song/video
+								if (allWerePaused) lastPlayed.play();
+								setTimeout(() => lastPlayed.scrollIntoView({behavior: 'smooth'}), 250);
+							}
+						// left
+						} else if (event.keyCode === 37) {
+							const prevToPlay = media[index - 1 < 0 ? media.length - 1 : index - 1];
+							if (prevToPlay) {
+								// if all were already paused play last or first song/video
+								prevToPlay.play();
+								setTimeout(() => prevToPlay.scrollIntoView({behavior: 'smooth'}), 250);
+							}
+						// right
+						} else if (event.keyCode === 39) {
+							const nextToPlay = media[index + 1 >= media.length ? 0 : index + 1];
+							if (nextToPlay) {
+								// if all were already paused play last or first song/video
+								nextToPlay.play();
+								setTimeout(() => nextToPlay.scrollIntoView({behavior: 'smooth'}), 250);
+							}
+						}
+					}
+				}
+			}, true);
+		}
+		// ******************************************************************
+		// ******************************************************************
 		// connect by hash
 		this.connectHash(false);
 		window.addEventListener('hashchange', () => this.connectHash());
