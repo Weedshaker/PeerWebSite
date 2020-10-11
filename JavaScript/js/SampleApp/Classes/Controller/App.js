@@ -128,12 +128,12 @@ export class App extends MasterApp {
 			document.body.addEventListener('keydown', event => {
 				if (event.keyCode === 32 || event.keyCode === 37 || event.keyCode === 39 || event.keyCode === 38 || event.keyCode === 40) {
 					event.preventDefault();
-					const media = querySelectorAllControls();
 					// volume change
 					if (event.keyCode === 38 || event.keyCode === 40) {
 						setVolumeAll((Number(localStorage.getItem('lastVolume') || 1) + (event.keyCode === 38 ? 0.1 : -0.1)).toFixed(4));
-					// prev, next, pause, play
+						// prev, next, pause, play
 					} else {
+						const media = querySelectorAllControls();
 						const index = Number(localStorage.getItem(`lastPlayed_${location.hash}`)) || 0;
 						let allWerePaused = true;
 						// pause all
