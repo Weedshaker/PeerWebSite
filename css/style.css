@@ -12,6 +12,7 @@ body figure {
     padding: 5px;
     margin: 5px auto;
     width: fit-content;
+    max-width: max-content;
 }
 body figcaption {
     background-color: #474747;
@@ -157,11 +158,11 @@ input.note-file-input.form-control::after {
 #txt-roomid{
 	color: black;
 }
-body{
+body {
     background-color: rgb(29, 28, 28) !important;
     min-width: 95vw;
     overflow: auto;
-    word-break: break-all;
+    word-break: break-word;
 }
 body > *, body > .panel {
     border-radius: 10px;
