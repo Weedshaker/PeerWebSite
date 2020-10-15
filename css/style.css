@@ -75,6 +75,10 @@ header button.mui-btn {
     line-height: 15px;
     background-color: #adadad;
 }
+p:empty {
+    margin: 0;
+    padding: 0;
+}
 .mui-btn--webRTC{
     color: #FFF;
     background-color: rgb(36, 230, 36);
@@ -207,6 +211,7 @@ body > *, body > .panel {
 }
 span.qr {
     cursor: pointer;
+    text-transform: none;
 }
 span.qr:empty {
     display: none;

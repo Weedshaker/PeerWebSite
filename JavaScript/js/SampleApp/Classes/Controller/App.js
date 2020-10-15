@@ -95,6 +95,7 @@ export class App extends MasterApp {
 		// below has to be moved into a shared player object*****************
 		const checkEvent = event => event.target && event.target.controls;
 		const querySelectorAllControls = () => Array.from(document.querySelectorAll('[controls]'));
+		const querySelectorAllReadyControls = () => querySelectorAllControls().filter(media => media.readyState >= 3); // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
 		const setVolumeAll = (volume = Number(localStorage.getItem('lastVolume') || 1)) => {
 			volume = volume > 1 ? 1 : volume < 0 ? 0 : volume;
 			querySelectorAllControls().forEach(media => media.volume = volume);
@@ -103,7 +104,7 @@ export class App extends MasterApp {
 		// loop all audio + video
 		document.body.addEventListener('ended', event => {
 			if (checkEvent(event)) {
-				const media = querySelectorAllControls(); //Array.from(document.querySelectorAll('audio')).concat(Array.from(document.querySelectorAll('video')));
+				const media = querySelectorAllReadyControls(); //Array.from(document.querySelectorAll('audio')).concat(Array.from(document.querySelectorAll('video')));
 				let index = -1;
 				if ((index = media.indexOf(event.target)) !== -1) media[index + 1 >= media.length ? 0 : index + 1].play();
 			}
@@ -115,6 +116,8 @@ export class App extends MasterApp {
 					 media.pause();
 				} else {
 					localStorage.setItem(`lastPlayed_${location.hash}`, index);
+					// only at receiver, otherwise the toolbar will be above the fold
+					if (!this.isSender) setTimeout(() => media.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'}), 1000);
 				}
 				setVolumeAll();
 			});
@@ -123,6 +126,20 @@ export class App extends MasterApp {
 		document.body.addEventListener('volumechange', event => {
 			if (checkEvent(event)) setVolumeAll(event.target.volume);
 		}, true);
+		// read last currentTime
+		document.body.addEventListener('loadeddata', event => {
+			if (checkEvent(event)) event.target.currentTime = Number(localStorage.getItem(`currentTime_${location.hash}_${event.target.id}`)) || 0;
+		}, true);
+		// save last currentTime
+		window.addEventListener('beforeunload', event => querySelectorAllReadyControls().forEach(media => {
+			// don't save a tollerance of 10sec
+			const currentTime = media.currentTime && media.currentTime > 10 && media.currentTime < media.duration - 10 ? media.currentTime : 0;
+			if (currentTime) {
+				localStorage.setItem(`currentTime_${location.hash}_${media.id}`, currentTime);
+			} else if (localStorage.getItem(`currentTime_${location.hash}_${media.id}`) !== null) {
+				localStorage.removeItem(`currentTime_${location.hash}_${media.id}`);
+			}
+		}));
 		if (!this.isSender) {
 			// keyboard
 			document.body.addEventListener('keydown', event => {
@@ -146,27 +163,18 @@ export class App extends MasterApp {
 						// spacebar
 						if (event.keyCode === 32) {
 							const lastPlayed = media[index];
-							if (lastPlayed) {
-								// if all were already paused play last or first song/video
-								if (allWerePaused) lastPlayed.play();
-								setTimeout(() => lastPlayed.scrollIntoView({behavior: 'smooth'}), 250);
-							}
+							// if all were already paused play last or first song/video
+							if (lastPlayed && allWerePaused) lastPlayed.play();
 						// left
 						} else if (event.keyCode === 37) {
 							const prevToPlay = media[index - 1 < 0 ? media.length - 1 : index - 1];
-							if (prevToPlay) {
-								// if all were already paused play last or first song/video
-								prevToPlay.play();
-								setTimeout(() => prevToPlay.scrollIntoView({behavior: 'smooth'}), 250);
-							}
+							// if all were already paused play last or first song/video
+							if (prevToPlay) prevToPlay.play();
 						// right
 						} else if (event.keyCode === 39) {
 							const nextToPlay = media[index + 1 >= media.length ? 0 : index + 1];
-							if (nextToPlay) {
-								// if all were already paused play last or first song/video
-								nextToPlay.play();
-								setTimeout(() => nextToPlay.scrollIntoView({behavior: 'smooth'}), 250);
-							}
+							// if all were already paused play last or first song/video
+							if (nextToPlay) nextToPlay.play();
 						}
 					}
 				}

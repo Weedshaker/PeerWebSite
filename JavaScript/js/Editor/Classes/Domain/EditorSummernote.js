@@ -172,53 +172,56 @@ export class EditorSummernote extends MasterEditor {
 			}
 			this.loadFile(files, text, container);
 		}else if (type === 'ipfs') {
-			super.loadFile(files, text, container, false).then(results => results.forEach(result => {
-				const outerNode = (result.audioVideo || result.source);
-				outerNode.classList.add('ipfsLoading');
-				// https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/FILES.md#returns
-				this.IPFS.add(result.name, result.content).then(file => {
-					// sw do not intercept videos for streaming but give mimetype down
-					file.link += `?filename=${result.name}${result.audioVideo ? '&swIntercept=false' : ''}`;
-					if (result.type[0] === 'img') {
-						outerNode.addEventListener('load', event => {
+			super.loadFile(files, text, container, false).then(results => {
+				results.forEach(result => {
+					const outerNode = (result.audioVideo || result.source);
+					outerNode.classList.add('ipfsLoading');
+					// https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/FILES.md#returns
+					this.IPFS.add(result.name, result.content).then(file => {
+						// sw do not intercept videos for streaming but give mimetype down
+						file.link += `?filename=${result.name}${result.audioVideo ? '&swIntercept=false' : ''}`;
+						if (result.type[0] === 'img') {
+							outerNode.addEventListener('load', event => {
+								outerNode.classList.remove('ipfsLoading');
+								this.changeEvent(this.getData(), container[0].id);
+							});
+						} else {
 							outerNode.classList.remove('ipfsLoading');
-							this.changeEvent(this.getData(), container[0].id);
-						});
-					} else {
-						outerNode.classList.remove('ipfsLoading');
-					}
-					// static error handling which also works at receiver
-					if (result.type[0] === 'a') {
-						outerNode.setAttribute('download', result.name);
-						outerNode.setAttribute('onclick', `${this.IPFS.ipfs_onerror}(event, '${file.link}', '${result.name}', '${result.type}', '${!!result.audioVideo}', this);`);
-					} else {
-						result.source.setAttribute('onerror', `${this.IPFS.ipfs_onerror}(null, '${file.link}', '${result.name}', '${result.type}', '${!!result.audioVideo}', this);`);
-					}
-					result.source[result.type[1]] = file.link;
-					// video wouldn't play on seeder if not newly set
-					if (result.audioVideo) {
-						result.audioVideo.innerHTML = result.audioVideo.innerHTML;
-						result.audioVideo.classList.remove('ipfsLoading');
-						// add a description
-						if (result.name && outerNode.parentNode) {
-							const figure = document.createElement('figure');
-							const placeholder = document.createElement('span');
-							figure.appendChild(placeholder);
-							const figcaption = document.createElement('figcaption');
-							figcaption.textContent = result.name;
-							figure.appendChild(figcaption);
-							outerNode.replaceWith(figure);
-							placeholder.replaceWith(outerNode);
 						}
-					}
-					this.changeEvent(this.getData(), container[0].id);
-				}).catch(error => {
-					const errorMessageEl = document.createElement('span');
-					errorMessageEl.textContent = `IPFS failed: ${error}`;
-					outerNode.replaceWith(errorMessageEl);
-					this.changeEvent(this.getData(), container[0].id);
+						// static error handling which also works at receiver
+						if (result.type[0] === 'a') {
+							outerNode.setAttribute('download', result.name);
+							outerNode.setAttribute('onclick', `${this.IPFS.ipfs_onerror}(event, '${file.link}', '${result.name}', '${result.type}', '${!!result.audioVideo}', this);`);
+						} else {
+							result.source.setAttribute('onerror', `${this.IPFS.ipfs_onerror}(null, '${file.link}', '${result.name}', '${result.type}', '${!!result.audioVideo}', this);`);
+						}
+						result.source[result.type[1]] = file.link;
+						// video wouldn't play on seeder if not newly set
+						if (result.audioVideo) {
+							result.audioVideo.innerHTML = result.audioVideo.innerHTML;
+							result.audioVideo.classList.remove('ipfsLoading');
+							// add a description
+							if (result.name && outerNode.parentNode) {
+								const figure = document.createElement('figure');
+								const placeholder = document.createElement('span');
+								figure.appendChild(placeholder);
+								const figcaption = document.createElement('figcaption');
+								figcaption.textContent = result.name;
+								figure.appendChild(figcaption);
+								outerNode.replaceWith(figure);
+								placeholder.replaceWith(outerNode);
+							}
+						}
+						this.changeEvent(this.getData(), container[0].id);
+					}).catch(error => {
+						const errorMessageEl = document.createElement('span');
+						errorMessageEl.textContent = `IPFS failed: ${error}`;
+						outerNode.replaceWith(errorMessageEl);
+						this.changeEvent(this.getData(), container[0].id);
+					});
 				});
-			}));
+				this.setData(container, document.createElement('p'), 'insertNode'); // trying to get cursor focus after node
+			});
 		}else{
 			super.loadFile(files, text, container);
 		}
@@ -242,7 +245,7 @@ export class EditorSummernote extends MasterEditor {
 				});
 			}
 		);
-		this.setData(container, document.createElement('span'), 'insertNode'); // trying to get cursor focus after node
 		this.setData(container, node, 'insertNode');
+		this.setData(container, document.createElement('p'), 'insertNode'); // trying to get cursor focus after node
 	}
 }
