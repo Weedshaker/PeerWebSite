@@ -56,7 +56,7 @@ Give me a star on Github, which will motivate me to tide up the code and write D
 This beta application has been only tested in Chrome. Don't expect miracles, it's a pure hobby, side project and due to bleeding edge sometimes buggy.
 
 ### Road map
-0. Download all media, harmonize sst_download behavior + figcaption, service worker to cache static page files + ipfs + webtorrent requests, [webamp for audio option](https://github.com/captbaritone/webamp) or simply a player interface with random etc. (research bluetooth device button support http://www.javascriptkeycode.com/)
+0. [remember "currentTime" for video and long podcasts to resume](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio), Download all media, harmonize sst_download behavior + figcaption, service worker to cache static page files + ipfs + webtorrent requests, [webamp for audio option](https://github.com/captbaritone/webamp) or simply a player interface with random etc. (research bluetooth device button support http://www.javascriptkeycode.com/)
 
 1. Tide up Code, make font-sizes variable (expl. style.css:249), get rid of jspm, fix Tests, move hosting to [IPFS](https://ipfs.io/), move UI to WebComponents based Event Driven Architecture, replace http://goqr.me/api/ with local qr code generator (this could be a privacy concern, if this ever gets high usage as well as github as a hoster itself and tinyurl + gtm... just to keep this in mind.)
 
