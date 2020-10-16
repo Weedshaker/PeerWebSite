@@ -120,7 +120,7 @@ export class App extends MasterApp {
 		const loadCurrentTime = (media, removeItem = true) => {
 			const currentTime = Number(localStorage.getItem(`currentTime_${media.id}`)) || 0;
 			if (currentTime && currentTime !== media.currentTime) {
-				media.currentTime = currentTime;
+				setTimeout(() => media.currentTime = currentTime, 200); // timeout because of ios overwrites currentTime at some load event
 				if (removeItem) localStorage.removeItem(`currentTime_${media.id}`); // only to be set once, then can be deleted
 			}
 		}
