@@ -117,11 +117,11 @@ export class App extends MasterApp {
 				localStorage.removeItem(`currentTime_${media.id}`);
 			}
 		};
-		const loadCurrentTime = media => {
+		const loadCurrentTime = (media, removeItem = true) => {
 			const currentTime = Number(localStorage.getItem(`currentTime_${media.id}`)) || 0;
 			if (currentTime && currentTime !== media.currentTime) {
 				media.currentTime = currentTime;
-				localStorage.removeItem(`currentTime_${media.id}`); // only to be set once, then can be deleted
+				if (removeItem) localStorage.removeItem(`currentTime_${media.id}`); // only to be set once, then can be deleted
 			}
 		}
 		// loop all audio + video
@@ -151,7 +151,7 @@ export class App extends MasterApp {
 		}, true);
 		// read last currentTime
 		document.body.addEventListener('loadedmetadata', event => {
-			if (checkEvent(event)) loadCurrentTime(event.target);
+			if (checkEvent(event)) loadCurrentTime(event.target, false);
 		}, true);
 		document.body.addEventListener('loadeddata', event => {
 			if (checkEvent(event)) loadCurrentTime(event.target);
