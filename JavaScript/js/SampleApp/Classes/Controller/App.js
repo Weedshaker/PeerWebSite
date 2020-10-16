@@ -95,7 +95,7 @@ export class App extends MasterApp {
 		// below has to be moved into a shared player object*****************
 		const checkEvent = event => event.target && event.target.controls;
 		const querySelectorAllControls = () => Array.from(document.querySelectorAll('[controls]'));
-		const querySelectorAllReadyControls = () => querySelectorAllControls().filter(media => media.readyState >= 3); // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
+		const querySelectorAllReadyControls = () => querySelectorAllControls().filter(media => media.readyState >= 2); // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
 		const setVolumeAll = (volume = Number(localStorage.getItem('lastVolume') || 1)) => {
 			volume = volume > 1 ? 1 : volume < 0 ? 0 : volume;
 			querySelectorAllControls().forEach(media => media.volume = volume);
