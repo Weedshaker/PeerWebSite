@@ -117,6 +117,13 @@ export class App extends MasterApp {
 				localStorage.removeItem(`currentTime_${media.id}`);
 			}
 		};
+		const loadCurrentTime = media => {
+			const currentTime = Number(localStorage.getItem(`currentTime_${media.id}`)) || 0;
+			if (currentTime && currentTime !== media.currentTime) {
+				media.currentTime = currentTime;
+				localStorage.removeItem(`currentTime_${media.id}`); // only to be set once, then can be deleted
+			}
+		}
 		// loop all audio + video
 		document.body.addEventListener('ended', event => {
 			if (checkEvent(event)) {
@@ -134,36 +141,25 @@ export class App extends MasterApp {
 					localStorage.setItem(`lastPlayed_${location.hash}`, index);
 					// only at receiver, otherwise the toolbar will be above the fold
 					if (!this.isSender) scrollToEl(media);
-					saveCurrentTime(media);
 				}
 				setVolumeAll();
 			});
 		}, true);
-		document.body.addEventListener('playing', event => {
-			if (checkEvent(event)) saveCurrentTime(event.target);
-		}, true);
-		document.body.addEventListener('pause', event => {
-			if (checkEvent(event)) saveCurrentTime(event.target);
-		}, true);
-		document.body.addEventListener('seeked', event => {
-			if (checkEvent(event)) saveCurrentTime(event.target);
-		}, true);
-		document.body.addEventListener('stalled', event => {
-			if (checkEvent(event)) saveCurrentTime(event.target);
-		}, true);
 		// keep all at same volume
 		document.body.addEventListener('volumechange', event => {
-			if (checkEvent(event)) {
-				setVolumeAll(event.target.volume);
-				saveCurrentTime(event.target);
-			}
+			if (checkEvent(event)) setVolumeAll(event.target.volume);
 		}, true);
 		// read last currentTime
 		document.body.addEventListener('loadedmetadata', event => {
-			if (checkEvent(event)) event.target.currentTime = Number(localStorage.getItem(`currentTime_${event.target.id}`)) || 0;
+			if (checkEvent(event)) loadCurrentTime(event.target);
+		}, true);
+		document.body.addEventListener('loadeddata', event => {
+			if (checkEvent(event)) loadCurrentTime(event.target);
 		}, true);
 		// save last currentTime
-		window.addEventListener('beforeunload', event => querySelectorAllReadyControls().forEach(media => saveCurrentTime(media)));
+		document.body.addEventListener('timeupdate', event => {
+			if (checkEvent(event)) saveCurrentTime(event.target);
+		}, true);
 		if (!this.isSender) {
 			// keyboard
 			document.body.addEventListener('keydown', event => {
