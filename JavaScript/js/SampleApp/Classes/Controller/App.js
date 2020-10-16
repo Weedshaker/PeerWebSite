@@ -95,7 +95,7 @@ export class App extends MasterApp {
 		// below has to be moved into a shared player object*****************
 		const checkEvent = event => event.target && event.target.controls;
 		const querySelectorAllControls = () => Array.from(document.querySelectorAll('[controls]'));
-		const querySelectorAllReadyControls = () => querySelectorAllControls().filter(media => media.readyState >= 2); // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
+		const querySelectorAllReadyControls = () => querySelectorAllControls().filter(media => media.readyState >= 1); // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
 		const setVolumeAll = (volume = Number(localStorage.getItem('lastVolume') || 1)) => {
 			volume = volume > 1 ? 1 : volume < 0 ? 0 : volume;
 			querySelectorAllControls().forEach(media => media.volume = volume);
@@ -106,6 +106,15 @@ export class App extends MasterApp {
 			// check if the element is outside the viewport, otherwise don't scroll
 			if (rect && (rect.top < 0 || rect.left < 0 || rect.bottom > (window.innerHeight || document.documentElement.clientHeight) || rect.right > (window.innerWidth || document.documentElement.clientWidth))) {
 				setTimeout(() => el.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'}), 500);
+			}
+		};
+		const saveCurrentTime = media => {
+			// don't save a tollerance of 10sec
+			const currentTime = media.currentTime && media.currentTime > 10 && media.currentTime < media.duration - 10 ? media.currentTime : 0;
+			if (currentTime) {
+				localStorage.setItem(`currentTime_${media.id}`, currentTime);
+			} else if (localStorage.getItem(`currentTime_${media.id}`) !== null) {
+				localStorage.removeItem(`currentTime_${media.id}`);
 			}
 		};
 		// loop all audio + video
@@ -125,28 +134,36 @@ export class App extends MasterApp {
 					localStorage.setItem(`lastPlayed_${location.hash}`, index);
 					// only at receiver, otherwise the toolbar will be above the fold
 					if (!this.isSender) scrollToEl(media);
+					saveCurrentTime(media);
 				}
 				setVolumeAll();
 			});
 		}, true);
+		document.body.addEventListener('playing', event => {
+			if (checkEvent(event)) saveCurrentTime(event.target);
+		}, true);
+		document.body.addEventListener('pause', event => {
+			if (checkEvent(event)) saveCurrentTime(event.target);
+		}, true);
+		document.body.addEventListener('seeked', event => {
+			if (checkEvent(event)) saveCurrentTime(event.target);
+		}, true);
+		document.body.addEventListener('stalled', event => {
+			if (checkEvent(event)) saveCurrentTime(event.target);
+		}, true);
 		// keep all at same volume
 		document.body.addEventListener('volumechange', event => {
-			if (checkEvent(event)) setVolumeAll(event.target.volume);
+			if (checkEvent(event)) {
+				setVolumeAll(event.target.volume);
+				saveCurrentTime(event.target);
+			}
 		}, true);
 		// read last currentTime
 		document.body.addEventListener('loadedmetadata', event => {
 			if (checkEvent(event)) event.target.currentTime = Number(localStorage.getItem(`currentTime_${event.target.id}`)) || 0;
 		}, true);
 		// save last currentTime
-		window.addEventListener('beforeunload', event => querySelectorAllReadyControls().forEach(media => {
-			// don't save a tollerance of 10sec
-			const currentTime = media.currentTime && media.currentTime > 10 && media.currentTime < media.duration - 10 ? media.currentTime : 0;
-			if (currentTime) {
-				localStorage.setItem(`currentTime_${media.id}`, currentTime);
-			} else if (localStorage.getItem(`currentTime_${media.id}`) !== null) {
-				localStorage.removeItem(`currentTime_${media.id}`);
-			}
-		}));
+		window.addEventListener('beforeunload', event => querySelectorAllReadyControls().forEach(media => saveCurrentTime(media)));
 		if (!this.isSender) {
 			// keyboard
 			document.body.addEventListener('keydown', event => {
