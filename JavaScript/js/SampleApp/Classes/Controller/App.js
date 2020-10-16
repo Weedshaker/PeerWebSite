@@ -120,7 +120,7 @@ export class App extends MasterApp {
 		const loadCurrentTime = (media, removeItem = true) => {
 			const currentTime = Number(localStorage.getItem(`currentTime_${media.id}`)) || 0;
 			if (currentTime && currentTime !== media.currentTime) {
-				setTimeout(() => media.currentTime = currentTime, 200); // timeout because of ios overwrites currentTime at some load event
+				media.currentTime = currentTime;
 				if (removeItem) localStorage.removeItem(`currentTime_${media.id}`); // only to be set once, then can be deleted
 			}
 		}
@@ -141,6 +141,7 @@ export class App extends MasterApp {
 					localStorage.setItem(`lastPlayed_${location.hash}`, index);
 					// only at receiver, otherwise the toolbar will be above the fold
 					if (!this.isSender) scrollToEl(media);
+					loadCurrentTime(media); // do this because ios does not swollow currentTime set at loadedmetadata
 				}
 				setVolumeAll();
 			});
@@ -152,9 +153,6 @@ export class App extends MasterApp {
 		// read last currentTime
 		document.body.addEventListener('loadedmetadata', event => {
 			if (checkEvent(event)) loadCurrentTime(event.target, false);
-		}, true);
-		document.body.addEventListener('loadeddata', event => {
-			if (checkEvent(event)) loadCurrentTime(event.target);
 		}, true);
 		// save last currentTime
 		document.body.addEventListener('timeupdate', event => {
