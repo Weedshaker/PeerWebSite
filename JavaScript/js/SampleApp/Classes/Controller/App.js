@@ -151,9 +151,12 @@ export class App extends MasterApp {
 			if (checkEvent(event)) setVolumeAll(event.target.volume);
 		}, true);
 		// read last currentTime
+		/* 
+		// ios has some weird behavior to just play from this set currentTime
 		document.body.addEventListener('loadedmetadata', event => {
 			if (checkEvent(event)) loadCurrentTime(event.target, false);
 		}, true);
+		*/
 		// save last currentTime
 		document.body.addEventListener('timeupdate', event => {
 			if (checkEvent(event)) saveCurrentTime(event.target);
