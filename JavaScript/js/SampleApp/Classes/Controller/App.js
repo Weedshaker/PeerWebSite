@@ -101,6 +101,13 @@ export class App extends MasterApp {
 			querySelectorAllControls().forEach(media => media.volume = volume);
 			localStorage.setItem('lastVolume', volume);
 		};
+		const scrollToEl = el => {
+			const rect = el.getBoundingClientRect();
+			// check if the element is outside the viewport, otherwise don't scroll
+			if (rect && (rect.top < 0 || rect.left < 0 || rect.bottom > (window.innerHeight || document.documentElement.clientHeight) || rect.right > (window.innerWidth || document.documentElement.clientWidth))) {
+				setTimeout(() => el.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'}), 500);
+			}
+		};
 		// loop all audio + video
 		document.body.addEventListener('ended', event => {
 			if (checkEvent(event)) {
@@ -117,7 +124,7 @@ export class App extends MasterApp {
 				} else {
 					localStorage.setItem(`lastPlayed_${location.hash}`, index);
 					// only at receiver, otherwise the toolbar will be above the fold
-					if (!this.isSender) setTimeout(() => media.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'}), 1000);
+					if (!this.isSender) scrollToEl(media);
 				}
 				setVolumeAll();
 			});
@@ -127,17 +134,17 @@ export class App extends MasterApp {
 			if (checkEvent(event)) setVolumeAll(event.target.volume);
 		}, true);
 		// read last currentTime
-		document.body.addEventListener('loadeddata', event => {
-			if (checkEvent(event)) event.target.currentTime = Number(localStorage.getItem(`currentTime_${location.hash}_${event.target.id}`)) || 0;
+		document.body.addEventListener('loadedmetadata', event => {
+			if (checkEvent(event)) event.target.currentTime = Number(localStorage.getItem(`currentTime_${event.target.id}`)) || 0;
 		}, true);
 		// save last currentTime
 		window.addEventListener('beforeunload', event => querySelectorAllReadyControls().forEach(media => {
 			// don't save a tollerance of 10sec
 			const currentTime = media.currentTime && media.currentTime > 10 && media.currentTime < media.duration - 10 ? media.currentTime : 0;
 			if (currentTime) {
-				localStorage.setItem(`currentTime_${location.hash}_${media.id}`, currentTime);
-			} else if (localStorage.getItem(`currentTime_${location.hash}_${media.id}`) !== null) {
-				localStorage.removeItem(`currentTime_${location.hash}_${media.id}`);
+				localStorage.setItem(`currentTime_${media.id}`, currentTime);
+			} else if (localStorage.getItem(`currentTime_${media.id}`) !== null) {
+				localStorage.removeItem(`currentTime_${media.id}`);
 			}
 		}));
 		if (!this.isSender) {
