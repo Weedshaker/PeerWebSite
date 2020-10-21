@@ -25,6 +25,7 @@ export class HTML extends MasterHTML {
 						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.29; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
+				// add edit and player htmlelements
 				header.find('#info').append(`<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">${!isSender ? 'Edit!' : 'Abort Editing!'}</span></a><section id="player"></section>`);
 				header.find('.edit').click(event => {
 					event.preventDefault();

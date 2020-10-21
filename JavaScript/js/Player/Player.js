@@ -2,6 +2,7 @@
 
 /**
  * Creates a global Player managing the audio and video tags
+ * Use for debugging: http://localhost:3000/index_debug.html#ipfs:QmT8dAKuCVQ7TTHV5ezNFE272cs15PyigJGV663GHeen6t
  * NOTE: JSPM Transpiler does not allow web components, so we are left with a simple class
  *
  * @export
@@ -15,9 +16,14 @@ export default class Player {
   
   connect (isSender) {
     this.isSender = isSender
+    // wait for the first media to load metadata bevor the player options initialize
+    document.body.addEventListener('loadedmetadata', event => this.init(), { once: true, capture: true })
+  }
+
+  init () {
     this.html = document.querySelector('#' + this.id)
     if (!this.html) return console.warn('SST: Player could not be started due to lack of html el hook #' + this.id)
-    this.renderHTML()
+    this.renderHTML(this.renderCSS())
     this.addEventListeners()
   }
 
@@ -101,21 +107,42 @@ export default class Player {
   renderCSS () {
     return `
       <style>
-        ${this.id} {
-          background-color: pink;
+        #${this.id} section#controls {
+            background-color: darkslategrey;
+            display: none;
+            grid-template-areas: "title title title title title volume"
+                                 "prev seekprev play seeknext next volume"
+                                 "repeat sleep sleep sleep sleep volume";
+            height: 100%;
+            left: 0;
+            margin: auto;
+            opacity: 0.95;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 9999;
+        }
+        #${this.id} section#controls.open {
+          display: grid;
         }
       </style>
     `
   }
 
-  renderHTML () {
+  renderHTML (css = '') {
     const section = document.createElement('section')
+    section.setAttribute('id', this.id)
     section.innerHTML = `
-      ${this.renderCSS()}
-      <span>
-        Player
-      </span>
+      ${css}
+      <a href="#" class="player">&#9836;&nbsp;<span class="tiny">Player</span></a>
+      <section id="controls"></section>
     `
+    const controls = section.querySelector('#controls')
+    const button = section.querySelector('.player')
+    button.addEventListener('click', event => {
+      event.preventDefault()
+      controls.classList.add('open')
+    })
     this.html.replaceWith(section)
   }
 

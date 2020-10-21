@@ -83,11 +83,6 @@ export class App extends MasterApp {
 			*/
 			// persist site
 			const hash = this.originalHash || location.hash;
-			// force DOM to update once receiving connect
-			if (!this.isSender && this.checkHashType(location.hash) === 'magnet') {
-				this.WebTorrentReceiver.container.querySelectorAll('[src]').forEach(element => (element.src += `?${Date.now()}`));
-				this.WebTorrentReceiver.container.querySelectorAll('[href]').forEach(element => (element.href += `?${Date.now()}`));
-			}
 			const data = this.isSender ? this.Editor.getData() : this.receiveCont[0].innerHTML;
 			this.HTML.saveData(hash, data);
 		});
@@ -140,7 +135,7 @@ export class App extends MasterApp {
 				$('.headerReceiver > .counterWebRTC').hide();
 			} else if (this.checkHashType(location.hash) === 'ipfs') {
 				this.IPFS.cat(location.hash.substr(6)).then(text => {
-					this.HTML.setData(this.receiveCont, {message: text}, false);
+					this.HTML.setData(this.receiveCont, {message: text});
 					this.HTML.setTitle(this.HTML.getFirstText(text));
 				}).catch(error => $('#receiver').text(`An Error occured! ${error}`));
 				$('.headerReceiver > .counterWebRTC').hide();

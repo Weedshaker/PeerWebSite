@@ -43,11 +43,12 @@ header > div.flex a {
     padding: 2px 0;
     text-align: center;
 }
-header > div.flex .recycle, header > div.flex .edit {
+header > div.flex .recycle, header > div.flex .edit, header > div.flex .player {
     display: flex;
     align-items: center;
     font-size: 30px;
     padding: 0 10px;
+    text-decoration: none;
 }
 header > div.flex .recycle {
     color: green;
@@ -59,9 +60,8 @@ header > div.flex .edit {
 body[type="ipfs"] header > div.flex .edit, body[type="magnet"] header > div.flex .edit, body[issender="false"] header > div.flex .edit {
     display: block;
 }
-header > div.flex .recycle:hover, header > div.flex .edit:hover {
-    text-decoration: none;
-    font-style: italic;
+header > div.flex .player {
+    color: yellow;
 }
 header label {
     color: white;
