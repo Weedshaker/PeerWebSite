@@ -12,6 +12,8 @@
 export default class Player {
   constructor (id = 'player') {
     this.id = id
+    this.saveTollerance = 10 // used to decide from when a track would be saved
+    this.prevResetTollerance = 3 // used to decide from when a track would be reset when going to prev track
   }
   
   connect (isSender) {
@@ -75,19 +77,13 @@ export default class Player {
               this.pauseAll()
             }
           // prev, next
-          } else {
-            const controls = this.allControls
-            const index = this.currentControlIndex
-            if (event.keyCode === 37) {
-              // left
-              const prevToPlay = controls[index - 1 < 0 ? controls.length - 1 : index - 1]
-              if (prevToPlay) this.play(prevToPlay)
-            } else if (event.keyCode === 39) {
-              // right
-              const nextToPlay = controls[index + 1 >= controls.length ? 0 : index + 1]
-              if (nextToPlay) this.play(nextToPlay)
-            }
-					}
+          } else if (event.keyCode === 37) {
+            // left
+            this.prev()
+          } else if (event.keyCode === 39) {
+            // right
+            this.next()
+          }
 				}
 			}, true)
 		}
@@ -246,19 +242,18 @@ export default class Player {
     this.titleText = section.querySelector('.title span')
     // open/close player
     this.playerControls = section.querySelector('.controls')
-    const openButton = section.querySelector('.player')
-    openButton.addEventListener('click', event => {
+    section.querySelector('.player').addEventListener('click', event => {
       event.preventDefault()
       this.openPlayer()
     })
-    const closeButton = section.querySelector('.clo')
-    closeButton.addEventListener('click', event => this.playerControls.classList.remove('open'))
+    section.querySelector('.clo').addEventListener('click', event => this.playerControls.classList.remove('open'))
     // play
     this.playBtn = section.querySelector('.play')
-    this.playPlayBtn = this.playBtn.querySelector('.play')
-    this.playPlayBtn.addEventListener('click', event => this.play())
-    this.playPauseBtn = this.playBtn.querySelector('.pause')
-    this.playPauseBtn.addEventListener('click', event => this.pause())
+    this.playBtn.querySelector('.play').addEventListener('click', event => this.play())
+    this.playBtn.querySelector('.pause').addEventListener('click', event => this.pause())
+    // prev, next
+    section.querySelector('.prev').addEventListener('click', event => this.prev())
+    section.querySelector('.next').addEventListener('click', event => this.next())
   }
 
   validateEvent (event) {
@@ -281,7 +276,7 @@ export default class Player {
 
   saveCurrentTime (control) {
     // don't save a tollerance of 10sec
-    const currentTime = control.currentTime && control.currentTime > 10 && control.currentTime < control.duration - 10 ? control.currentTime : 0
+    const currentTime = control.currentTime && control.currentTime > this.saveTollerance && control.currentTime < control.duration - this.saveTollerance ? control.currentTime : 0
     if (currentTime) {
       localStorage.setItem(`currentTime_${control.id}`, currentTime)
     } else if (localStorage.getItem(`currentTime_${control.id}`) !== null) {
@@ -292,9 +287,14 @@ export default class Player {
   loadCurrentTime (control, removeItem = true) {
     const currentTime = Number(localStorage.getItem(`currentTime_${control.id}`)) || 0
     if (currentTime && currentTime !== control.currentTime) {
-      control.currentTime = currentTime
+      this.setCurrentTime(control, currentTime)
       if (removeItem) localStorage.removeItem(`currentTime_${control.id}`) // only to be set once, then can be deleted
     }
+  }
+
+  setCurrentTime (control, time = 0) {
+    if (isNaN(time)) time = 0
+    control.currentTime = time
   }
 
   getControlTitle (control) {
@@ -341,11 +341,18 @@ export default class Player {
   }
 
   prev () {
-
+    const controls = this.allControls
+    if (this.currentControl.currentTime > this.prevResetTollerance) return this.setCurrentTime(this.currentControl)
+    const index = this.currentControlIndex
+    const control = controls[index - 1 < 0 ? controls.length - 1 : index - 1]
+    if (control) this.play(control)
   }
-
+  
   next () {
-    
+    const controls = this.allControls
+    const index = this.currentControlIndex
+    const control = controls[index + 1 >= controls.length ? 0 : index + 1]
+    if (control) this.play(control)
   }
 
   get allControls () {
