@@ -25,33 +25,28 @@ export default class Player {
     if (!this.html) return console.warn('SST: Player could not be started due to lack of html el hook #' + this.id)
     this.addControlsBehavior(this.renderHTML(this.renderCSS()))
     this.addEventListeners()
+    this.setVolume() // intial set last volume
   }
 
   // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
   addEventListeners() {
-		// stop other audios playing
 		document.body.addEventListener('play', event => {
-			if (this.validateEvent(event)) this.allControls.forEach((control, index) => {
-				if (control !== event.target) {
-					 this.pause(control)
-				} else {
-          this.play(control)
-					this.loadCurrentTime(control) // do this because ios does not swollow currentTime set at loadedmetadata
-				}
-				this.setVolumeAll()
-			})
+			if (this.validateEvent(event)) this.play(event.target, true)
+    }, true)
+    document.body.addEventListener('pause', event => {
+			if (this.validateEvent(event)) this.pause(event.target, true)
     }, true)
     // loop all audio + video
 		document.body.addEventListener('ended', event => {
 			if (this.validateEvent(event)) {
-				const control = this.allReadyControls //Array.from(document.querySelectorAll('audio')).concat(Array.from(document.querySelectorAll('video')))
+				const control = this.allReadyControls
 				let index = -1
 				if ((index = control.indexOf(event.target)) !== -1) this.play(control[index + 1 >= control.length ? 0 : index + 1])
 			}
 		}, true)
 		// keep all at same volume
 		document.body.addEventListener('volumechange', event => {
-			if (this.validateEvent(event)) this.setVolumeAll(event.target.volume)
+			if (this.validateEvent(event)) this.setVolume(event.target.volume)
 		}, true)
 		// save last currentTime
 		document.body.addEventListener('timeupdate', event => {
@@ -68,30 +63,30 @@ export default class Player {
           // open player with "p"
           if (event.keyCode === 80) {
             this.openPlayer(undefined, true)
-            // volume change
+          // volume change
           } else if (event.keyCode === 38 || event.keyCode === 40) {
-						this.setVolumeAll((Number(localStorage.getItem('lastVolume') || 1) + (event.keyCode === 38 ? 0.1 : -0.1)).toFixed(4))
-						// prev, next, pause, play
-					} else {
-						const controls = this.allControls
-						const index = this.currentControlIndex
-						const allWerePaused = this.pauseAll()
-						// spacebar
-						if (event.keyCode === 32) {
-							// if all were already paused play last or first song/video
-              if (allWerePaused) this.play()
-              // TODO: broken but review the whole play pause next prev concept!!!!
-						// left
-						} else if (event.keyCode === 37) {
-							const prevToPlay = controls[index - 1 < 0 ? controls.length - 1 : index - 1]
-							// if all were already paused play last or first song/video
-							if (prevToPlay) this.play(prevToPlay)
-						// right
-						} else if (event.keyCode === 39) {
-							const nextToPlay = controls[index + 1 >= controls.length ? 0 : index + 1]
-							// if all were already paused play last or first song/video
-							if (nextToPlay) this.play(nextToPlay)
-						}
+						this.setVolume((Number(localStorage.getItem('lastVolume') || 1) + (event.keyCode === 38 ? 0.1 : -0.1)).toFixed(4))
+					// pause, play
+					} else if (event.keyCode === 32) {
+            // spacebar
+            if (this.currentControl.paused) {
+              this.play()
+            } else {
+              this.pauseAll()
+            }
+          // prev, next
+          } else {
+            const controls = this.allControls
+            const index = this.currentControlIndex
+            if (event.keyCode === 37) {
+              // left
+              const prevToPlay = controls[index - 1 < 0 ? controls.length - 1 : index - 1]
+              if (prevToPlay) this.play(prevToPlay)
+            } else if (event.keyCode === 39) {
+              // right
+              const nextToPlay = controls[index + 1 >= controls.length ? 0 : index + 1]
+              if (nextToPlay) this.play(nextToPlay)
+            }
 					}
 				}
 			}, true)
@@ -270,7 +265,7 @@ export default class Player {
     return event.target && event.target.controls
   }
 
-  setVolumeAll (volume = Number(localStorage.getItem('lastVolume') || 1)) {
+  setVolume (volume = Number(localStorage.getItem('lastVolume') || 1)) {
     volume = volume > 1 ? 1 : volume < 0 ? 0 : volume
     this.allControls.forEach(control => control.volume = volume)
     localStorage.setItem('lastVolume', volume)
@@ -324,26 +319,25 @@ export default class Player {
     this.setTitleText()
   }
 
-  play (control = this.currentControl) {
-    const index = this.allControls.indexOf(control)
-    localStorage.setItem(`lastPlayed_${location.hash}`, index === -1 ? 0 : index)
-    this.setTitleText()
-    if (!this.isSender) this.scrollToEl(control) // only at receiver, otherwise the toolbar will be above the fold
+  play (control = this.currentControl, eventTriggered = false) {
+    if (!eventTriggered && control.paused) return control.play() // this wil trigger the event, which in turn will trigger this function
+    this.currentControl = control
+    this.loadCurrentTime(control) // do this because ios does not swollow currentTime set at loadedmetadata
+    this.pauseAll(control)
     this.playBtn.classList.add('is-playing')
-    if (control.paused) {
-      control.play()
-      return true
-    }
-    return false
+    this.setTitleText(undefined, control)
+    if (!this.isSender) this.scrollToEl(control) // only at receiver, otherwise the toolbar will be above the fold
   }
 
-  pause (control = this.currentControl) {
+  pause (control = this.currentControl, eventTriggered = false) {
+    if (!eventTriggered && !control.paused) return control.pause() // this wil trigger the event, which in turn will trigger this function
     if (this.currentControl === control) this.playBtn.classList.remove('is-playing')
-    if (!control.paused) {
-      control.pause()
-      return true
-    }
-    return false
+  }
+
+  pauseAll (except = null) {
+    this.allControls.forEach(control => {
+      if (control !== except) this.pause(control)
+    })
   }
 
   prev () {
@@ -354,15 +348,6 @@ export default class Player {
     
   }
 
-  pauseAll () {
-    let allWerePaused = true
-    // pause all
-    this.allControls.forEach(control => {
-      if (!this.pause(control)) allWerePaused = false
-    })
-    return allWerePaused
-  }
-
   get allControls () {
     return Array.from(document.querySelectorAll('[controls]'))
   }
@@ -371,8 +356,16 @@ export default class Player {
     return this.allControls.filter(control => control.readyState >= 1) // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
   }
 
+  set currentControlIndex (index) {
+    localStorage.setItem(`lastPlayed_${location.hash}`, index === -1 ? 0 : index)
+  }
+
   get currentControlIndex () {
     return Number(localStorage.getItem(`lastPlayed_${location.hash}`)) || 0
+  }
+  
+  set currentControl (control) {
+    this.currentControlIndex = this.allControls.indexOf(control)
   }
 
   get currentControl () {
