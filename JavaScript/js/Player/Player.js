@@ -23,7 +23,7 @@ export default class Player {
   init () {
     this.html = document.querySelector('#' + this.id)
     if (!this.html) return console.warn('SST: Player could not be started due to lack of html el hook #' + this.id)
-    this.renderHTML(this.renderCSS())
+    this.addControlsBehavior(this.renderHTML(this.renderCSS()))
     this.addEventListeners()
   }
 
@@ -35,7 +35,8 @@ export default class Player {
 				if (media !== event.target) {
 					 media.pause()
 				} else {
-					localStorage.setItem(`lastPlayed_${location.hash}`, index)
+          localStorage.setItem(`lastPlayed_${location.hash}`, index)
+          this.setTitleText()
 					// only at receiver, otherwise the toolbar will be above the fold
 					if (!this.isSender) this.scrollToEl(media)
 					this.loadCurrentTime(media) // do this because ios does not swollow currentTime set at loadedmetadata
@@ -73,7 +74,7 @@ export default class Player {
 						// prev, next, pause, play
 					} else {
 						const media = this.allControls
-						const index = Number(localStorage.getItem(`lastPlayed_${location.hash}`)) || 0
+						const index = this.currentControlIndex
 						let allWerePaused = true
 						// pause all
 						media.forEach(el => {
@@ -107,12 +108,14 @@ export default class Player {
   renderCSS () {
     return `
       <style>
-        #${this.id} section#controls {
+        #${this.id} section.controls {
             background-color: darkslategrey;
             display: none;
-            grid-template-areas: "title title title title title volume"
-                                 "prev seekprev play seeknext next volume"
-                                 "repeat sleep sleep sleep sleep volume";
+            grid-template-areas: "title title title title clo"
+                                 "prev seekprev play seeknext next"
+                                 "repeat sleep sleep sleep sleep";
+            grid-template-rows: 1fr 4fr 1fr;
+            grid-template-columns: repeat(5, 1fr);
             height: 100%;
             left: 0;
             margin: auto;
@@ -122,8 +125,96 @@ export default class Player {
             width: 100%;
             z-index: 9999;
         }
-        #${this.id} section#controls.open {
+        #${this.id} section.controls.open {
           display: grid;
+        }
+        #${this.id} section.controls > i {
+          cursor: pointer;
+          font-size: min(15vh, 15vw);
+          user-select: none;
+        }
+        #${this.id} section.controls > i:hover {
+          color: #c5bbbb;
+        }
+        #${this.id} section.controls > div {
+          font-size: min(5vh, 5vw);
+        }
+        #${this.id} section.controls > i, #${this.id} section.controls > div {
+          color: white;
+          font-style: normal;
+        }
+        #${this.id} section.controls > i, #${this.id} section.controls > div {
+          align-items: center;
+          display: flex;
+          justify-content: center;
+        }
+        #${this.id} section.controls > .title {
+          grid-area: title;
+          justify-content: start;
+          overflow: hidden;
+          padding: 5px;
+        }
+        #${this.id} section.controls > .title > span {
+          white-space: nowrap;
+        }
+        #${this.id} section.controls > .title > span.marquee {
+          animation: marquee 10s linear infinite;
+          animation-delay: 2s;
+        }
+        #${this.id} section.controls > .clo {
+          grid-area: clo;
+        }
+        #${this.id} section.controls > .prev {
+          grid-area: prev;
+        }
+        #${this.id} section.controls > .seekprev {
+          grid-area: seekprev;
+        }
+        #${this.id} section.controls > .play {
+          grid-area: play;
+        }
+        #${this.id} section.controls > .seeknext {
+          grid-area: seeknext;
+        }
+        #${this.id} section.controls > .next {
+          grid-area: next;
+        }
+        #${this.id} section.controls > .repeat {
+          grid-area: repeat;
+        }
+        #${this.id} section.controls > .repeat > span.repeat-one {
+          display: none;
+        }
+        #${this.id} section.controls > .repeat.repeat-one > span.repeat-one {
+          display: block;
+        }
+        #${this.id} section.controls > .repeat.repeat-one > span.repeat-all {
+          display: none;
+        }
+        #${this.id} section.controls > .sleep {
+          align-content: center;
+          display: flex;
+          flex-wrap: wrap;
+          grid-area: sleep;
+        }
+        #${this.id} section.controls > .sleep > span {
+          margin-right: 15px;
+        }
+        #${this.id} section.controls > .sleep > input {
+          color: black;
+          text-align: center;
+        }
+        #${this.id} section.controls > .prev, #${this.id} section.controls > .next {
+          letter-spacing: max(-7vh, -7vw);
+          margin-left: max(-7vh, -7vw);
+        }
+        @keyframes marquee {
+          0% {
+            transform: translateX(51%);
+          }
+          100% {
+            transform: translateX(-101%);
+          }
         }
       </style>
     `
@@ -135,15 +226,29 @@ export default class Player {
     section.innerHTML = `
       ${css}
       <a href="#" class="player">&#9836;&nbsp;<span class="tiny">Player</span></a>
-      <section id="controls"></section>
+      <section class="controls">
+        <div class="title"><span>...</span></div><i class="clo">&#10006;</i>
+        <i class="prev">&#10073;&#10096;</i><i class="seekprev">&#10092;</i><i class="play">&#10148;</i><i class="seeknext">&#10093;</i><i class="next">&#10097;&#10073;</i>
+        <i class="repeat"><span class="repeat-all">&#9854;</span><span class="repeat-one">&#9843;</span></i><div class="sleep"><span>Sleep:</span><input type="number" placeholder="0"></div>
+      </section>
     `
-    const controls = section.querySelector('#controls')
-    const button = section.querySelector('.player')
-    button.addEventListener('click', event => {
+    this.html.replaceWith(section)
+    return section
+  }
+
+  addControlsBehavior (section) {
+    // title
+    this.titleText = section.querySelector('.title span')
+    // open/close player
+    const controls = section.querySelector('.controls')
+    const playerButton = section.querySelector('.player')
+    playerButton.addEventListener('click', event => {
       event.preventDefault()
       controls.classList.add('open')
+      this.setTitleText()
     })
-    this.html.replaceWith(section)
+    const closeButton = section.querySelector('.clo')
+    closeButton.addEventListener('click', event => controls.classList.remove('open'))
   }
 
   validateEvent (event) {
@@ -182,11 +287,35 @@ export default class Player {
     }
   }
 
+  getControlTitle (control) {
+    let text = '...'
+    if (!control) return text
+    const figcaption = control.parentElement && control.parentElement.querySelector('figcaption') && control.parentElement.querySelector('figcaption').textContent || ''
+    return figcaption ? figcaption : control.getAttribute('data-filename') ? control.getAttribute('data-filename') : control.getAttribute('download') ? control.getAttribute('download') : text
+  }
+
+  setTitleText (titleText = this.titleText, control = this.currentControl) {
+    titleText.textContent = this.getControlTitle(control)
+    if (titleText.offsetWidth > titleText.parentElement.offsetWidth) {
+      titleText.classList.add('marquee')
+    } else {
+      titleText.classList.remove('marquee')
+    }
+  }
+
   get allControls () {
     return Array.from(document.querySelectorAll('[controls]'))
   }
 
   get allReadyControls () {
     return this.allControls.filter(media => media.readyState >= 1) // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
+  }
+
+  get currentControlIndex () {
+    return Number(localStorage.getItem(`lastPlayed_${location.hash}`)) || 0
+  }
+
+  get currentControl () {
+    return this.allControls[this.currentControlIndex] || null
   }
 }

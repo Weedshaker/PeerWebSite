@@ -28,6 +28,7 @@ body > header {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
+    user-select: none;
 }
 header > div.flex {
     display: flex;
