@@ -59,7 +59,7 @@ header > div.flex .edit {
     display: none;
 }
 body[type="ipfs"] header > div.flex .edit, body[type="magnet"] header > div.flex .edit, body[issender="false"] header > div.flex .edit {
-    display: block;
+    display: flex;
 }
 header > div.flex .player {
     color: yellow;
