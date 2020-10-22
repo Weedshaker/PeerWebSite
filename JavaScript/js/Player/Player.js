@@ -16,6 +16,8 @@ export default class Player {
     this.prevResetTollerance = 3 // sec., used to decide from when a track would be reset when going to prev track
     this.seekTime = 10 // sec.
     this.keyDownTollerance = 300 // ms
+
+    this.randomQueue = []
   }
   
   connect (isSender) {
@@ -33,8 +35,9 @@ export default class Player {
   }
   
   refreshedInit () {
-    this.setVolume() // intial set last volume
-    this.currentControl.focus()
+    this.setVolume() // initial set last volume
+    this.setMode() // initial set last mode
+    if (this.mode !== 'loop-machine') this.currentControl.focus()
   }
 
   // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
@@ -48,11 +51,12 @@ export default class Player {
     // loop all audio + video
 		document.body.addEventListener('ended', event => {
 			if (this.validateEvent(event)) {
-        //  TODO: getNextByMode this.mode
-				const control = this.allReadyControls
-				let index = -1
-				if ((index = control.indexOf(event.target)) !== -1) this.play(control[index + 1 >= control.length ? 0 : index + 1])
-			}
+        if (this.mode === 'repeat-one' || this.mode === 'loop-machine') {
+          this.play(event.target)
+        } else {
+          this.next(true)
+        }
+      }
 		}, true)
 		// keep all at same volume
 		document.body.addEventListener('volumechange', event => {
@@ -64,7 +68,26 @@ export default class Player {
     }, true)
     document.body.addEventListener('seeked', event => {
 			if (this.validateEvent(event)) this.saveCurrentTime(event.target)
-		}, true)
+    }, true)
+    // is media playing or not
+    document.body.addEventListener('canplay', event => {
+			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(false)
+    }, true)
+    document.body.addEventListener('canplaythrough', event => {
+			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(false)
+    }, true)
+    document.body.addEventListener('playing', event => {
+			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(false)
+    }, true)
+    document.body.addEventListener('seeking', event => {
+			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(true)
+    }, true)
+    document.body.addEventListener('stalled', event => {
+			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(true)
+    }, true)
+    document.body.addEventListener('waiting', event => {
+			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(true)
+    }, true)
     // keyboard
 		if (!this.isSender) {
 			document.body.addEventListener('keydown', event => {
@@ -224,16 +247,15 @@ export default class Player {
         #${this.id} section.controls > .repeat {
           grid-area: repeat;
         }
-        #${this.id} section.controls > .repeat > div.repeat-one, #${this.id} section.controls > .repeat > div.random {
+        #${this.id} section.controls > .repeat > div.repeat-one, #${this.id} section.controls > .repeat > div.random, #${this.id} section.controls > .repeat > div.loop-machine {
           display: none;
         }
-        #${this.id} section.controls > .repeat.repeat-one > div.repeat-one, #${this.id} section.controls > .repeat.random > div.random {
+        #${this.id} section.controls > .repeat.repeat-one > div.repeat-one, #${this.id} section.controls > .repeat.random > div.random, #${this.id} section.controls > .repeat.loop-machine > div.loop-machine {
           display: flex;
         }
-        #${this.id} section.controls > .repeat.repeat-one > div.repeat-all,  #${this.id} section.controls > .repeat.repeat-one > div.random, #${this.id} section.controls > .repeat.random > div.repeat-all,  #${this.id} section.controls > .repeat.random > div.repeat-one {
-          display: none;
-        }
-        #${this.id} section.controls > .repeat.random > div.repeat-all {
+        #${this.id} section.controls > .repeat.repeat-one > div.repeat-all, #${this.id} section.controls > .repeat.repeat-one > div.random, #${this.id} section.controls > .repeat.repeat-one > div.loop-machine,
+        #${this.id} section.controls > .repeat.random > div.repeat-all,  #${this.id} section.controls > .repeat.random > div.repeat-one,  #${this.id} section.controls > .repeat.random > div.loop-machine,
+        #${this.id} section.controls > .repeat.loop-machine > div.repeat-all,  #${this.id} section.controls > .repeat.loop-machine > div.repeat-one,  #${this.id} section.controls > .repeat.loop-machine > div.random {
           display: none;
         }
         #${this.id} section.controls > .sleep {
@@ -259,6 +281,28 @@ export default class Player {
           margin-left: max(-5vh, -5vw);
           white-space: nowrap;
         }
+        #${this.id}.loop-machine > section.controls > .prev, #${this.id}.loop-machine > section.controls > .seekprev,
+        #${this.id}.loop-machine > section.controls > .next, #${this.id}.loop-machine > section.controls > .seeknext {
+          display: none;
+        }
+        #${this.id} section.controls > .play > div.loading {
+          animation: loading 1s linear infinite;
+          background-image: none;
+          border-color: gray;
+          border-radius: 50%;
+          border-right-color: transparent !important;
+          border: min(4vh, 4vw) solid white;
+          box-shadow: 0 0 min(10vh, 10vw) min(1vh, 1vw) lightgray;
+          display: none;
+          height: min(15vh, 15vw);
+          width: min(15vh, 15vw);
+        }
+        #${this.id}.loading > section.controls > .play > div.loading {
+          display: inline-block;
+        }
+        #${this.id}.loading > section.controls > .play > div.play, #${this.id}.loading > section.controls > .play > div.pause {
+          display: none;
+        }
         @keyframes marquee {
           0% {
             transform: translateX(51%);
@@ -267,6 +311,11 @@ export default class Player {
             transform: translateX(-101%);
           }
         }
+        @keyframes loading{
+          from{transform: rotate(0deg); opacity: 0.2;}
+          50%{transform: rotate(180deg); opacity: 1.0;}
+          to{transform: rotate(360deg); opacity: 0.2;}
+      }
       </style>
     `
   }
@@ -280,14 +329,15 @@ export default class Player {
       <section class="controls">
         <div class="title"><span>...</span></div><i class="clo">&#10006;</i>
         <i class="prev">&#10073;&#10096;</i><i class="seekprev">&#10092;</i>
-          <i class="play"><div class="play">&#10148;</div><div class="pause">&#10074;&#10074;</div></i>
+          <i class="play"><div class="play">&#10148;</div><div class="pause">&#10074;&#10074;</div><div class="loading"></div></i>
         <i class="seeknext">&#10093;</i><i class="next">&#10097;&#10073;</i>
         <i class="repeat">
-          <div class="repeat-all">&#9854;</div><div class="repeat-one">&#9843;</div><div class="random">&#9736;</div>
+          <div class="repeat-all">&#9854;</div><div class="repeat-one">&#9843;</div><div class="random">&#9736;</div><div class="loop-machine">&#9885;</div>
         </i><div class="sleep"><span>Sleep:</span><input type="number" placeholder="0"></div>
       </section>
     `
     this.html.replaceWith(section)
+    this.html = section
     return section
   }
 
@@ -315,7 +365,8 @@ export default class Player {
     this.repeatBtn = section.querySelector('.repeat')
     this.repeatBtn.querySelector('.repeat-all').addEventListener('click', event => this.setMode('repeat-one'))
     this.repeatBtn.querySelector('.repeat-one').addEventListener('click', event => this.setMode('random'))
-    this.repeatBtn.querySelector('.random').addEventListener('click', event => this.setMode('repeat-all'))
+    this.repeatBtn.querySelector('.random').addEventListener('click', event => this.setMode('loop-machine'))
+    this.repeatBtn.querySelector('.loop-machine').addEventListener('click', event => this.setMode('repeat-all'))
   }
 
   validateEvent (event) {
@@ -381,34 +432,51 @@ export default class Player {
     this.setTitleText()
   }
 
-  play (control = this.currentControl, eventTriggered = false) {
-    if (!eventTriggered && control.paused) return control.play() // this wil trigger the event, which in turn will trigger this function
+  play (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
+    if (!eventTriggered) {
+      if (respectLoopMachine && this.mode === 'loop-machine') return this.playAll()
+      if (control.paused) return control.play() // this wil trigger the event, which in turn will trigger this function
+    }
     this.currentControl = control
-    this.loadCurrentTime(control) // do this because ios does not swollow currentTime set at loadedmetadata
-    this.pauseAll(control)
     this.playBtn.classList.add('is-playing')
     this.setTitleText(undefined, control)
-    this.currentControl.focus()
-    if (!this.isSender) this.scrollToEl(control) // only at receiver, otherwise the toolbar will be above the fold
+    if (this.mode !== 'loop-machine') {
+      this.loadCurrentTime(control) // do this because ios does not swollow currentTime set at loadedmetadata
+      this.pauseAll(control)
+      this.currentControl.focus()
+      if (!this.isSender) this.scrollToEl(control) // only at receiver, otherwise the toolbar will be above the fold
+    }
   }
 
-  pause (control = this.currentControl, eventTriggered = false) {
-    if (!eventTriggered && !control.paused) return control.pause() // this wil trigger the event, which in turn will trigger this function
+  playAll (except = null) {
+    this.allControls.forEach(control => {
+      if (control !== except) {
+        this.play(control, undefined, false)
+        this.setCurrentTime(control, undefined, true)
+      }
+    })
+  }
+
+  pause (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
+    if (!eventTriggered) {
+      if (respectLoopMachine && this.mode === 'loop-machine') return this.pauseAll()
+      if (!control.paused) return control.pause() // this wil trigger the event, which in turn will trigger this function
+    }
     if (this.currentControl === control) this.playBtn.classList.remove('is-playing')
   }
 
   pauseAll (except = null) {
     this.allControls.forEach(control => {
-      if (control !== except) this.pause(control)
+      if (control !== except) this.pause(control, undefined, false)
     })
   }
 
-  prev (resetTrack = true) {
+  prev (resetTrack = true, respectRandom = true) {
     const controls = this.allControls
     if (resetTrack && this.currentControl.currentTime > this.prevResetTollerance) {
       this.play()
       return this.setCurrentTime(this.currentControl, undefined, true)
-    }
+    } else if (respectRandom && this.mode === 'random') return this.prevRandom()
     const index = this.currentControlIndex
     const control = controls[index - 1 < 0 ? controls.length - 1 : index - 1]
     if (control) {
@@ -418,8 +486,9 @@ export default class Player {
     return null
   }
   
-  next () {
-    const controls = this.allControls
+  next (onlyReady = false, respectRandom = true) {
+    if (respectRandom && this.mode === 'random') return this.nextRandom()
+    const controls = onlyReady ? this.allReadyControls : this.allControls
     const index = this.currentControlIndex
     const control = controls[index + 1 >= controls.length ? 0 : index + 1]
     if (control) {
@@ -427,6 +496,26 @@ export default class Player {
       return control
     }
     return null
+  }
+
+  prevRandom () {
+    const control = this.randomQueue.splice(-1)[0]
+    if (control) {
+      this.play(control)
+      return control
+    }
+    return this.prev(false, false)
+  }
+
+  nextRandom () {
+    const controls = this.allReadyControls
+    const control = controls[Math.floor(Math.random() * controls.length)]
+    if (control) {
+      this.randomQueue.push(control)
+      this.play(control)
+      return control
+    }
+    return this.next(true, false)
   }
 
   seekPrev () {
@@ -448,9 +537,22 @@ export default class Player {
   }
 
   setMode (mode) {
-    this.repeatBtn.className = 'repeat'
-    this.repeatBtn.classList.add(mode)
-    this.mode = mode
+    if (mode) this.mode = mode
+    this.repeatBtn.className = 'repeat' // reset to initial
+    this.repeatBtn.classList.add(this.mode)
+    if (this.mode === 'loop-machine') {
+      this.html.classList.add('loop-machine')
+    } else {
+      this.html.classList.remove('loop-machine')
+    }
+  }
+
+  isLoading (loading) {
+    if (loading) {
+      this.html.classList.add('loading')
+    } else {
+      this.html.classList.remove('loading')
+    }
   }
 
   get allControls () {
@@ -475,5 +577,13 @@ export default class Player {
 
   get currentControl () {
     return this.allControls[this.currentControlIndex] || null
+  }
+
+  set mode (mode) {
+    localStorage.setItem(`mode_${location.hash}`, mode)
+  }
+
+  get mode () {
+    return localStorage.getItem(`mode_${location.hash}`) || 'repeat-all'
   }
 }
