@@ -46,7 +46,10 @@ export default class Player {
 			if (this.validateEvent(event)) this.play(event.target, true)
     }, true)
     document.body.addEventListener('pause', event => {
-			if (this.validateEvent(event)) this.pause(event.target, true)
+			if (this.validateEvent(event)) {
+        this.pause(event.target, true)
+        if (event.target === this.currentControl) this.isLoading(false)
+      }
     }, true)
     // loop all audio + video
 		document.body.addEventListener('ended', event => {
@@ -268,8 +271,13 @@ export default class Player {
           margin-right: 15px;
         }
         #${this.id} section.controls > .sleep > input {
+          border: 0;
           color: black;
           text-align: center;
+        }
+        #${this.id} section.controls > .sleep > input.active {
+          border: 3px solid;
+          animation: active 3s linear infinite;
         }
         #${this.id} section.controls > .prev, #${this.id} section.controls > .next {
           letter-spacing: max(-7vh, -7vw);
@@ -303,19 +311,20 @@ export default class Player {
         #${this.id}.loading > section.controls > .play > div.play, #${this.id}.loading > section.controls > .play > div.pause {
           display: none;
         }
+        @keyframes active {
+          from {border-color: rgb(255, 0, 0, 0);}
+          50% {border-color: rgb(255, 0, 0, 1);}
+          to {border-color: rgb(255, 0, 0, 0);}
+        }
         @keyframes marquee {
-          0% {
-            transform: translateX(51%);
-          }
-          100% {
-            transform: translateX(-101%);
-          }
+          from {transform: translateX(51%);}
+          to {transform: translateX(-101%);}
         }
         @keyframes loading{
-          from{transform: rotate(0deg); opacity: 0.2;}
-          50%{transform: rotate(180deg); opacity: 1.0;}
-          to{transform: rotate(360deg); opacity: 0.2;}
-      }
+          from {transform: rotate(0deg); opacity: 0.2;}
+          50% {transform: rotate(180deg); opacity: 1.0;}
+          to {transform: rotate(360deg); opacity: 0.2;}
+        }
       </style>
     `
   }
@@ -333,7 +342,7 @@ export default class Player {
         <i class="seeknext">&#10093;</i><i class="next">&#10097;&#10073;</i>
         <i class="repeat">
           <div class="repeat-all">&#9854;</div><div class="repeat-one">&#9843;</div><div class="random">&#9736;</div><div class="loop-machine">&#9885;</div>
-        </i><div class="sleep"><span>Sleep:</span><input type="number" placeholder="0"></div>
+        </i><div class="sleep"><span>Sleep in (min.):</span><input type="number" placeholder="0"></div>
       </section>
     `
     this.html.replaceWith(section)
@@ -367,6 +376,10 @@ export default class Player {
     this.repeatBtn.querySelector('.repeat-one').addEventListener('click', event => this.setMode('random'))
     this.repeatBtn.querySelector('.random').addEventListener('click', event => this.setMode('loop-machine'))
     this.repeatBtn.querySelector('.loop-machine').addEventListener('click', event => this.setMode('repeat-all'))
+    // sleep timer
+    section.querySelector('.sleep input').addEventListener('change', event => {
+      if (event.target && !isNaN(Number(event.target.value))) this.setTimer(event.target, event.target.value)
+    })
   }
 
   validateEvent (event) {
@@ -549,10 +562,25 @@ export default class Player {
 
   isLoading (loading) {
     if (loading) {
-      this.html.classList.add('loading')
+      if (this.mode !== 'loop-machine') this.html.classList.add('loading')
     } else {
       this.html.classList.remove('loading')
     }
+  }
+
+  // value is expected in minutes
+  setTimer (input, value) {
+    input.value = value = Math.floor(value)
+    clearTimeout(this.timer)
+    if (!value || value <= 0) {
+      input.classList.remove('active')
+      input.value = 0
+      this.pauseAll()
+    } else {
+      input.classList.add('active')
+      this.timer = setTimeout(() => this.setTimer(input, value - 1), 60000);
+    }
+    input.blur()
   }
 
   get allControls () {
