@@ -43,7 +43,10 @@ export default class Player {
   // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
   addEventListeners() {
 		document.body.addEventListener('play', event => {
-			if (this.validateEvent(event)) this.play(event.target, true)
+			if (this.validateEvent(event)) {
+        this.play(event.target, true)
+        if (event.target === this.currentControl) this.isLoading(false)
+      }
     }, true)
     document.body.addEventListener('pause', event => {
 			if (this.validateEvent(event)) {
@@ -67,7 +70,10 @@ export default class Player {
 		}, true)
 		// save last currentTime
 		document.body.addEventListener('timeupdate', event => {
-			if (this.validateEvent(event)) this.saveCurrentTime(event.target)
+			if (this.validateEvent(event)) {
+        this.saveCurrentTime(event.target)
+        if (event.target === this.currentControl) this.isLoading(false)
+      }
     }, true)
     document.body.addEventListener('seeked', event => {
 			if (this.validateEvent(event)) this.saveCurrentTime(event.target)
@@ -147,23 +153,26 @@ export default class Player {
   renderCSS () {
     return `
       <style>
+        #${this.id} {
+          display: block !important;
+        }
         #${this.id} section.controls {
-            background-color: darkslategrey;
-            display: none;
-            grid-template-areas: "title title title title clo"
-                                 "prev seekprev play seeknext next"
-                                 "repeat sleep sleep sleep sleep";
-            grid-template-rows: 1fr 4fr 1fr;
-            grid-template-columns: repeat(5, 1fr);
-            height: 100%;
-            left: 0;
-            margin: auto;
-            opacity: 0.95;
-            padding: 5px;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 9999;
+          background-color: darkslategrey;
+          display: none;
+          grid-template-areas: "title title title title clo"
+                                "prev seekprev play seeknext next"
+                                "repeat sleep sleep sleep sleep";
+          grid-template-rows: 1fr 4fr 1fr;
+          grid-template-columns: repeat(5, 1fr);
+          height: 100%;
+          left: 0;
+          margin: auto;
+          opacity: 0.95;
+          padding: 5px;
+          position: fixed;
+          top: 0;
+          width: 100%;
+          z-index: 9999;
         }
         @media only screen and (max-width: 400px) {
           #${this.id} section.controls {
@@ -192,13 +201,13 @@ export default class Player {
           justify-content: center;
           width: 100%;
         }
-        #${this.id} section.controls > i:hover {
+        #${this.id} section.controls > i:hover, #${this.id} section.controls > i:hover > div {
           color: #c5bbbb;
         }
         #${this.id} section.controls > div {
           font-size: min(5vh, 5vw);
         }
-        #${this.id} section.controls > i, #${this.id} section.controls > div {
+        #${this.id} section.controls > i, #${this.id} section.controls div {
           color: white;
           font-style: normal;
         }
@@ -285,8 +294,8 @@ export default class Player {
           white-space: nowrap;
         }
         #${this.id} section.controls > .play > div.pause {
-          letter-spacing: max(-5vh, -5vw);
-          margin-left: max(-5vh, -5vw);
+          letter-spacing: max(-3vh, -3vw);
+          margin-left: max(-3vh, -3vw);
           white-space: nowrap;
         }
         #${this.id}.loop-machine > section.controls > .prev, #${this.id}.loop-machine > section.controls > .seekprev,
@@ -336,12 +345,12 @@ export default class Player {
       ${css}
       <a href="#" class="player">&#9836;&nbsp;<span class="tiny">Player</span></a>
       <section class="controls">
-        <div class="title"><span>...</span></div><i class="clo">&#10006;</i>
+        <div class="title"><span>...</span></div><i class="clo">&#10008;</i>
         <i class="prev">&#10073;&#10096;</i><i class="seekprev">&#10092;</i>
           <i class="play"><div class="play">&#10148;</div><div class="pause">&#10074;&#10074;</div><div class="loading"></div></i>
         <i class="seeknext">&#10093;</i><i class="next">&#10097;&#10073;</i>
         <i class="repeat">
-          <div class="repeat-all">&#9854;</div><div class="repeat-one">&#9843;</div><div class="random">&#9736;</div><div class="loop-machine">&#9885;</div>
+          <div class="repeat-all">&#9854;</div><div class="repeat-one">&#9843;</div><div class="random">&#9736;</div><div class="loop-machine">&#10046;</div>
         </i><div class="sleep"><span>Sleep in (min.):</span><input type="number" placeholder="0"></div>
       </section>
     `
@@ -604,7 +613,7 @@ export default class Player {
   }
 
   get currentControl () {
-    return this.allControls[this.currentControlIndex] || null
+    return this.allControls[this.currentControlIndex] || document.createElement('audio')
   }
 
   set mode (mode) {

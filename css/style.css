@@ -345,3 +345,6 @@ body.viewer #receiver {
     padding: 7px;
     border-radius: 4px;
 }
+#player {
+    display: none;
+}
