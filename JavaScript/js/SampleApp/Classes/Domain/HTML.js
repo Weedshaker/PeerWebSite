@@ -1,6 +1,7 @@
 /*jshint esnext: true */
 
 import {MasterHTML} from 'SampleApp/Prototype/Domain/MasterHTML.js';
+import Player from 'Player/Player.js';
 
 export class HTML extends MasterHTML {
 	constructor(WebTorrentReceiver, WebTorrentSeeder, Editor, WebRTC, IPFS, parent){
@@ -11,6 +12,8 @@ export class HTML extends MasterHTML {
 		this.WebRTC = WebRTC;
 		this.IPFS = IPFS;
 		this.parent = parent; // ref to App.js
+
+		this.Player = new Player();
 	}
 	createElements(name, attach = '#body', connection = null, isSender = true){
 		attach = $(attach).length > 0 ? attach : 'body';
@@ -19,10 +22,12 @@ export class HTML extends MasterHTML {
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
 				const header = $(`<header>
 					<div id="info" class="flex">
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.28; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<div class="offline">YOU ARE OFFLINE!!!</div>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.29; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
-				header.find('#info').append(`<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">${!isSender ? 'Edit!' : 'Abort Editing!'}</span></a>`);
+				// add edit and player htmlelements
+				header.find('#info').append(`<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">${!isSender ? 'Edit!' : 'Abort Editing!'}</span></a><section id="player"></section>`);
 				header.find('.edit').click(event => {
 					event.preventDefault();
 					if (!isSender) {
@@ -72,6 +77,8 @@ export class HTML extends MasterHTML {
 				});
 
 				$('#info').append(headerReceiver);
+
+				this.Player.connect(isSender);
 
 				return [sender, receiver, webrtcButton, counterWebTorrent];
 		}

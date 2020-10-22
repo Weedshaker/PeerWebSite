@@ -28,6 +28,7 @@ body > header {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
+    user-select: none;
 }
 header > div.flex {
     display: flex;
@@ -43,11 +44,12 @@ header > div.flex a {
     padding: 2px 0;
     text-align: center;
 }
-header > div.flex .recycle, header > div.flex .edit {
+header > div.flex .recycle, header > div.flex .edit, header > div.flex .player {
     display: flex;
     align-items: center;
     font-size: 30px;
     padding: 0 10px;
+    text-decoration: none;
 }
 header > div.flex .recycle {
     color: green;
@@ -57,11 +59,10 @@ header > div.flex .edit {
     display: none;
 }
 body[type="ipfs"] header > div.flex .edit, body[type="magnet"] header > div.flex .edit, body[issender="false"] header > div.flex .edit {
-    display: block;
+    display: flex;
 }
-header > div.flex .recycle:hover, header > div.flex .edit:hover {
-    text-decoration: none;
-    font-style: italic;
+header > div.flex .player {
+    color: yellow;
 }
 header label {
     color: white;
@@ -337,4 +338,10 @@ body.viewer #receiver {
 }
 .form-check input {
     margin: 0;
+}
+.offline {
+    color: red;
+    border: 1px solid red;
+    padding: 7px;
+    border-radius: 4px;
 }

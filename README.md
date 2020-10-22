@@ -5,7 +5,7 @@
 1. [IPFS page with video](https://peerweb.site/#ipfs:QmaqoHkBE7xyixxyxhd5fV1PBzTikFkKKV6ZCz8UFNe1ZE)
 2. [IPFS page with audio - Grateful Dead Live borrowed from archive.org](https://peerweb.site/#ipfs:QmT8dAKuCVQ7TTHV5ezNFE272cs15PyigJGV663GHeen6t)
 3. [IPFS page with client side app](https://peerweb.site/#ipfs:QmZb1mx8WXKReT8YmwY6bt1KTz48wqS9KCXwMptCX3UkpM)
-4. [IPFS page with client side app (js + css fed through service worker)](https://peerweb.site/#ipfs:QmSR4HEkMf2ZDeYdioQnqTm8wrFmz91aBbfXqh1u4pz2do)
+4. [IPFS page with client side app (js + css fed through service worker)](https://peerweb.site/#ipfs:QmP9PpZFt3VirDt5xBe22CAQn8K7QppfER49QRu2ctnLxC)
 
 ### Description
 Send Texts, Music, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC, WebTorrents or IPFS, live edited P2P as well as static Torrents + IPFS. With WebRTC/WebTorrent (NOT [IPFS - more details](https://ipfs.io/#why)) - No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent/IPFS snapshots. *(Saving in-site WebTorrents is not yet supported.)* **Note: Cellphone networks on 4g/5g possibly block your WebRTC or WebTorrent connections, which renders PeerWebSite unusable, except you use the IPFS option!!! or you could circumvent network restrictions by using a VPN.**
@@ -56,7 +56,7 @@ Give me a star on Github, which will motivate me to tide up the code and write D
 This beta application has been only tested in Chrome. Don't expect miracles, it's a pure hobby, side project and due to bleeding edge sometimes buggy.
 
 ### Road map
-0. Download all media, harmonize sst_download behavior + figcaption, service worker to cache static page files + ipfs + webtorrent requests, [webamp for audio option](https://github.com/captbaritone/webamp) or simply a player interface with random etc. (research bluetooth device button support http://www.javascriptkeycode.com/)
+0. Download all media, harmonize sst_download behavior + figcaption
 
 1. Tide up Code (split out stuff into submodules), make font-sizes variable (expl. style.css:249), get rid of jspm, fix Tests, move hosting to [IPFS](https://ipfs.io/), move UI to WebComponents based Event Driven Architecture, replace http://goqr.me/api/ with local qr code generator (this could be a privacy concern, if this ever gets high usage as well as github as a hoster itself and tinyurl + gtm... just to keep this in mind.)
 
