@@ -86,6 +86,17 @@ export class App extends MasterApp {
 			const data = this.isSender ? this.Editor.getData() : this.receiveCont[0].innerHTML;
 			this.HTML.saveData(hash, data);
 		});
+		// online / offline
+		const onlineOffline = event => {
+			if (navigator.onLine) {
+				$('.offline').hide();
+			} else {
+				$('.offline').show();
+			}
+		};
+		onlineOffline();
+		window.addEventListener('online', onlineOffline);
+  		window.addEventListener('offline', onlineOffline);
 		// connect by hash
 		this.connectHash(false);
 		window.addEventListener('hashchange', () => this.connectHash());
