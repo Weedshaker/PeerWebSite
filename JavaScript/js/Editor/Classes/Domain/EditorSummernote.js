@@ -179,7 +179,7 @@ export class EditorSummernote extends MasterEditor {
 					// https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/FILES.md#returns
 					this.IPFS.add(result.name, result.content).then(file => {
 						// sw do not intercept videos for streaming but give mimetype down
-						file.link += `?filename=${result.name}${result.audioVideo ? '&swIntercept=false' : ''}`;
+						file.link += `?filename=${result.name}${result.audioVideo ? '&audioVideo=true' : ''}`;
 						if (result.type[0] === 'img') {
 							outerNode.addEventListener('load', event => {
 								outerNode.classList.remove('ipfsLoading');

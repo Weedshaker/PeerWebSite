@@ -288,16 +288,6 @@ export default class Player {
           border: 3px solid;
           animation: active 3s linear infinite;
         }
-        #${this.id} section.controls > .prev, #${this.id} section.controls > .next {
-          letter-spacing: max(-7vh, -7vw);
-          margin-left: max(-7vh, -7vw);
-          white-space: nowrap;
-        }
-        #${this.id} section.controls > .play > div.pause {
-          letter-spacing: max(-3vh, -3vw);
-          margin-left: max(-3vh, -3vw);
-          white-space: nowrap;
-        }
         #${this.id}.loop-machine > section.controls > .prev, #${this.id}.loop-machine > section.controls > .seekprev,
         #${this.id}.loop-machine > section.controls > .next, #${this.id}.loop-machine > section.controls > .seeknext {
           display: none;
@@ -345,12 +335,12 @@ export default class Player {
       ${css}
       <a href="#" class="player">&#9836;&nbsp;<span class="tiny">Player</span></a>
       <section class="controls">
-        <div class="title"><span>...</span></div><i class="clo">&#10008;</i>
-        <i class="prev">&#10073;&#10096;</i><i class="seekprev">&#10092;</i>
-          <i class="play"><div class="play">&#10148;</div><div class="pause">&#10074;&#10074;</div><div class="loading"></div></i>
-        <i class="seeknext">&#10093;</i><i class="next">&#10097;&#10073;</i>
+        <div class="title"><span>...</span></div><i class="clo"><span class="glyphicon glyphicon-remove"></span></i>
+        <i class="prev"><span class="glyphicon glyphicon-step-backward"></i><i class="seekprev"><span class="glyphicon glyphicon-backward"></span></span></i>
+          <i class="play"><div class="play"><span class="glyphicon glyphicon-play"></span></div><div class="pause"><span class="glyphicon glyphicon-pause"></span></div><div class="loading"></div></i>
+        <i class="seeknext"><span class="glyphicon glyphicon-forward"></span></i><i class="next"><span class="glyphicon glyphicon-step-forward"></i>
         <i class="repeat">
-          <div class="repeat-all">&#9854;</div><div class="repeat-one">&#9843;</div><div class="random">&#9736;</div><div class="loop-machine">&#10046;</div>
+          <div class="repeat-all"><span class="glyphicon glyphicon-refresh"></span></div><div class="repeat-one"><span class="glyphicon glyphicon-repeat"></span></div><div class="random"><span class="glyphicon glyphicon-random"></span></div><div class="loop-machine"><span class="glyphicon glyphicon-equalizer"></span></div>
         </i><div class="sleep"><span>Sleep in (min.):</span><input type="number" placeholder="0"></div>
       </section>
     `

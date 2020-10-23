@@ -9,11 +9,27 @@ export class MasterWebTorrent {
 	constructor(container = document.body){
 		this.container = container;
 		this.Helper = new Helper();
-		this.client = new WebTorrent();
-		this.client.sst_magnetURI = [];
-		this.client.on('error', err => {
-			console.error('ERROR: ' + err.message);
-		});
+		this.client = {
+			on: () => {},
+			get: () => {},
+			add: () => {},
+			seed: () => {},
+			remove: () => {},
+			sst_magnetURI: [],
+			torrents: [],
+		}; // placeholder until client is loaded
+		const createClient = () => {
+			if (window.WebTorrent) {
+				this.client = new WebTorrent();
+				this.client.sst_magnetURI = [];
+				this.client.on('error', err => {
+					console.error('ERROR: ' + err.message);
+				});
+			} else {
+				setTimeout(createClient, 1000);
+			}
+		};
+		createClient();
 		this.addByTextReturn = new Map(); // takes function, scope and attributes [] to trigger on this._resultAddByText
 		this.OptionRegex = new OptionRegex(this, this.client, undefined, this.addByTextReturn);
 		this.OptionRegex.returnMap.set('init', [this.OptionRegex.getMagnetURL, this.OptionRegex]);

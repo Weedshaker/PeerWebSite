@@ -1,6 +1,8 @@
 /*jshint esnext: true */
 
 // NOTE: this ServiceWorkers can't be loaded into a Blob. This file must be directly referenced. Don't extend it.
+// Debug: http://localhost:3000/index_debug.html#ipfs:QmT8dAKuCVQ7TTHV5ezNFE272cs15PyigJGV663GHeen6t
+// Test for QmbD7KXb5JrEmPooLeQBXvxJvjmHuHJLyynYVjzeDM5CbL at Cache
 
 class MasterServiceWorker {
 	constructor(){
@@ -14,22 +16,21 @@ class MasterServiceWorker {
 			'./img/ms-icon-144x144.png',
 			'./favicon.ico',
 			'./JavaScript/webRTC.js',
-			'./index_debug.html',
-			'./JavaScript/js/debug.js',
-			'./JavaScript/js/init.js',
 			'./css/style.css',
 			'./css/mui.css',
+			// update these jspm_packages links when version gets updated
+			'./jspm_packages/github/twbs/bootstrap@3.3.7/css/bootstrap.min.css',
+			'./jspm_packages/github/tanaka-de-silva/google-diff-match-patch-js@1.0.0/diff_match_patch.js',
+			'./jspm_packages/github/pieroxy/lz-string@1.4.4/libs/lz-string.min.js',
 			'https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js',
 			'https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js',
-			'./jspm_packages/system.js',
-			'./config.js'
 		];
 		// ipfs + webtorrent
-		this.doNotIntercept = ['socket.io', 'tinyurl.com', 'swIntercept=false', 'api.qrserver.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
+		this.doNotCache = ['socket.io'];
+		this.doRefreshCache = [location.origin];
+		this.doNotIntercept = ['socket.io', 'tinyurl.com', /*'audioVideo=true', */'api.qrserver.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
 		this.doIntercept = ['magnet:', 'magnet/', 'ipfs/']; // + location.origin added below on message
-		// Turn of Pinning for IPFS, since stuff gets cached in the service worker it maybe better to not double save at IndexedDB
-		//this.justInform = ['gateway.ipfs.io'];
-		this.justInform = [];
+		this.ipfsPin = ['gateway.ipfs.io'];
 		// messaging
 		this.messageChannel = null;
 		this.resolveMap = new Map(); // used to resolve after the message response
@@ -51,6 +52,11 @@ class MasterServiceWorker {
 			},
 			isApproved: function() {return this.approved === this.recent;}
 		}; // used to track, if new session
+
+		// strangly the cache function called in getMessageOrFetchOrCache looses its scope even call, apply don't work
+		this.getCache = this.getCache.bind(this);
+		this.setCache = this.setCache.bind(this);
+		this.getFetchOrCache = this.getFetchOrCache.bind(this);
 	}
 	run(){
 		//console.log('@serviceworker run');
@@ -69,8 +75,11 @@ class MasterServiceWorker {
 		self.addEventListener('activate', event => {
 			//console.log('@serviceworker got activated!');
 			event.waitUntil(self.clients.claim());
+			// NOTE: not needed when refreshing cache on doRefreshCache
+			// NOTE: clearing the cache evtl. had strange sideeffects or waiting makes service worker unresponsive
 			// onActivate clear old caches to avoid conflict
-			event => event.waitUntil(caches.keys().then(keyList => Promise.all(keyList.map(key => key !== this.version ? caches.delete(key) : undefined))));
+			//event.waitUntil(caches.keys().then(keyList => Promise.all(keyList.map(key => key !== this.version ? caches.delete(key) : undefined))));
+			//caches.keys().then(keyList => keyList.forEach(key => key !== this.version ? caches.delete(key) : undefined));
 		});
 	}
 	// gets executed on every message received from dom and is used to save the communication channel
@@ -100,29 +109,71 @@ class MasterServiceWorker {
 			this.clientId.recent = event.clientId;
 			// feed a selfexecuting function
 			event.respondWith((() => {
-				// use message channels, etc. when online
-				if (self.navigator.onLine) {
-					if (!this.messageChannel) return this.fetch(event.request);
-					const intercept = this.clientId.isApproved() && this.doNotIntercept.every(url => !event.request.url.includes(url)) && this.doIntercept.some(url => event.request.url.includes(url))
-					console.info(`@serviceworker intercept ${intercept}:`, event.request.url);
-					if (intercept) {
-						const key = this.getRandomString();
-						this.messageChannel.postMessage([event.request.url, key]);
-						return new Promise((resolve, reject) => {
-							// key, [success, failure] functions
-							this.resolveMap.set(key, [(data) => { resolve(this.cache(event.request, new Response(data[0], data[1]))); }, () => { resolve(this.fetch(event.request)); }]);
-						});
-					} else {
-						//console.log('@serviceworker donot-intercept', event.request.url);
-						if (this.justInform.some(url => event.request.url.includes(url))) this.messageChannel.postMessage(['info', event.request.url]);
-						return this.fetch(event.request);
-					}
-				// when offline
+				// cache all and pin all ipfs
+				if (!this.messageChannel) return this.getFetchOrCache(event.request);
+				const intercept = this.clientId.isApproved() && this.doNotIntercept.every(url => !event.request.url.includes(url)) && this.doIntercept.some(url => event.request.url.includes(url))
+				console.info(`@serviceworker intercept ${intercept}:`, event.request.url);
+				// try to get it from webtorrent or ipfs first when interception is true
+				// else if your offline get it from ipfs if it is an ipfs url
+				if (intercept || (!self.navigator.onLine && this.doIntercept.some(url => event.request.url.includes(url)))) {
+					return this.getMessageOrFetchOrCache(event.request);
 				} else {
-					return caches.open(this.version).then(cache => cache.match(event.request, {ignoreSearch: true, ignoreMethod: true, ignoreVary: true})).catch(error => this.error(error));
+					//console.log('@serviceworker donot-intercept', event.request.url);
+					// pin ipfs but get it here for streaming reasons
+					if (this.ipfsPin.some(url => event.request.url.includes(url))) this.messageChannel.postMessage(['info', event.request.url]);
+					return this.getFetchOrCache(event.request);
 				}
 			})());
 		});
+	}
+	getMessageOrFetchOrCache(request) {
+		// race message vs fetch
+		const key = this.getRandomString();
+		this.messageChannel.postMessage([request.url, key]);
+		return new Promise(resolve => {
+			const abortController = new AbortController();
+			this.getFetchOrCache(request, abortController).then(response => resolve(response));
+			// key, [success, failure] functions
+			this.resolveMap.set(key, [data => {
+				resolve(this.setCache(request, new Response(data[0], data[1])))
+				// only abort non local resources, since cache has to be refreshed in case local files change
+				if (this.doRefreshCache.every(url => !request.url.includes(url))) abortController.abort();
+			}, () => {}]);
+		});
+	}
+	getFetchOrCache(request, abortController = new AbortController()) {
+		// race fetch vs cache
+		return new Promise(resolve => {
+			this.doFetchThenCache(request, abortController).then(response => {
+				if (this.validateResponse(response)) resolve(response);
+			});
+			this.getCache(request).then(response => {
+				if (this.validateResponse(response)) {
+					resolve(response);
+					// only abort non local resources, since cache has to be refreshed in case local files change
+					if (this.doRefreshCache.every(url => !request.url.includes(url))) abortController.abort();
+				}
+			});
+		});
+	}
+	doFetchThenCache(request, abortController) {
+		return fetch(request, {signal: abortController.signal}).then(response => this.setCache(request, response)).catch(error => this.error(error, request, request));
+	}
+	getCache(request) {
+		return caches.open(this.version).then(cache => cache.match(request, {ignoreSearch: true, ignoreMethod: true, ignoreVary: true})).catch(error => this.error(error, request));
+	}
+	setCache(request, response) {
+		// don't cache POST
+		if (request.method === 'POST' || (request.url && this.doNotCache.some(url => request.url.includes(url)))) return response;
+		return caches.open(this.version).then(cache => {
+			const responseClone = response.clone();
+			if (this.validateResponse(responseClone)) cache.put(request, responseClone).catch(error => this.error(error, request));
+			return response;
+		}).catch(error => this.error(error, request, response));
+	}
+	error(error, request, toReturn) {
+		console.warn('ServiceWorker:', error, request);
+		return toReturn;
 	}
 	getRandomString() {
 		if (self.crypto && self.crypto.getRandomValues && navigator.userAgent.indexOf('Safari') === -1) {
@@ -136,19 +187,9 @@ class MasterServiceWorker {
 			return (Math.random() * new Date().getTime()).toString(36).replace(/\./g, '');
 		}
 	}
-	// fetch and cache
-	fetch(request) {
-		return fetch(request).then(response => this.cache(request, response)).catch(error => this.error(error, request));
-	}
-	cache(request, response) {
-		return caches.open(this.version).then(cache => {
-			cache.put(request, response.clone()).catch(error => this.error(error));
-			return response;
-		}).catch(error => this.error(error, response));
-	}
-	error(error, toReturn) {
-		console.warn('ServiceWorker:', error);
-		return toReturn;
+	validateResponse(response) {
+		// 0 is for cache
+		return response && (response.status === 0 || (response.status >= 200 && response.status <= 299));
 	}
 }
 

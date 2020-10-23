@@ -5,7 +5,16 @@ export class IPFS {
         // should be 'ipfs://' but browsers do not yet support that url scheme, once this gateway would get blocked or overloaded the files have to be fixed through the service worker
         this.baseUrl = 'https://gateway.ipfs.io/ipfs/'; // must have "onFetchError" error handling, when used at add
         // https://blog.ipfs.io/2020-07-20-js-ipfs-0-48/
-        this.node = window.Ipfs.create();
+        this.node = new Promise(resolve => {
+            const createIpfs = () => {
+                if (window.Ipfs) {
+                    resolve(window.Ipfs.create());
+                } else {
+                    setTimeout(createIpfs, 1000);
+                }
+            };
+            createIpfs();
+        });
         this.isIdle = new Promise(resolve => document.readyState !== 'complete' ? window.addEventListener('load', event => setTimeout(() => resolve(), 60000)) : setTimeout(() => resolve(), 60000));
 
         // ipfs dom nodes error handling
