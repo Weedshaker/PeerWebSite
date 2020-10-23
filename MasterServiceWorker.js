@@ -28,6 +28,8 @@ class MasterServiceWorker {
 		// ipfs + webtorrent
 		this.doNotCache = ['socket.io'];
 		this.doCacheStrict = ['tinyurl.com', 'api.qrserver.com']; // cache strict (don't ignore parameters etc.)
+		// TODO: doCacheSrict is not respected, so I added the below to doNotCache
+		this.doNotCache.concat(this.doCacheStrict)
 		this.doRefreshCache = [location.origin];
 		this.doNotIntercept = ['socket.io', 'tinyurl.com', /*'audioVideo=true', */'api.qrserver.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
 		this.doIntercept = ['magnet:', 'magnet/', 'ipfs/']; // + location.origin added below on message
