@@ -27,6 +27,7 @@ class MasterServiceWorker {
 		];
 		// ipfs + webtorrent
 		this.doNotCache = ['socket.io'];
+		this.doCacheStrict = ['tinyurl.com', 'api.qrserver.com']; // cache strict (don't ignore parameters etc.)
 		this.doRefreshCache = [location.origin];
 		this.doNotIntercept = ['socket.io', 'tinyurl.com', /*'audioVideo=true', */'api.qrserver.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
 		this.doIntercept = ['magnet:', 'magnet/', 'ipfs/']; // + location.origin added below on message
@@ -160,7 +161,10 @@ class MasterServiceWorker {
 		return fetch(request, {signal: abortController.signal}).then(response => this.setCache(request, response)).catch(error => this.error(error, request, request));
 	}
 	getCache(request) {
-		return caches.open(this.version).then(cache => cache.match(request, {ignoreSearch: true, ignoreMethod: true, ignoreVary: true})).catch(error => this.error(error, request));
+		return caches.open(this.version).then(cache => {
+			const options = request.url && this.doCacheStrict.some(url => request.url.includes(url)) ? {} : {ignoreSearch: true, ignoreMethod: true, ignoreVary: true};
+			return cache.match(request, options);
+		}).catch(error => this.error(error, request));
 	}
 	setCache(request, response) {
 		// don't cache POST
