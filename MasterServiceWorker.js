@@ -8,6 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.version = 'v1';
+		this.devVersion = '0.01';
         this.precache = [
             './',
 			'./index.html',
@@ -95,6 +96,7 @@ class MasterServiceWorker {
 				this.messageChannel = event.ports[0];
 				this.doIntercept.push(event.data); // location.origin
 				this.messageChannel.postMessage('!!!ready');
+				this.messageChannel.postMessage(['version', this.devVersion]);
 			} else if (event.data && Array.isArray(event.data[0])) {
 				// execute resolving function
 				//console.log('@serviceworker got response:', event.data);
@@ -145,6 +147,15 @@ class MasterServiceWorker {
 		});
 	}
 	getFetchOrCache(request, abortController = new AbortController()) {
+		// race fetch else cache
+		return new Promise(resolve => {
+			this.doFetchThenCache(request, abortController).then(response => {
+				if (this.validateResponse(response)) resolve(response);
+			}).catch(error => this.getCache(request).then(response => {
+				if (this.validateResponse(response)) resolve(response)
+			}));
+		});
+		/*
 		// race fetch vs cache
 		return new Promise(resolve => {
 			this.doFetchThenCache(request, abortController).then(response => {
@@ -158,6 +169,7 @@ class MasterServiceWorker {
 				}
 			});
 		});
+		*/
 	}
 	doFetchThenCache(request, abortController) {
 		return fetch(request, {signal: abortController.signal}).then(response => this.setCache(request, response)).catch(error => this.error(error, request, request));

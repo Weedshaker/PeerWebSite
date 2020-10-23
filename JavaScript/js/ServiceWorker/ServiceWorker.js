@@ -74,6 +74,8 @@ export class ServiceWorker {
 				}
 			} else if (Array.isArray(event.data) && event.data[0] === 'info') {
 				this.infoFuncs.forEach(func => func(event.data[1]));
+			} else if (Array.isArray(event.data) && event.data[0] === 'version') {
+				$('#sw-version').text(`; sw-v. ${event.data[1]}`);
 			} else {
 				this.Worker.postMessage([event.data, false]);
 			}
