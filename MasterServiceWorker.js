@@ -1,7 +1,7 @@
 /*jshint esnext: true */
 
 // NOTE: this ServiceWorkers can't be loaded into a Blob. This file must be directly referenced. Don't extend it.
-// Debug: http://localhost:3000/index_debug.html#ipfs:QmT8dAKuCVQ7TTHV5ezNFE272cs15PyigJGV663GHeen6t
+// Debug: http://localhost:3000/index.html#ipfs:QmT8dAKuCVQ7TTHV5ezNFE272cs15PyigJGV663GHeen6t
 // Test for QmbD7KXb5JrEmPooLeQBXvxJvjmHuHJLyynYVjzeDM5CbL at Cache
 
 class MasterServiceWorker {
@@ -33,7 +33,7 @@ class MasterServiceWorker {
 		this.doCacheStrict = ['tinyurl.com', 'api.qrserver.com']; // cache strict (don't ignore parameters etc.) // TODO: doCacheStrict is not respected, so I added the below to doNotCache
 		this.doNotCache = ['socket.io', 'preload.ipfs', 'swIntercept=false', 'audioVideo=true'].concat(this.doIntercept).concat(this.doCacheStrict); // sw-cache makes trouble with streaming content so we don't cache all doIntercept
 		this.ipfsPin = ['gateway.ipfs.io'];
-		this.onGoingMessaging = []; // only message once per session
+		this.onGoingMessaging = new Map(); // only message once per session
 		// messaging
 		this.messageChannel = null;
 		this.resolveMap = new Map(); // used to resolve after the message response
@@ -96,7 +96,7 @@ class MasterServiceWorker {
 				this.doIntercept.push(event.data); // location.origin
 				this.messageChannel.postMessage('!!!ready');
 				this.messageChannel.postMessage(['version', this.devVersion]);
-				this.onGoingMessaging = [];
+				this.onGoingMessaging.clear();
 			} else if (event.data && Array.isArray(event.data[0])) {
 				// execute resolving function
 				//console.log('@serviceworker got response:', event.data);
@@ -133,30 +133,24 @@ class MasterServiceWorker {
 	getFetchOrMessage(request) {
 		// race message vs fetch
 		const sendMessage = () => {
-			return new Promise((resolve, reject) => {
-				if (!this.onGoingMessaging.includes(request.url)) {
-					const key = this.getRandomString();
-					this.messageChannel.postMessage([request.url, key]);
-					this.onGoingMessaging.push(request.url);
-					const finallyFunc = () => {
-						const index = this.onGoingMessaging.indexOf(request.url);
-						if (index !== -1) this.onGoingMessaging.splice(index, 1);
-					};
-					// key, [success, failure] functions
-					this.resolveMap.set(key, [
-						data => {
-							resolve(new Response(data[0], data[1]));
-							finallyFunc();
-						},
-						() => {
-							reject(`ServiceWorker: No message response for ${request.url}`);
-							finallyFunc();
-						}
-					]);
-				} else {
-					reject(`ServiceWorker: Already messaging for ${request.url}`)
-				}
+			// already messaged answer with such
+			if (this.onGoingMessaging.has(request.url)) return this.onGoingMessaging.get(request.url);
+			// new message
+			const messagePromise = new Promise((resolve, reject) => {
+				const key = this.getRandomString();
+				this.messageChannel.postMessage([request.url, key]);
+				// key, [success, failure] functions
+				this.resolveMap.set(key, [
+					data => {
+						resolve(new Response(data[0], data[1]))
+					},
+					() => reject(`ServiceWorker: No message response for ${request.url}`)
+				]);
+			}).finally(() => {
+				if (this.onGoingMessaging.has(request.url)) this.onGoingMessaging.delete(request.url);
 			});
+			this.onGoingMessaging.set(request.url, messagePromise);
+			return messagePromise;
 		};
 		const getFetch = abortController => {
 			return new Promise((resolve, reject) => {
