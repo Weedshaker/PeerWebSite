@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.version = 'v1';
-		this.devVersion = '0.01';
+		this.devVersion = '0.2';
         this.precache = [
             './',
 			'./index.html',
@@ -27,13 +27,11 @@ class MasterServiceWorker {
 			'https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js',
 		];
 		// ipfs + webtorrent
-		this.doNotCache = ['socket.io'];
-		this.doCacheStrict = ['tinyurl.com', 'api.qrserver.com']; // cache strict (don't ignore parameters etc.)
-		// TODO: doCacheSrict is not respected, so I added the below to doNotCache
-		this.doNotCache.concat(this.doCacheStrict)
 		this.doRefreshCache = [location.origin];
-		this.doNotIntercept = ['socket.io', 'tinyurl.com', /*'audioVideo=true', */'api.qrserver.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
+		this.doNotIntercept = ['socket.io', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
 		this.doIntercept = ['magnet:', 'magnet/', 'ipfs/']; // + location.origin added below on message
+		this.doCacheStrict = ['tinyurl.com', 'api.qrserver.com']; // cache strict (don't ignore parameters etc.) // TODO: doCacheStrict is not respected, so I added the below to doNotCache
+		this.doNotCache = ['socket.io', 'preload.ipfs', 'swIntercept=false', 'audioVideo=true'].concat(this.doIntercept).concat(this.doCacheStrict); // sw-cache makes trouble with streaming content so we don't cache all doIntercept
 		this.ipfsPin = ['gateway.ipfs.io'];
 		// messaging
 		this.messageChannel = null;
@@ -57,10 +55,10 @@ class MasterServiceWorker {
 			isApproved: function() {return this.approved === this.recent;}
 		}; // used to track, if new session
 
-		// strangly the cache function called in getMessageOrFetchOrCache looses its scope even call, apply don't work
+		// strangly the cache function called in getMessageOrFetch looses its scope even call, apply don't work
 		this.getCache = this.getCache.bind(this);
 		this.setCache = this.setCache.bind(this);
-		this.getFetchOrCache = this.getFetchOrCache.bind(this);
+		this.getFetchSetCacheOrGetCache = this.getFetchSetCacheOrGetCache.bind(this);
 	}
 	run(){
 		//console.log('@serviceworker run');
@@ -102,7 +100,7 @@ class MasterServiceWorker {
 				//console.log('@serviceworker got response:', event.data);
 				const resolveFuncs = this.resolveMap.get(event.data[0][1]); // key
 				if (resolveFuncs) {
-					event.data[1] && Array.isArray(event.data[1]) ? resolveFuncs[0](event.data[1]) : resolveFuncs[1]();
+					event.data[1] && Array.isArray(event.data[1]) && event.data[1][0] && event.data[1][1] ? resolveFuncs[0](event.data[1]) : resolveFuncs[1]();
 					this.resolveMap.delete(event.data[0][1]);
 				}
 			}
@@ -115,63 +113,84 @@ class MasterServiceWorker {
 			// feed a selfexecuting function
 			event.respondWith((() => {
 				// cache all and pin all ipfs
-				if (!this.messageChannel) return this.getFetchOrCache(event.request);
+				if (!this.messageChannel) return this.getFetchSetCacheOrGetCache(event.request);
 				const intercept = this.clientId.isApproved() && this.doNotIntercept.every(url => !event.request.url.includes(url)) && this.doIntercept.some(url => event.request.url.includes(url))
 				console.info(`@serviceworker intercept ${intercept}:`, event.request.url);
 				// try to get it from webtorrent or ipfs first when interception is true
 				// else if your offline get it from ipfs if it is an ipfs url
 				if (intercept || (!self.navigator.onLine && this.doIntercept.some(url => event.request.url.includes(url)))) {
-					return this.getMessageOrFetchOrCache(event.request);
+					return this.getMessageOrFetch(event.request);
 				} else {
 					//console.log('@serviceworker donot-intercept', event.request.url);
 					// pin ipfs but get it here for streaming reasons
 					if (this.ipfsPin.some(url => event.request.url.includes(url))) this.messageChannel.postMessage(['info', event.request.url]);
-					return this.getFetchOrCache(event.request);
+					return this.getFetchSetCacheOrGetCache(event.request);
 				}
 			})());
 		});
 	}
-	getMessageOrFetchOrCache(request) {
-		// race message vs fetch
-		const key = this.getRandomString();
-		this.messageChannel.postMessage([request.url, key]);
-		return new Promise(resolve => {
-			const abortController = new AbortController();
-			this.getFetchOrCache(request, abortController).then(response => resolve(response));
-			// key, [success, failure] functions
-			this.resolveMap.set(key, [data => {
-				resolve(this.setCache(request, new Response(data[0], data[1])))
-				// only abort non local resources, since cache has to be refreshed in case local files change
-				if (this.doRefreshCache.every(url => !request.url.includes(url))) abortController.abort();
-			}, () => {}]);
+	getMessageOrFetch(request) {
+		// first fetch on failuire or timeout request it through message if that failes request fetch without timeout
+		const sendMessage = (resolve, reject) => {
+			return new Promise((resolve, reject) => {
+				const key = this.getRandomString();
+				this.messageChannel.postMessage([request.url, key]);
+				// key, [success, failure] functions
+				this.resolveMap.set(key, [
+					data => resolve(new Response(data[0], data[1])),
+					() => reject(`ServiceWorker: No message response for ${request.url}`)
+				]);
+			});
+		};
+		const getFetch = (timeout = null) => {
+			return new Promise((resolve, reject) => {
+				const abortController = new AbortController();
+				if (timeout) setTimeout(() => abortController.abort(), timeout);
+				fetch(request, {signal: abortController.signal}).then(response => {
+					if (this.validateResponse(response)) {
+						resolve(response);
+					} else {
+						reject(request.url);
+					}
+				}).catch(error => reject(error));
+			});
+		}
+		return new Promise((resolve, reject) => {
+			const rejectFunc = this.getRejectFunc(reject, 3);
+			getFetch(self.navigator.onLine ? null : 200).then(response => resolve(response)).catch(error => {
+				rejectFunc(request.url, error);
+				sendMessage().then(response => resolve(response)).catch(error => {
+					rejectFunc(request.url, error);
+					getFetch().then(response => resolve(response)).catch(error => rejectFunc(request.url, error));
+				});
+			});
 		});
 	}
-	getFetchOrCache(request, abortController = new AbortController()) {
-		// race fetch else cache
-		return new Promise(resolve => {
-			this.doFetchThenCache(request, abortController).then(response => {
-				if (this.validateResponse(response)) resolve(response);
-			}).catch(error => this.getCache(request).then(response => {
-				if (this.validateResponse(response)) resolve(response)
-			}));
-		});
-		/*
+	getFetchSetCacheOrGetCache(request, abortController = new AbortController()) {
 		// race fetch vs cache
-		return new Promise(resolve => {
-			this.doFetchThenCache(request, abortController).then(response => {
-				if (this.validateResponse(response)) resolve(response);
-			});
-			this.getCache(request).then(response => {
+		return new Promise((resolve, reject) => {
+			const rejectFunc = this.getRejectFunc(reject);
+			// Fetch
+			this.getFetchSetCache(request, abortController).then(response => {
 				if (this.validateResponse(response)) {
 					resolve(response);
-					// only abort non local resources, since cache has to be refreshed in case local files change
-					if (this.doRefreshCache.every(url => !request.url.includes(url))) abortController.abort();
+				} else {
+					rejectFunc(request.url);
 				}
-			});
+			}).catch(error => rejectFunc(request.url, error));
+			// Cache
+			this.getCache(request).then(response => {
+				if (this.validateResponse(response)) {
+					// only abort non local resources, since cache has to be refreshed in case local files change
+					if (request.url && this.doRefreshCache.every(url => !request.url.includes(url))) abortController.abort();
+					resolve(response);
+				} else {
+					rejectFunc(request.url);
+				}
+			}).catch(error => rejectFunc(request.url, error));
 		});
-		*/
 	}
-	doFetchThenCache(request, abortController) {
+	getFetchSetCache(request, abortController) {
 		return fetch(request, {signal: abortController.signal}).then(response => this.setCache(request, response)).catch(error => this.error(error, request, request));
 	}
 	getCache(request) {
@@ -189,10 +208,6 @@ class MasterServiceWorker {
 			return response;
 		}).catch(error => this.error(error, request, response));
 	}
-	error(error, request, toReturn) {
-		console.warn('ServiceWorker:', error, request);
-		return toReturn;
-	}
 	getRandomString() {
 		if (self.crypto && self.crypto.getRandomValues && navigator.userAgent.indexOf('Safari') === -1) {
 			var a = self.crypto.getRandomValues(new Uint32Array(3)),
@@ -208,6 +223,18 @@ class MasterServiceWorker {
 	validateResponse(response) {
 		// 0 is for cache
 		return response && (response.status === 0 || (response.status >= 200 && response.status <= 299));
+	}
+	getRejectFunc(reject, max = 2) {
+		let counter = 0;
+		return (url, error) => {
+			counter++;
+			if (counter >= max) reject(error || `ServiceWorker: No response for ${url}`);
+			if (error) this.error(error, url);
+		}
+	}
+	error(error, request, toReturn) {
+		console[error && error.message && error.message.includes('user aborted a request') ? 'info' : 'warn']('ServiceWorker Error:', error, request);
+		return toReturn;
 	}
 }
 
