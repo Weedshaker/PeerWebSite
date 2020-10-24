@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.version = 'v1';
-		this.devVersion = '0.2';
+		this.devVersion = '0.3';
         this.precache = [
             './',
 			'./index.html',
@@ -33,6 +33,7 @@ class MasterServiceWorker {
 		this.doCacheStrict = ['tinyurl.com', 'api.qrserver.com']; // cache strict (don't ignore parameters etc.) // TODO: doCacheStrict is not respected, so I added the below to doNotCache
 		this.doNotCache = ['socket.io', 'preload.ipfs', 'swIntercept=false', 'audioVideo=true'].concat(this.doIntercept).concat(this.doCacheStrict); // sw-cache makes trouble with streaming content so we don't cache all doIntercept
 		this.ipfsPin = ['gateway.ipfs.io'];
+		this.onGoingMessaging = []; // only message once per session
 		// messaging
 		this.messageChannel = null;
 		this.resolveMap = new Map(); // used to resolve after the message response
@@ -55,7 +56,7 @@ class MasterServiceWorker {
 			isApproved: function() {return this.approved === this.recent;}
 		}; // used to track, if new session
 
-		// strangly the cache function called in getMessageOrFetch looses its scope even call, apply don't work
+		// strangly the cache function called in getFetchOrMessage looses its scope even call, apply don't work
 		this.getCache = this.getCache.bind(this);
 		this.setCache = this.setCache.bind(this);
 		this.getFetchSetCacheOrGetCache = this.getFetchSetCacheOrGetCache.bind(this);
@@ -95,6 +96,7 @@ class MasterServiceWorker {
 				this.doIntercept.push(event.data); // location.origin
 				this.messageChannel.postMessage('!!!ready');
 				this.messageChannel.postMessage(['version', this.devVersion]);
+				this.onGoingMessaging = [];
 			} else if (event.data && Array.isArray(event.data[0])) {
 				// execute resolving function
 				//console.log('@serviceworker got response:', event.data);
@@ -114,38 +116,50 @@ class MasterServiceWorker {
 			event.respondWith((() => {
 				// cache all and pin all ipfs
 				if (!this.messageChannel) return this.getFetchSetCacheOrGetCache(event.request);
+				// pin ipfs
+				if (this.ipfsPin.some(url => event.request.url.includes(url))) this.messageChannel.postMessage(['info', event.request.url]);
 				const intercept = this.clientId.isApproved() && this.doNotIntercept.every(url => !event.request.url.includes(url)) && this.doIntercept.some(url => event.request.url.includes(url))
 				console.info(`@serviceworker intercept ${intercept}:`, event.request.url);
 				// try to get it from webtorrent or ipfs first when interception is true
 				// else if your offline get it from ipfs if it is an ipfs url
 				if (intercept || (!self.navigator.onLine && this.doIntercept.some(url => event.request.url.includes(url)))) {
-					return this.getMessageOrFetch(event.request);
+					return this.getFetchOrMessage(event.request);
 				} else {
-					//console.log('@serviceworker donot-intercept', event.request.url);
-					// pin ipfs but get it here for streaming reasons
-					if (this.ipfsPin.some(url => event.request.url.includes(url))) this.messageChannel.postMessage(['info', event.request.url]);
 					return this.getFetchSetCacheOrGetCache(event.request);
 				}
 			})());
 		});
 	}
-	getMessageOrFetch(request) {
-		// first fetch on failuire or timeout request it through message if that failes request fetch without timeout
-		const sendMessage = (resolve, reject) => {
+	getFetchOrMessage(request) {
+		// race message vs fetch
+		const sendMessage = () => {
 			return new Promise((resolve, reject) => {
-				const key = this.getRandomString();
-				this.messageChannel.postMessage([request.url, key]);
-				// key, [success, failure] functions
-				this.resolveMap.set(key, [
-					data => resolve(new Response(data[0], data[1])),
-					() => reject(`ServiceWorker: No message response for ${request.url}`)
-				]);
+				if (!this.onGoingMessaging.includes(request.url)) {
+					const key = this.getRandomString();
+					this.messageChannel.postMessage([request.url, key]);
+					this.onGoingMessaging.push(request.url);
+					const finallyFunc = () => {
+						const index = this.onGoingMessaging.indexOf(request.url);
+						if (index !== -1) this.onGoingMessaging.splice(index, 1);
+					};
+					// key, [success, failure] functions
+					this.resolveMap.set(key, [
+						data => {
+							resolve(new Response(data[0], data[1]));
+							finallyFunc();
+						},
+						() => {
+							reject(`ServiceWorker: No message response for ${request.url}`);
+							finallyFunc();
+						}
+					]);
+				} else {
+					reject(`ServiceWorker: Already messaging for ${request.url}`)
+				}
 			});
 		};
-		const getFetch = (timeout = null) => {
+		const getFetch = abortController => {
 			return new Promise((resolve, reject) => {
-				const abortController = new AbortController();
-				if (timeout) setTimeout(() => abortController.abort(), timeout);
 				fetch(request, {signal: abortController.signal}).then(response => {
 					if (this.validateResponse(response)) {
 						resolve(response);
@@ -156,14 +170,14 @@ class MasterServiceWorker {
 			});
 		}
 		return new Promise((resolve, reject) => {
-			const rejectFunc = this.getRejectFunc(reject, 3);
-			getFetch(self.navigator.onLine ? null : 200).then(response => resolve(response)).catch(error => {
-				rejectFunc(request.url, error);
-				sendMessage().then(response => resolve(response)).catch(error => {
-					rejectFunc(request.url, error);
-					getFetch().then(response => resolve(response)).catch(error => rejectFunc(request.url, error));
-				});
-			});
+			const rejectFunc = this.getRejectFunc(reject);
+			const abortController = new AbortController()
+			getFetch(abortController).then(response => resolve(response)).catch(error => rejectFunc(request.url, error));
+			// TODO: somehow the browser has an issue properly streaming the message response (results in no seekeing and other weird sideeffects)
+			sendMessage().then(response => {
+				resolve(response);
+				abortController.abort();
+			}).catch(error => rejectFunc(request.url, error));
 		});
 	}
 	getFetchSetCacheOrGetCache(request, abortController = new AbortController()) {
