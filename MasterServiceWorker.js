@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.5';
+		this.devVersion = '0.6';
         this.precache = [
             './',
 			'./index.html',
@@ -128,7 +128,7 @@ class MasterServiceWorker {
 				if (this.clientId.isApproved() && (intercept || (!this.isOnline && this.doIntercept.some(url => event.request.url.includes(url))))) {
 					return this.getFetchOrGetCacheOrGetMessage(event.request);
 				} else {
-					return this.getFetchOrGetCache(event.request);
+					return this.getFetchOrGetCache(event.request, undefined, undefined, undefined, undefined, true);
 				}
 			})());
 		});
@@ -145,10 +145,13 @@ class MasterServiceWorker {
 			}).catch(error => rejectFunc(request.url, error));
 		});
 	}
-	getFetchOrGetCache(request, abortController = new AbortController(), setCache = true, overwrite = true, getCache = true) {
+	getFetchOrGetCache(request, abortController = new AbortController(), setCache = true, overwrite = true, getCache = true, fallbackToGetMessage = false) {
 		// race fetch vs cache
 		return new Promise((resolve, reject) => {
-			const rejectFunc = this.getRejectFunc(reject, getCache ? 2 : 1);
+			const rejectFunc = this.getRejectFunc(fallbackToGetMessage && this.doIntercept.some(url => request.url.includes(url)) ? () => {
+				// if fetch + cache failed try to get it trhough message eventough it is in doNotIntercept
+				this.getMessage(request).then(response => resolve(response)).catch(error => reject(error));
+			} : reject, getCache ? 2 : 1);
 			// Fetch
 			fetch(request, {signal: abortController.signal}).then(response => {
 				if (setCache) {
@@ -179,7 +182,8 @@ class MasterServiceWorker {
 			}
 		});
 	}
-	getMessage(request, setCache = true, overwrite = false) {
+	// don't set cache, since this is already in indexedDB and streams from IPFS are not streamable from cache (TODO)
+	getMessage(request, setCache = false, overwrite = false) {
 		// already messaged answer with such
 		if (this.onGoingMessaging.has(request.url)) return this.onGoingMessaging.get(request.url);
 		// new message
