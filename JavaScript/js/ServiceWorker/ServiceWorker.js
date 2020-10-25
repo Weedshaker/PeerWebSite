@@ -36,8 +36,10 @@ export class ServiceWorker {
 			// send port to service worker
 			//console.log('@sw_helper sending port to ServiceWorker');
 			this.Worker.postMessage(location.origin, [this.messageChannel.port2]);
+			this.version = this.version;
 		}).catch((e) => {
 			console.error(e);
+			this.version = 'n/a';
 		});
 	}
 	// gets executed on every message received from ServiceWorker
@@ -75,7 +77,7 @@ export class ServiceWorker {
 			} else if (Array.isArray(event.data) && event.data[0] === 'info') {
 				this.infoFuncs.forEach(func => func(event.data[1]));
 			} else if (Array.isArray(event.data) && event.data[0] === 'version') {
-				$('#sw-version').text(`; sw-v. ${event.data[1]}`);
+				this.version = event.data[1];
 			} else {
 				this.Worker.postMessage([event.data, false]);
 			}
@@ -90,5 +92,12 @@ export class ServiceWorker {
 		}).catch((e) => {
 			console.error(e);
 		});
+	}
+	set version(version) {
+		$('#sw-version').text(`; sw-v. ${version}`);
+		localStorage.setItem('sw-version', version);
+	}
+	get version() {
+		return localStorage.getItem('sw-version');
 	}
 }

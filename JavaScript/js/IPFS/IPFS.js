@@ -76,6 +76,7 @@ export class IPFS {
             el.classList.add('ipfsLoading');
             if (isAudioVideo && el.parentElement) el.parentElement.classList.add('ipfsLoading');
             return this.cat(url.cid, true).then(chunks => {
+                el.innerHTML = el.innerHTML; // newly set the element
                 el[type[1]] = URL.createObjectURL(new Blob(chunks, { type: mime.getType(name) }));
                 el.classList.remove('ipfsLoading');
                 if (isAudioVideo && el.parentElement) {
