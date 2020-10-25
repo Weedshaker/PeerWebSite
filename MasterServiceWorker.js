@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.6';
+		this.devVersion = '0.7';
         this.precache = [
             './',
 			'./index.html',
@@ -183,7 +183,7 @@ class MasterServiceWorker {
 		});
 	}
 	// don't set cache, since this is already in indexedDB and streams from IPFS are not streamable from cache (TODO)
-	getMessage(request, setCache = false, overwrite = false) {
+	getMessage(request, setCache = true, overwrite = false) {
 		// already messaged answer with such
 		if (this.onGoingMessaging.has(request.url)) return this.onGoingMessaging.get(request.url);
 		// new message
