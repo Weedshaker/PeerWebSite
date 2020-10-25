@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.4';
+		this.devVersion = '0.5';
         this.precache = [
             './',
 			'./index.html',
@@ -119,7 +119,7 @@ class MasterServiceWorker {
 			event.respondWith((() => {
 				// cache all and pin all ipfs
 				if (!this.messageChannel) return this.getFetchOrGetCache(event.request);
-				// pin ipfs (TODO: Test sw-cache vs. pin, which is more performant)
+				// pin ipfs
 				if (this.ipfsPin.some(url => event.request.url.includes(url))) this.messageChannel.postMessage(['info', event.request.url]);
 				const intercept = this.doNotIntercept.every(url => !event.request.url.includes(url)) && this.doIntercept.some(url => event.request.url.includes(url))
 				console.info(`@serviceworker intercept ${intercept}:`, event.request.url);
@@ -145,14 +145,14 @@ class MasterServiceWorker {
 			}).catch(error => rejectFunc(request.url, error));
 		});
 	}
-	getFetchOrGetCache(request, abortController = new AbortController(), setCache = true, getCache = true) {
+	getFetchOrGetCache(request, abortController = new AbortController(), setCache = true, overwrite = true, getCache = true) {
 		// race fetch vs cache
 		return new Promise((resolve, reject) => {
 			const rejectFunc = this.getRejectFunc(reject, getCache ? 2 : 1);
 			// Fetch
 			fetch(request, {signal: abortController.signal}).then(response => {
 				if (setCache) {
-					this.setCache(request, response).then(response => {
+					this.setCache(request, response, overwrite).then(response => {
 						if (this.validateResponse(response)) {
 							resolve(response);
 						} else {
@@ -179,7 +179,7 @@ class MasterServiceWorker {
 			}
 		});
 	}
-	getMessage(request, setCache = true) {
+	getMessage(request, setCache = true, overwrite = false) {
 		// already messaged answer with such
 		if (this.onGoingMessaging.has(request.url)) return this.onGoingMessaging.get(request.url);
 		// new message
@@ -191,7 +191,8 @@ class MasterServiceWorker {
 				data => {
 					const response = new Response(data[0], data[1]);
 					if (setCache) {
-						this.setCache(request, response).then(response => resolve(response)).catch(error => reject(`ServiceWorker: Message caching failed for ${request.url}`));
+						// only write to cache when there is none with this key, since ipfs.cat on streams sometimes gives back empty objects. TODO: look deeper at IPFS
+						this.setCache(request, response, overwrite).then(response => resolve(response)).catch(error => reject(`ServiceWorker: Message caching failed for ${request.url}`));
 					} else {
 						resolve(response);
 					}
@@ -210,12 +211,22 @@ class MasterServiceWorker {
 			return cache.match(request, options);
 		}).catch(error => this.error(error, request));
 	}
-	setCache(request, response) {
+	setCache(request, response, overwrite = true) {
 		// don't cache POST
 		if (request.method === 'POST' || (request.url && this.doNotCache.some(url => request.url.includes(url)))) return Promise.resolve(response);
 		return caches.open(this.cacheVersion).then(cache => {
 			const responseClone = response.clone();
-			if (this.validateResponse(responseClone)) cache.put(request, responseClone).catch(error => this.error(error, request));
+			if (this.validateResponse(responseClone)) {
+				const put = () => cache.put(request, responseClone).catch(error => this.error(error, request));
+				if (overwrite) {
+					put();
+				} else {
+					this.getCache(request).then(response => {
+						// only overwrite in case cache response would not validate (not found resolves undefined)
+						if (!this.validateResponse(response)) put();
+					}).catch(error => this.error(error, request));
+				}
+			}
 			return response;
 		}).catch(error => this.error(error, request, response));
 	}

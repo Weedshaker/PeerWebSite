@@ -37,7 +37,7 @@ export default class Player {
   refreshedInit () {
     this.setVolume() // initial set last volume
     this.setMode() // initial set last mode
-    if (this.mode !== 'loop-machine') this.currentControl.focus()
+    if (this.mode !== 'loop-machine' && !this.isPlayerOpen()) this.currentControl.focus()
   }
 
   // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
@@ -392,10 +392,15 @@ export default class Player {
   }
 
   scrollToEl (el) {
-    const rect = el.getBoundingClientRect()
-    // check if the element is outside the viewport, otherwise don't scroll
-    if (rect && (rect.top < 0 || rect.left < 0 || rect.bottom > (window.innerHeight || document.documentElement.clientHeight) || rect.right > (window.innerWidth || document.documentElement.clientWidth))) {
-      setTimeout(() => el.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'}), 500)
+    if (!this.isPlayerOpen()) {
+      const rect = el.getBoundingClientRect()
+      // check if the element is outside the viewport, otherwise don't scroll
+      if (rect && (rect.top < 0 || rect.left < 0 || rect.bottom > (window.innerHeight || document.documentElement.clientHeight) || rect.right > (window.innerWidth || document.documentElement.clientWidth))) {
+        setTimeout(() => {
+            el.focus()
+            el.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'})
+        }, 500)
+      }
     }
   }
 
@@ -444,6 +449,10 @@ export default class Player {
     this.setTitleText()
   }
 
+  isPlayerOpen (playerControls = this.playerControls) {
+    return playerControls.classList.contains('open');
+  }
+
   play (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
     if (!eventTriggered) {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.playAll()
@@ -455,7 +464,6 @@ export default class Player {
     if (this.mode !== 'loop-machine') {
       this.loadCurrentTime(control) // do this because ios does not swollow currentTime set at loadedmetadata
       this.pauseAll(control)
-      this.currentControl.focus()
       if (!this.isSender) this.scrollToEl(control) // only at receiver, otherwise the toolbar will be above the fold
     }
   }
