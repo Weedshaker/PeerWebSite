@@ -18,6 +18,7 @@ export default class Player {
     this.keyDownTollerance = 300 // ms
 
     this.randomQueue = []
+    this.onErrorResetedIds = []
   }
   
   connect (isSender) {
@@ -92,7 +93,16 @@ export default class Player {
 			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(true)
     }, true)
     document.body.addEventListener('stalled', event => {
-			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(true)
+			if (this.validateEvent(event) && event.target === this.currentControl) {
+        this.isLoading(true)
+        this.onError(event.target)
+      }
+    }, true)
+    document.body.addEventListener('suspend', event => {
+			if (this.validateEvent(event) && event.target === this.currentControl) {
+        this.isLoading(true)
+        this.onError(event.target)
+      }
     }, true)
     document.body.addEventListener('waiting', event => {
 			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(true)
@@ -450,7 +460,7 @@ export default class Player {
   }
 
   isPlayerOpen (playerControls = this.playerControls) {
-    return playerControls.classList.contains('open');
+    return playerControls.classList.contains('open')
   }
 
   play (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
@@ -585,9 +595,22 @@ export default class Player {
       this.pauseAll()
     } else {
       input.classList.add('active')
-      this.timer = setTimeout(() => this.setTimer(input, value - 1), 60000);
+      this.timer = setTimeout(() => this.setTimer(input, value - 1), 60000)
     }
     input.blur()
+  }
+
+  onError (control) {
+    // once reset the html element
+    if (!this.onErrorResetedIds.includes(control.id)) {
+      this.pause(control)
+      control.innerHTML = control.innerHTML // newly set the element
+      this.onErrorResetedIds.push()
+    } else {
+      // else trigger error function which for ipfs will start ipfs.cat
+      let source = null
+      if ((source = control.querySelector('source')) && typeof source.onerror === 'function') source.onerror()
+    }
   }
 
   get allControls () {
