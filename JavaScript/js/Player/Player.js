@@ -98,12 +98,6 @@ export default class Player {
         this.onError(event.target)
       }
     }, true)
-    document.body.addEventListener('suspend', event => {
-			if (this.validateEvent(event) && event.target === this.currentControl) {
-        this.isLoading(true)
-        this.onError(event.target)
-      }
-    }, true)
     document.body.addEventListener('waiting', event => {
 			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(true)
     }, true)
