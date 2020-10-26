@@ -18,7 +18,7 @@ export default class Player {
     this.keyDownTollerance = 300 // ms
 
     this.randomQueue = []
-    this.onErrorResetedIds = []
+    this.onErrorExtendedToSourceIds = []
   }
   
   connect (isSender) {
@@ -38,6 +38,7 @@ export default class Player {
   refreshedInit () {
     this.setVolume() // initial set last volume
     this.setMode() // initial set last mode
+    this.allControls.forEach(control => this.onError(control)) // extended error handling
     if (this.mode !== 'loop-machine' && !this.isPlayerOpen()) this.currentControl.focus()
   }
 
@@ -93,10 +94,10 @@ export default class Player {
 			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(true)
     }, true)
     document.body.addEventListener('stalled', event => {
-			if (this.validateEvent(event) && event.target === this.currentControl) {
-        this.isLoading(true)
-        this.onError(event.target)
-      }
+			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(true)
+    }, true)
+    document.body.addEventListener('suspend', event => {
+			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(true)
     }, true)
     document.body.addEventListener('waiting', event => {
 			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(true)
@@ -596,14 +597,13 @@ export default class Player {
 
   onError (control) {
     // once reset the html element
-    if (!this.onErrorResetedIds.includes(control.id)) {
-      this.pause(control)
-      control.innerHTML = control.innerHTML // newly set the element
-      this.onErrorResetedIds.push()
-    } else {
-      // else trigger error function which for ipfs will start ipfs.cat
+    if (control && control.id && !this.onErrorExtendedToSourceIds.includes(control.id)) {
       let source = null
-      if ((source = control.querySelector('source')) && typeof source.onerror === 'function') source.onerror()
+      if ((source = control.querySelector('source')) && typeof source.onerror === 'function') control.addEventListener('error', event => {
+        // if it is not already ipfs.cat then trigger it
+        if (!source.classList.contains('ipfsLoading')) source.onerror()
+      }, {once: true})
+      this.onErrorExtendedToSourceIds.push(control.id)
     }
   }
 
