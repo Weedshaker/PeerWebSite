@@ -14,14 +14,16 @@ body figure {
     width: fit-content;
     max-width: max-content;
 }
-body figcaption {
+body figure > figcaption {
     background-color: #474747;
-    border-radius: 0 0 10px 10px;
     color: #fff;
     font: italic smaller sans-serif;
     padding: 3px;
     text-align: center;
     width: 100%;
+}
+body figure > figcaption:last-child {
+    border-radius: 0 0 10px 10px;
 }
 body > header {
     margin: 5px 0;

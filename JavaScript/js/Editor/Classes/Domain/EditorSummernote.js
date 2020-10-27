@@ -10,7 +10,7 @@ import 'Editor/lib/codemirror/javascript.js';
 import 'Editor/lib/codemirror/css.js';
 import 'Editor/lib/codemirror/htmlmixed.js';
 import 'Editor/lib/codemirror/formatting.js';
-import 'Editor/lib/summernote.js';
+import 'summernote/summernote';
 // plugins
 import 'Editor/lib/summernote-ext-filedialog.js';
 import 'Editor/Classes/Helper/summernote-image-shapes.js';
