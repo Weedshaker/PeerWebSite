@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.9';
+		this.devVersion = '0.10';
         this.precache = [
             './',
 			'./index.html',
@@ -27,7 +27,7 @@ class MasterServiceWorker {
 			'https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js',
 		];
 		// ipfs + webtorrent
-		this.doRefreshCache = [location.origin];
+		this.doRefreshCache = [location.origin, 'cdn.jsdelivr.net'];
 		// doNotIntercept ipfs audioVideo/swIntercept if this isOnline since it breaks streaming
 		this.doNotIntercept = ['audioVideo=true', 'swIntercept=false', 'socket.io', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', 'herokuapp.com', 'webrtcweb.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
 		this.doIntercept = ['magnet:', 'magnet/', 'ipfs/']; // + location.origin added below on message
