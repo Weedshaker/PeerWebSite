@@ -192,9 +192,9 @@ export class EditorSummernote extends MasterEditor {
 						// static error handling which also works at receiver
 						if (result.type[0] === 'a') {
 							outerNode.setAttribute('download', result.name);
-							outerNode.setAttribute('onclick', `${this.IPFS.ipfs_onerror}(event, '${file.link}', '${result.name}', '${result.type}', '${!!result.audioVideo}', this);`);
+							outerNode.setAttribute('onclick', `${this.IPFS.ipfs_onerror}(event, '${this.sanitizForInlineError(file.link)}', '${this.sanitizForInlineError(result.name)}', '${result.type}', '${!!result.audioVideo}', this);`);
 						} else {
-							result.source.setAttribute('onerror', `${this.IPFS.ipfs_onerror}(null, '${file.link}', '${result.name}', '${result.type}', '${!!result.audioVideo}', this);`);
+							result.source.setAttribute('onerror', `${this.IPFS.ipfs_onerror}(null, '${this.sanitizForInlineError(file.link)}', '${this.sanitizForInlineError(result.name)}', '${result.type}', '${!!result.audioVideo}', this);`);
 						}
 						result.source[result.type[1]] = file.link;
 						// video wouldn't play on seeder if not newly set
@@ -249,5 +249,8 @@ export class EditorSummernote extends MasterEditor {
 		const p = document.createElement('p');
 		this.setData(container, p, 'insertNode'); // trying to get cursor focus after node
 		p.replaceWith(node);
+	}
+	sanitizForInlineError(str) {
+		return str.replace(/[\'\"]/g, '');
 	}
 }

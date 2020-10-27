@@ -612,7 +612,18 @@ export default class Player {
   }
 
   get allReadyControls () {
-    return this.allControls.filter(control => control.readyState >= 1) // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
+    const allControls = this.allControls
+    let state = 4 // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
+    let controls = this.filterByReadyState(allControls, state)
+    while (state > 0 && controls.length < 1) {
+      state--
+      controls = this.filterByReadyState(allControls, state)
+    }
+    return controls
+  }
+
+  filterByReadyState (controls, state = 4) {
+    return controls.filter(control => control.readyState >= state)
   }
 
   set currentControlIndex (index) {
