@@ -613,7 +613,7 @@ export default class Player {
 
   get allReadyControls () {
     const allControls = this.allControls
-    let state = 4 // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
+    let state = 3 // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
     let controls = this.filterByReadyState(allControls, state)
     while (state > 0 && controls.length < 1) {
       state--
