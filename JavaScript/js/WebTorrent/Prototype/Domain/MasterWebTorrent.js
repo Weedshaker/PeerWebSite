@@ -19,8 +19,7 @@ export class MasterWebTorrent {
 			torrents: [],
 		}; // placeholder until client is loaded
 		const createClient = () => {
-			if (window.WebTorrent) {
-				this.client = new WebTorrent();
+			if (window.WebTorrent && (this.client = new WebTorrent())) {
 				this.client.sst_magnetURI = [];
 				this.client.on('error', err => {
 					console.error('ERROR: ' + err.message);

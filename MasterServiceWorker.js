@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.7';
+		this.devVersion = '0.9';
         this.precache = [
             './',
 			'./index.html',
@@ -29,10 +29,10 @@ class MasterServiceWorker {
 		// ipfs + webtorrent
 		this.doRefreshCache = [location.origin];
 		// doNotIntercept ipfs audioVideo/swIntercept if this isOnline since it breaks streaming
-		this.doNotIntercept = ['audioVideo=true', 'swIntercept=false', 'socket.io', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
+		this.doNotIntercept = ['audioVideo=true', 'swIntercept=false', 'socket.io', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', 'herokuapp.com', 'webrtcweb.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
 		this.doIntercept = ['magnet:', 'magnet/', 'ipfs/']; // + location.origin added below on message
 		this.doCacheStrict = ['tinyurl.com', 'api.qrserver.com']; // cache strict (don't ignore parameters etc.) // TODO: doCacheStrict is not respected, so I added the below to doNotCache
-		this.doNotCache = ['socket.io', 'preload.ipfs'].concat(this.doCacheStrict); // sw-cache makes trouble with streaming content so we don't cache all doIntercept
+		this.doNotCache = ['socket.io', 'preload.ipfs', 'herokuapp.com', 'webrtcweb.com'].concat(this.doCacheStrict); // sw-cache makes trouble with streaming content so we don't cache all doIntercept
 		this.ipfsPin = ['gateway.ipfs.io'];
 		// messaging
 		this.onGoingMessaging = new Map(); // only message once per session
@@ -80,6 +80,7 @@ class MasterServiceWorker {
 		//console.log('@serviceworker listening to activate event');
 		self.addEventListener('activate', event => {
 			//console.log('@serviceworker got activated!');
+			//https://developer.mozilla.org/en-US/docs/Web/API/Clients/claim
 			event.waitUntil(self.clients.claim());
 			// NOTE: not needed when refreshing cache on doRefreshCache
 			// NOTE: clearing the cache evtl. had strange sideeffects or waiting makes service worker unresponsive

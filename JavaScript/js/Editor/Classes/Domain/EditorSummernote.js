@@ -10,10 +10,11 @@ import 'Editor/lib/codemirror/javascript.js';
 import 'Editor/lib/codemirror/css.js';
 import 'Editor/lib/codemirror/htmlmixed.js';
 import 'Editor/lib/codemirror/formatting.js';
-import 'summernote/summernote';
+import 'Editor/lib/summernote.js';
 // plugins
 import 'Editor/lib/summernote-ext-filedialog.js';
 import 'Editor/Classes/Helper/summernote-image-shapes.js';
+import 'Editor/Classes/Helper/summernote-insert-paragraph-bug-fix.js';
 //import 'Editor/Classes/Helper/summernote-plugin-image-download.js';
 
 // summernote uses this icons: https://fontawesome.com/icons [jspm_packages/github/summernote/summernote@0.8.16/summernote-bs4.css]
@@ -23,7 +24,7 @@ export class EditorSummernote extends MasterEditor {
 		super();
 		this.WebTorrent = WebTorrent;
 		this.IPFS = IPFS;
-		this.torrentNodeName = 'span';
+		this.torrentNodeName = 'figure';
 
 		this.container = null;
 		this.summernote = $.summernote;
@@ -220,7 +221,6 @@ export class EditorSummernote extends MasterEditor {
 						this.changeEvent(this.getData(), container[0].id);
 					});
 				});
-				this.setData(container, document.createElement('p'), 'insertNode'); // trying to get cursor focus after node
 			});
 		}else{
 			super.loadFile(files, text, container);
@@ -246,6 +246,5 @@ export class EditorSummernote extends MasterEditor {
 			}
 		);
 		this.setData(container, node, 'insertNode');
-		this.setData(container, document.createElement('p'), 'insertNode'); // trying to get cursor focus after node
 	}
 }
