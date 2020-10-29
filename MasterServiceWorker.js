@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.14';
+		this.devVersion = '0.15';
         this.precache = [
             './',
 			'./index.html',
@@ -172,7 +172,8 @@ class MasterServiceWorker {
 		});
 	}
 	// don't overwrite to cache since it is already at indexedDB, also the audio element gets confused when it gets resolved message response mixed fetch response
-	getMessage(request, setCache = true, overwrite = false) {
+	// test if corrupted streaming cache was introduced there: step v. 0.15: setCache=false
+	getMessage(request, setCache = false, overwrite = false) {
 		// already messaged answer with such
 		if (this.onGoingMessaging.has(request.url)) return this.onGoingMessaging.get(request.url);
 		// new message
