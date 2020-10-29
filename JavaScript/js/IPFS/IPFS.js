@@ -66,6 +66,10 @@ export class IPFS {
         if (url.urlString.includes(this.baseUrl) && url.cid) return Promise.all([this.isIdle, this.node]).then(results => results[1].pin.add(url.cid));
         return null;
     }
+    pinCid(cid){
+        if (cid) return Promise.all([this.isIdle, this.node]).then(results => results[1].pin.add(cid));
+        return null;
+    }
     onFetchError(event, url, name, type, isAudioVideo, el){
         const sanitize = () => {
             type = type.split(',');
