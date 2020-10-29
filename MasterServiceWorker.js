@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.10';
+		this.devVersion = '0.11';
         this.precache = [
             './',
 			'./index.html',
@@ -26,14 +26,10 @@ class MasterServiceWorker {
 			'https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js',
 			'https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js',
 		];
-		// ipfs + webtorrent
-		this.doRefreshCache = [location.origin, 'cdn.jsdelivr.net'];
-		// doNotIntercept ipfs audioVideo/swIntercept if this isOnline since it breaks streaming
-		this.doNotIntercept = ['audioVideo=true', 'swIntercept=false', 'socket.io', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', 'herokuapp.com', 'webrtcweb.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
-		this.doIntercept = ['magnet:', 'magnet/', 'ipfs/']; // + location.origin added below on message
-		this.doCacheStrict = ['tinyurl.com', 'api.qrserver.com']; // cache strict (don't ignore parameters etc.) // TODO: doCacheStrict is not respected, so I added the below to doNotCache
-		this.doNotCache = ['socket.io', 'preload.ipfs', 'herokuapp.com', 'webrtcweb.com'].concat(this.doCacheStrict); // sw-cache makes trouble with streaming content so we don't cache all doIntercept
-		this.ipfsPin = ['gateway.ipfs.io'];
+		this.doNotGetMessage = ['socket.io', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', 'herokuapp.com', 'webrtcweb.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
+		this.doNotGetMessageInitial = ['audioVideo=true', 'swIntercept=false'].concat(this.doNotGetMessage); // on first try do not get message but as fallback
+		this.doGetMessage = ['magnet:', 'magnet/', 'ipfs/']; // + location.origin added below on message
+		this.doNotGetCache = ['socket.io', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', 'herokuapp.com', 'webrtcweb.com'];
 		// messaging
 		this.onGoingMessaging = new Map(); // only message once per session
 		this.messageChannel = null;
@@ -56,13 +52,6 @@ class MasterServiceWorker {
 			},
 			isApproved: function() {return this.approved === this.recent;}
 		}; // used to track, if new session
-
-		// strangly the cache function called in getFetchOrGetCacheOrGetMessage looses its scope even call, apply don't work
-		this.getMessage = this.getMessage.bind(this);
-		this.getFetchOrGetCache = this.getFetchOrGetCache.bind(this);
-		this.getCache = this.getCache.bind(this);
-		this.setCache = this.setCache.bind(this);
-		this.getRejectFunc = this.getRejectFunc.bind(this);
 	}
 	run(){
 		//console.log('@serviceworker run');
@@ -82,7 +71,6 @@ class MasterServiceWorker {
 			//console.log('@serviceworker got activated!');
 			//https://developer.mozilla.org/en-US/docs/Web/API/Clients/claim
 			event.waitUntil(self.clients.claim());
-			// NOTE: not needed when refreshing cache on doRefreshCache
 			// NOTE: clearing the cache evtl. had strange sideeffects or waiting makes service worker unresponsive
 			// onActivate clear old caches to avoid conflict
 			//event.waitUntil(caches.keys().then(keyList => Promise.all(keyList.map(key => key !== this.cacheVersion ? caches.delete(key) : undefined))));
@@ -97,7 +85,7 @@ class MasterServiceWorker {
 				this.clientId.approved = this.clientId.recent;
 				// save messageChannel
 				this.messageChannel = event.ports[0];
-				this.doIntercept.push(event.data); // location.origin
+				this.doGetMessage.push(event.data); // location.origin
 				this.messageChannel.postMessage('!!!ready');
 				this.messageChannel.postMessage(['version', this.devVersion]);
 				this.onGoingMessaging.clear();
@@ -115,44 +103,49 @@ class MasterServiceWorker {
 	// intercepts fetches, asks dom and resolves accordingly
 	addFetchEventListener() {
 		self.addEventListener('fetch', event => {
-			this.clientId.recent = event.clientId;
-			// feed a selfexecuting function
-			event.respondWith((() => {
-				// cache all and pin all ipfs
-				if (!this.messageChannel) return this.getFetchOrGetCache(event.request);
-				// pin ipfs
-				if (this.ipfsPin.some(url => event.request.url.includes(url))) this.messageChannel.postMessage(['info', event.request.url]);
-				const intercept = this.doNotIntercept.every(url => !event.request.url.includes(url)) && this.doIntercept.some(url => event.request.url.includes(url))
-				console.info(`@serviceworker intercept ${intercept}:`, event.request.url);
-				// try to get it from webtorrent or ipfs first when interception is true
-				// else if your offline get it from ipfs if it is an ipfs url
-				if (this.clientId.isApproved() && (intercept || (!this.isOnline && this.doIntercept.some(url => event.request.url.includes(url))))) {
-					return this.getFetchOrGetCacheOrGetMessage(event.request);
-				} else {
-					return this.getFetchOrGetCache(event.request, undefined, undefined, undefined, undefined, true);
+			if (event && event.respondWith && event.request && event.request.url) {
+				if (event.clientId !== undefined) this.clientId.recent = event.clientId;
+				// at the moment only two step by step levels exist. Level0: fetch + cache + message without streaming; Level1: message
+				const actionsByLevels = [[], []];
+				const getAllActionsLength = twoDimensionalArr => twoDimensionalArr.reduce((acc, cur) => (acc + cur.length || 0), 0) || 0;
+				// doGetMessageInitial (incl. ipfs streams) = Level0
+				const doGetMessageInitial = this.messageChannel && !this.doNotGetMessageInitial.some(url => event.request.url.includes(url)) && this.doGetMessage.some(url => event.request.url.includes(url));
+				if (doGetMessageInitial) actionsByLevels[0].push(this.getMessage.bind(this, event.request));
+				// doGetMessage = Level1 (excl. ipfs streams)
+				if (!doGetMessageInitial && this.messageChannel && !this.doNotGetMessage.some(url => event.request.url.includes(url)) && this.doGetMessage.some(url => event.request.url.includes(url))) actionsByLevels[1].push(this.getMessage.bind(this, event.request));
+				// doGetCache = Level0
+				if (!this.doNotGetCache.some(url => event.request.url.includes(url))) actionsByLevels[0].push(this.getCache.bind(this, event.request));
+				// from here intercept default fetch response
+				if (!!getAllActionsLength(actionsByLevels)) {
+					// add fetch as a default action to Level0
+					actionsByLevels[0].push(this.getFetch.bind(this, event.request));
+					event.respondWith(new Promise((resolve, reject) => {
+						let didResolve = false;
+						const resolveFunc = (response, level, action) => {
+							if (didResolve) {
+								// uncomment for complete logging
+								//console.info(`@serviceworker already resolved! Now at level${level}: ${event.request.url} and ignored  ${action.name}`);
+							} else {
+								console.info(`@serviceworker resolved at level${level}: ${event.request.url} with ${action.name}`);
+								resolve(response);
+							}
+							didResolve = true;
+						};
+						const rejectFunc = this.getRejectFunc(reject, getAllActionsLength(actionsByLevels));
+						// uncomment error for complete logging
+						let execActions = (actions, level) => Promise.all(actions.map(action => action().then(response => resolveFunc(response, level, action)).catch(error => rejectFunc(`@serviceworker rejected at level${level}: ${event.request.url} at action ${action.name}`/*, error*/))));
+						// run Level0 messageInit vs cache vs fetch || run Leve1 message (incl. ipfs stream)
+						execActions(actionsByLevels[0], 0).finally(error => {
+							if (!didResolve) execActions(actionsByLevels[1], 1);
+						});
+					}));
 				}
-			})());
+			}
+
 		});
 	}
-	getFetchOrGetCacheOrGetMessage(request) {
-		// race message vs (fetch vs cache)
+	getFetch(request, abortController = new AbortController(), setCache = true, overwrite = true) {
 		return new Promise((resolve, reject) => {
-			const rejectFunc = this.getRejectFunc(reject);
-			const abortController = new AbortController()
-			this.getFetchOrGetCache(request, abortController).then(response => resolve(response)).catch(error => rejectFunc(request.url, error));
-			this.getMessage(request).then(response => {
-				resolve(response);
-				abortController.abort();
-			}).catch(error => rejectFunc(request.url, error));
-		});
-	}
-	getFetchOrGetCache(request, abortController = new AbortController(), setCache = true, overwrite = true, getCache = true, fallbackToGetMessage = false) {
-		// race fetch vs cache
-		return new Promise((resolve, reject) => {
-			const rejectFunc = this.getRejectFunc(fallbackToGetMessage && this.doIntercept.some(url => request.url.includes(url)) ? () => {
-				// if fetch + cache failed try to get it trhough message eventough it is in doNotIntercept
-				this.getMessage(request).then(response => resolve(response)).catch(error => reject(error));
-			} : reject, getCache ? 2 : 1);
 			// Fetch
 			fetch(request, {signal: abortController.signal}).then(response => {
 				if (setCache) {
@@ -160,31 +153,19 @@ class MasterServiceWorker {
 						if (this.validateResponse(response)) {
 							resolve(response);
 						} else {
-							rejectFunc(request.url);
+							reject(request.url);
 						}
-					}).catch(error => rejectFunc(`ServiceWorker: Fetch caching failed for ${request.url}`, error));
+					}).catch(error => reject(`ServiceWorker: Fetch caching failed for ${request.url}`));
 				} else if (this.validateResponse(response)) {
 					resolve(response);
 				} else {
-					rejectFunc(request.url);
+					reject(request.url);
 				}
-			}).catch(error => rejectFunc(request.url, error));
-			// Cache
-			if (getCache) {
-				this.getCache(request).then(response => {
-					if (this.validateResponse(response)) {
-						resolve(response);
-						// only abort non local resources, since cache has to be refreshed in case local files change
-						if (request.url && this.doRefreshCache.every(url => !request.url.includes(url))) abortController.abort();
-					} else {
-						rejectFunc(request.url);
-					}
-				}).catch(error => rejectFunc(request.url, error));
-			}
+			}).catch(error => reject(request.url));
 		});
 	}
-	// don't set cache, since this is already in indexedDB and streams from IPFS are not streamable from cache (TODO)
-	getMessage(request, setCache = true, overwrite = false) {
+	// don't write to cache since it is already at indexedDB, also the audio element gets confused when it gets resolved message response after saving to cache
+	getMessage(request, setCache = false, overwrite = false) {
 		// already messaged answer with such
 		if (this.onGoingMessaging.has(request.url)) return this.onGoingMessaging.get(request.url);
 		// new message
@@ -211,14 +192,22 @@ class MasterServiceWorker {
 		return messagePromise;
 	}
 	getCache(request) {
-		return caches.open(this.cacheVersion).then(cache => {
-			const options = request.url && this.doCacheStrict.some(url => request.url.includes(url)) ? {} : {ignoreSearch: true, ignoreMethod: true, ignoreVary: true};
-			return cache.match(request, options);
-		}).catch(error => this.error(error, request));
+		return new Promise((resolve, reject) => {
+			caches.open(this.cacheVersion).then(cache => {
+				cache.match(request, {ignoreSearch: true, ignoreMethod: true, ignoreVary: true}).then(response => {
+					// only overwrite in case cache response would not validate (not found resolves undefined)
+					if (this.validateResponse(response)) {
+						resolve(response);
+					} else {
+						reject(request.url);
+					}
+				}).catch(error => reject(`ServiceWorker: Match cache failed for ${request.url}`));
+			}).catch(error => reject(`ServiceWorker: Open cache failed for ${request.url}`));
+		});
 	}
 	setCache(request, response, overwrite = true) {
-		// don't cache POST
-		if (request.method === 'POST' || (request.url && this.doNotCache.some(url => request.url.includes(url)))) return Promise.resolve(response);
+		// don't cache POST as well as those which doNotGetCache
+		if (request.method === 'POST' || this.doNotGetCache.some(url => request.url.includes(url))) return Promise.resolve(response);
 		return caches.open(this.cacheVersion).then(cache => {
 			const responseClone = response.clone();
 			if (this.validateResponse(responseClone)) {
@@ -226,10 +215,8 @@ class MasterServiceWorker {
 				if (overwrite) {
 					put();
 				} else {
-					this.getCache(request).then(response => {
-						// only overwrite in case cache response would not validate (not found resolves undefined)
-						if (!this.validateResponse(response)) put();
-					}).catch(error => this.error(error, request));
+					// only overwrite in case cache response would not validate
+					this.getCache(request).catch(error => put());
 				}
 			}
 			return response;
