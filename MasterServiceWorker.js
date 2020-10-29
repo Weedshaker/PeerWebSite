@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.11';
+		this.devVersion = '0.12';
         this.precache = [
             './',
 			'./index.html',
@@ -133,7 +133,7 @@ class MasterServiceWorker {
 						};
 						const rejectFunc = this.getRejectFunc(reject, getAllActionsLength(actionsByLevels));
 						// uncomment error for complete logging
-						let execActions = (actions, level) => Promise.all(actions.map(action => action().then(response => resolveFunc(response, level, action)).catch(error => rejectFunc(`@serviceworker rejected at level${level}: ${event.request.url} at action ${action.name}`/*, error*/))));
+						const execActions = (actions, level) => Promise.all(actions.map(action => action().then(response => resolveFunc(response, level, action)).catch(error => rejectFunc(`@serviceworker rejected at level${level}: ${event.request.url} at action ${action.name}`/*, error*/))));
 						// run Level0 messageInit vs cache vs fetch || run Leve1 message (incl. ipfs stream)
 						execActions(actionsByLevels[0], 0).finally(error => {
 							if (!didResolve) execActions(actionsByLevels[1], 1);
@@ -164,8 +164,8 @@ class MasterServiceWorker {
 			}).catch(error => reject(request.url));
 		});
 	}
-	// don't write to cache since it is already at indexedDB, also the audio element gets confused when it gets resolved message response after saving to cache
-	getMessage(request, setCache = false, overwrite = false) {
+	// don't overwrite to cache since it is already at indexedDB, also the audio element gets confused when it gets resolved message response mixed fetch response
+	getMessage(request, setCache = true, overwrite = false) {
 		// already messaged answer with such
 		if (this.onGoingMessaging.has(request.url)) return this.onGoingMessaging.get(request.url);
 		// new message
