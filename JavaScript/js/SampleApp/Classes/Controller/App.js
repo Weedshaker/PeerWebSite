@@ -145,7 +145,7 @@ export class App extends MasterApp {
 				}
 				$('.headerReceiver > .counterWebRTC').hide();
 			} else if (this.checkHashType(location.hash) === 'ipfs') {
-				this.IPFS.cat(location.hash.substr(6)).then(text => {
+				this.IPFS.raceFetchVsCat(location.hash.substr(6)).then(text => {
 					this.HTML.setData(this.receiveCont, {message: text});
 					this.HTML.setTitle(this.HTML.getFirstText(text));
 				}).catch(error => $('#receiver').text(`An Error occured! ${error}`));
@@ -163,7 +163,7 @@ export class App extends MasterApp {
 			location.reload();
 		} else if (this.checkHashType(location.hash) === 'ipfs') {
 			if (this.Editor.getData().length < 12) this.Editor.setData(undefined, this.HTML.loadingAnimation, 'code')
-			this.IPFS.cat(location.hash.substr(6)).then(text => {
+			this.IPFS.raceFetchVsCat(location.hash.substr(6)).then(text => {
 				this.Editor.setData(undefined, text, 'code');
 				this.HTML.setTitle();
 			}).catch(error => $('#sender').text(`An Error occured! ${error}`));

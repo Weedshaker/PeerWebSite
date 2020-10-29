@@ -25,7 +25,7 @@ export class IPFS {
         // file.link, which depends on this.baseUrl is only used at EditorSummernote and has an error handling "onFetchError" to findPeers
         return this.node.then(node => node.add({path, content})).then(file => Object.assign({link: this.baseUrl + file.cid}, file));
     }
-    get(cid){
+    fetch(cid){
         return fetch(this.baseUrl + cid).then(response => response.text());
     }
     cat(cid, raw = false){
@@ -41,6 +41,9 @@ export class IPFS {
             };
             return chunksIterator.next().then(consume); // kick off the recursive function
         });
+    }
+    raceFetchVsCat(cid){
+        return Promise.race([this.fetch(cid), this.cat(cid, false)]);
     }
     getBlobByFileCID(url) {
         //QmQKaoJcU9QoHHgaSMZ4htAoSXHwBBx25oShbk2f5W1bh1
