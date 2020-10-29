@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.12';
+		this.devVersion = '0.14';
         this.precache = [
             './',
 			'./index.html',
@@ -30,6 +30,8 @@ class MasterServiceWorker {
 		this.doNotGetMessageInitial = ['audioVideo=true', 'swIntercept=false'].concat(this.doNotGetMessage); // on first try do not get message but as fallback
 		this.doGetMessage = ['magnet:', 'magnet/', 'ipfs/']; // + location.origin added below on message
 		this.doNotGetCache = ['socket.io', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', 'herokuapp.com', 'webrtcweb.com'];
+		this.doRefreshCache = [location.origin, 'cdn.jsdelivr.net'];
+		this.ipfsPin = ['gateway.ipfs.io'];
 		// messaging
 		this.onGoingMessaging = new Map(); // only message once per session
 		this.messageChannel = null;
@@ -105,6 +107,8 @@ class MasterServiceWorker {
 		self.addEventListener('fetch', event => {
 			if (event && event.respondWith && event.request && event.request.url) {
 				if (event.clientId !== undefined) this.clientId.recent = event.clientId;
+				// pin ipfs
+				if (this.ipfsPin.some(url => event.request.url.includes(url))) this.messageChannel.postMessage(['info', event.request.url]);
 				// at the moment only two step by step levels exist. Level0: fetch + cache + message without streaming; Level1: message
 				const actionsByLevels = [[], []];
 				const getAllActionsLength = twoDimensionalArr => twoDimensionalArr.reduce((acc, cur) => (acc + cur.length || 0), 0) || 0;
@@ -118,7 +122,8 @@ class MasterServiceWorker {
 				// from here intercept default fetch response
 				if (!!getAllActionsLength(actionsByLevels)) {
 					// add fetch as a default action to Level0
-					actionsByLevels[0].push(this.getFetch.bind(this, event.request));
+					const abortController = new AbortController();
+					actionsByLevels[0].push(this.getFetch.bind(this, event.request, abortController));
 					event.respondWith(new Promise((resolve, reject) => {
 						let didResolve = false;
 						const resolveFunc = (response, level, action) => {
@@ -128,6 +133,8 @@ class MasterServiceWorker {
 							} else {
 								console.info(`@serviceworker resolved at level${level}: ${event.request.url} with ${action.name}`);
 								resolve(response);
+								// abort if not fetch itself and cache does not need to be refreshed
+								if (!action.name.includes('getFetch') && !this.doRefreshCache.some(url => event.request.url.includes(url))) abortController.abort();
 							}
 							didResolve = true;
 						};
