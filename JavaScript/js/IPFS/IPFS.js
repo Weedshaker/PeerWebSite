@@ -1,5 +1,6 @@
 import { mime } from './helpers/mimeTypes.js';
 
+// Debug: http://localhost:3000/index_debug.html#ipfs:QmT8dAKuCVQ7TTHV5ezNFE272cs15PyigJGV663GHeen6t
 export class IPFS {
 	constructor(){
         // should be 'ipfs://' but browsers do not yet support that url scheme, once this gateway would get blocked or overloaded the files have to be fixed through the service worker
@@ -25,8 +26,21 @@ export class IPFS {
         // file.link, which depends on this.baseUrl is only used at EditorSummernote and has an error handling "onFetchError" to findPeers
         return this.node.then(node => node.add({path, content})).then(file => Object.assign({link: this.baseUrl + file.cid}, file));
     }
-    fetch(cid){
-        return fetch(this.baseUrl + cid).then(response => response.text());
+    fetch(cid, type = 'text', abortController = new AbortController()){
+        return new Promise((resolve, reject) => {
+			// Fetch
+			fetch(this.baseUrl + cid, {signal: abortController.signal}).then(response => {
+				if (this.validateResponse(response)) {
+                    try {
+                        resolve(type ? response[type]() : response);
+                    } catch (error) {
+                        reject(this.baseUrl + cid + error && error.message);
+                    }
+				} else {
+					reject(this.baseUrl + cid);
+				}
+			}).catch(error => reject(this.baseUrl + cid));
+		});
     }
     cat(cid, raw = false){
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of
@@ -42,8 +56,20 @@ export class IPFS {
             return chunksIterator.next().then(consume); // kick off the recursive function
         });
     }
-    raceFetchVsCat(cid){
-        return Promise.race([this.fetch(cid), this.cat(cid, false)]);
+    raceFetchVsCat(cid, type){
+        return new Promise((resolve, reject) => {
+            const rejectFunc = this.getRejectFunc(reject, 2);
+            const abortController = new AbortController();
+            this.fetch(cid, type, abortController).then(result => {
+                console.info(`@IPFS: Got Page ${cid} through fetch`);
+                resolve(result);
+            }).catch(rejectFunc);
+            this.cat(cid, false).then(result => {
+                console.info(`@IPFS: Got Page ${cid} through cat`);
+                resolve(result);
+                abortController.abort();
+            }).catch(rejectFunc);
+        });
     }
     getBlobByFileCID(url) {
         //QmQKaoJcU9QoHHgaSMZ4htAoSXHwBBx25oShbk2f5W1bh1
@@ -117,4 +143,15 @@ export class IPFS {
             url
         };
     }
+    validateResponse(response) {
+		// 0 is for cache
+		return response && (response.status === 0 || (response.status >= 200 && response.status <= 299));
+    }
+    getRejectFunc(reject, max = 2) {
+		let counter = 0;
+		return url => {
+			counter++;
+			if (counter >= max) reject(`@IPFS: No response for ${url}`);
+		}
+	}
 }
