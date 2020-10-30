@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.15';
+		this.devVersion = '0.17';
         this.precache = [
             './',
 			'./index.html',
@@ -21,6 +21,11 @@ class MasterServiceWorker {
 			'./css/mui.css',
 			// update these jspm_packages links when version gets updated
 			'./jspm_packages/github/twbs/bootstrap@3.3.7/css/bootstrap.min.css',
+			'./jspm_packages/github/twbs/bootstrap@3.3.7/fonts/glyphicons-halflings-regular.eot',
+			'./jspm_packages/github/twbs/bootstrap@3.3.7/fonts/glyphicons-halflings-regular.svg',
+			'./jspm_packages/github/twbs/bootstrap@3.3.7/fonts/glyphicons-halflings-regular.ttf',
+			'./jspm_packages/github/twbs/bootstrap@3.3.7/fonts/glyphicons-halflings-regular.woff',
+			'./jspm_packages/github/twbs/bootstrap@3.3.7/fonts/glyphicons-halflings-regular.woff2',
 			'./jspm_packages/github/tanaka-de-silva/google-diff-match-patch-js@1.0.0/diff_match_patch.js',
 			'./jspm_packages/github/pieroxy/lz-string@1.4.4/libs/lz-string.min.js',
 			'https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js',
@@ -171,18 +176,19 @@ class MasterServiceWorker {
 			}).catch(error => reject(request.url));
 		});
 	}
-	// don't overwrite to cache since it is already at indexedDB, also the audio element gets confused when it gets resolved message response mixed fetch response
-	// test if corrupted streaming cache was introduced there: step v. 0.15: setCache=false
+	// don't overwrite to cache since it is already at indexedDB
+	// also the blob from IPFS.cat is not seekable (blob.stream does not help)
 	getMessage(request, setCache = false, overwrite = false) {
 		// already messaged answer with such
-		if (this.onGoingMessaging.has(request.url)) return this.onGoingMessaging.get(request.url);
+		if (this.onGoingMessaging.has(request.url)) return Promise.resolve(new Response(...this.onGoingMessaging.get(request.url)));
 		// new message
-		const messagePromise = new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 			const key = this.getRandomString();
 			this.messageChannel.postMessage([request.url, key]);
 			// key, [success, failure] functions
 			this.resolveMap.set(key, [
 				data => {
+					this.onGoingMessaging.set(request.url, data);
 					const response = new Response(data[0], data[1]);
 					if (setCache) {
 						// only write to cache when there is none with this key, since ipfs.cat on streams sometimes gives back empty objects. TODO: look deeper at IPFS
@@ -193,11 +199,7 @@ class MasterServiceWorker {
 				},
 				() => reject(`ServiceWorker: No message response for ${request.url}`)
 			]);
-		}).finally(() => {
-			if (this.onGoingMessaging.has(request.url)) this.onGoingMessaging.delete(request.url);
 		});
-		this.onGoingMessaging.set(request.url, messagePromise);
-		return messagePromise;
 	}
 	getCache(request) {
 		return new Promise((resolve, reject) => {
