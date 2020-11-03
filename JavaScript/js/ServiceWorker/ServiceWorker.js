@@ -59,8 +59,14 @@ export class ServiceWorker {
 						this.Worker.postMessage([event.data, false]);
 						return null;
 					}
-					const init = { 'status': 200, 'statusText': name };
-					this.Worker.postMessage([event.data, [blob, init]]);
+					const init = { status: 200, statusText: name, headers: [['content-type', blob.type || null]] };
+					init.headers.push(['accept-ranges', 'bytes']);
+					init.headers.push(['cache-control', 'no-store']);
+					blob.arrayBuffer()
+						.then(arrayBuffer => {
+							init.headers.push(['content-length', arrayBuffer.byteLength]);
+							init.headers.push(['content-range', `bytes 0-${arrayBuffer.byteLength - 1}/${arrayBuffer.byteLength}`]);
+						}).finally(() => this.Worker.postMessage([event.data, [blob, init]]));
 					return !!blob;
 				};
 				// only ask one instance of webtorrent when there is a magnetURI to resolve !!!if you change this, change equal at JavaScript/js/WebTorrent/Prototype/Domain/MasterWebTorrent.js.getBlobByFileName!!!
