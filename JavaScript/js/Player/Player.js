@@ -371,11 +371,16 @@ export default class Player {
     this.playBtn = section.querySelector('.play')
     this.playBtn.querySelector('.play').addEventListener('click', event => this.play())
     this.playBtn.querySelector('.pause').addEventListener('click', event => this.pause())
-    this.playBtn.querySelector('.loading').addEventListener('click', event => {
+    this.playBtn.querySelector('.loading').addEventListener('dblclick', event => {
       let source = null
       if ((source = this.currentControl.querySelector('source')) && typeof source.onerror === 'function') {
         // if it is not already ipfs.cat then trigger it
         if (!source.classList.contains('ipfsLoading')) source.onerror()
+        if (this.currentControl.paused) {
+          this.play()
+        } else {
+          this.pause()
+        }
       }
     })
     // prev, next
