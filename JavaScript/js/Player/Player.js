@@ -49,13 +49,13 @@ export default class Player {
 		document.body.addEventListener('play', event => {
 			if (this.validateEvent(event)) {
         this.play(event.target, true)
-        if (event.target === this.currentControl) this.isLoading(false)
+        this.isLoading(false, event.target)
       }
     }, true)
     document.body.addEventListener('pause', event => {
 			if (this.validateEvent(event)) {
         this.pause(event.target, true)
-        if (event.target === this.currentControl) this.isLoading(false)
+        this.isLoading(false, event.target)
       }
     }, true)
     // loop all audio + video
@@ -76,15 +76,8 @@ export default class Player {
 		document.body.addEventListener('timeupdate', event => {
 			if (this.validateEvent(event)) {
         this.saveCurrentTime(event.target)
-        if (this.waitingToPlayTimeout[0]) {
-          if (this.waitingToPlayTimeout[1] > 1) { // timeupdate can happen for two times (0,1) without actually playing
-            clearTimeout(this.waitingToPlayTimeout[0])
-            this.waitingToPlayTimeout = [null, 0]
-          } else {
-            this.waitingToPlayTimeout[1]++
-          }
-        }
-        if (event.target === this.currentControl) this.isLoading(false)
+        this.resetWaitingToPlayTimeout()
+        this.isLoading(false, event.target)
       }
     }, true)
     document.body.addEventListener('seeked', event => {
@@ -92,25 +85,25 @@ export default class Player {
     }, true)
     // is media playing or not
     document.body.addEventListener('canplay', event => {
-			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(false)
+			if (this.validateEvent(event)) this.isLoading(false, event.target)
     }, true)
     document.body.addEventListener('canplaythrough', event => {
-			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(false)
+			if (this.validateEvent(event)) this.isLoading(false, event.target)
     }, true)
     document.body.addEventListener('playing', event => {
-			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(false)
+			if (this.validateEvent(event)) this.isLoading(false, event.target)
     }, true)
     document.body.addEventListener('seeking', event => {
-			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(true)
+			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
     document.body.addEventListener('stalled', event => {
-			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(true)
+			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
     document.body.addEventListener('suspend', event => {
-			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(true)
+			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
     document.body.addEventListener('waiting', event => {
-			if (this.validateEvent(event) && event.target === this.currentControl) this.isLoading(true)
+			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
     // keyboard
 		if (!this.isSender) {
@@ -485,7 +478,7 @@ export default class Player {
   play (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
     if (!eventTriggered) {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.playAll()
-      if (this.mode === 'random') this.waitingToPlayTimeout[0] = setTimeout(() => this.nextRandom(), this.waitToPlay)
+      if (this.mode === 'random') this.setWaitingToPlayTimeout()
       if (control.paused) return control.play() // this wil trigger the event, which in turn will trigger this function
     }
     this.currentControl = control
@@ -598,9 +591,11 @@ export default class Player {
     }
   }
 
-  isLoading (loading) {
+  isLoading (loading, control) {
+    if (control !== this.currentControl) return false
     if (loading) {
       if (this.mode !== 'loop-machine') this.html.classList.add('loading')
+      if (this.mode === 'random') this.setWaitingToPlayTimeout()
     } else {
       this.html.classList.remove('loading')
     }
@@ -619,6 +614,22 @@ export default class Player {
       this.timer = setTimeout(() => this.setTimer(input, value - 1), 60000)
     }
     input.blur()
+  }
+
+  setWaitingToPlayTimeout() {
+    if (this.waitingToPlayTimeout[0]) clearTimeout(this.waitingToPlayTimeout[0])
+    this.waitingToPlayTimeout = [setTimeout(() => this.nextRandom(), this.waitToPlay), 0]
+  }
+
+  resetWaitingToPlayTimeout() {
+    if (this.waitingToPlayTimeout[0]) {
+      if (this.waitingToPlayTimeout[1] > 1) { // timeupdate can happen for two times timeupdate (0,1) without actually playing
+        clearTimeout(this.waitingToPlayTimeout[0])
+        this.waitingToPlayTimeout = [null, 0]
+      } else {
+        this.waitingToPlayTimeout[1]++
+      }
+    }
   }
 
   onError (control) {
