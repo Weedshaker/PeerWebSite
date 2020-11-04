@@ -16,6 +16,8 @@ export default class Player {
     this.prevResetTollerance = 3 // sec., used to decide from when a track would be reset when going to prev track
     this.seekTime = 10 // sec.
     this.keyDownTollerance = 300 // ms
+    this.waitToPlay = 5000
+    this.waitingToPlayTimeout = [null, 0]
 
     this.randomQueue = []
     this.onErrorExtendedToSourceIds = []
@@ -74,6 +76,14 @@ export default class Player {
 		document.body.addEventListener('timeupdate', event => {
 			if (this.validateEvent(event)) {
         this.saveCurrentTime(event.target)
+        if (this.waitingToPlayTimeout[0]) {
+          if (this.waitingToPlayTimeout[1] > 1) { // timeupdate can happen for two times (0,1) without actually playing
+            clearTimeout(this.waitingToPlayTimeout[0])
+            this.waitingToPlayTimeout = [null, 0]
+          } else {
+            this.waitingToPlayTimeout[1]++
+          }
+        }
         if (event.target === this.currentControl) this.isLoading(false)
       }
     }, true)
@@ -368,6 +378,20 @@ export default class Player {
     this.playBtn = section.querySelector('.play')
     this.playBtn.querySelector('.play').addEventListener('click', event => this.play())
     this.playBtn.querySelector('.pause').addEventListener('click', event => this.pause())
+    this.playBtn.querySelector('.loading').addEventListener('click', event => {
+      if (this.currentControl.paused) {
+        this.play()
+      } else {
+        this.pause()
+      }
+    })
+    this.playBtn.querySelector('.loading').addEventListener('dblclick', event => {
+      let source = null
+      if ((source = this.currentControl.querySelector('source')) && typeof source.onerror === 'function') {
+        // if it is not already ipfs.cat then trigger it
+        if (!source.classList.contains('ipfsLoading')) source.onerror()
+      }
+    })
     // prev, next
     section.querySelector('.prev').addEventListener('click', event => this.prev())
     section.querySelector('.next').addEventListener('click', event => this.next())
@@ -461,6 +485,7 @@ export default class Player {
   play (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
     if (!eventTriggered) {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.playAll()
+      if (this.mode === 'random') this.waitingToPlayTimeout[0] = setTimeout(() => this.nextRandom(), this.waitToPlay)
       if (control.paused) return control.play() // this wil trigger the event, which in turn will trigger this function
     }
     this.currentControl = control
@@ -536,6 +561,7 @@ export default class Player {
     const controls = this.allReadyControls
     const control = controls[Math.floor(Math.random() * controls.length)]
     if (control) {
+      if (control === this.currentControl) return this.nextRandom()
       this.randomQueue.push(control)
       this.play(control)
       return control
@@ -613,17 +639,20 @@ export default class Player {
 
   get allReadyControls () {
     const allControls = this.allControls
-    let state = 4 // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
-    let controls = this.filterByReadyState(allControls, state) // 4
-    while (state > 1 && controls.length < allControls.length / 2) {
+    let state = 5 // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState + state 5 which means it has control.duration
+    let controls = this.filterByReadyState(allControls, state) // 5
+    while (state > 1 && controls.length < 3) {
       state--
-      controls = this.filterByReadyState(allControls, state) // 3, 2, 1
+      controls = this.filterByReadyState(allControls, state) // 4, 3, 2, 1
     }
     return controls
   }
 
   filterByReadyState (controls, state = 4) {
-    return controls.filter(control => control.readyState >= state)
+    return controls.filter(control => {
+      if (state === 5) return !!control.duration && control.readyState === 4
+      return control.readyState >= state
+    })
   }
 
   set currentControlIndex (index) {
