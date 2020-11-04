@@ -372,13 +372,6 @@ export default class Player {
     this.playBtn.querySelector('.play').addEventListener('click', event => this.play())
     this.playBtn.querySelector('.pause').addEventListener('click', event => this.pause())
     this.playBtn.querySelector('.loading').addEventListener('click', event => {
-      if (this.currentControl.paused) {
-        this.play()
-      } else {
-        this.pause()
-      }
-    })
-    this.playBtn.querySelector('.loading').addEventListener('dblclick', event => {
       let source = null
       if ((source = this.currentControl.querySelector('source')) && typeof source.onerror === 'function') {
         // if it is not already ipfs.cat then trigger it
@@ -594,8 +587,8 @@ export default class Player {
   isLoading (loading, control) {
     if (control !== this.currentControl) return false
     if (loading) {
+      if (this.mode === 'random' && !this.html.classList.contains('loading')) this.setWaitingToPlayTimeout()
       if (this.mode !== 'loop-machine') this.html.classList.add('loading')
-      if (this.mode === 'random') this.setWaitingToPlayTimeout()
     } else {
       this.html.classList.remove('loading')
     }
