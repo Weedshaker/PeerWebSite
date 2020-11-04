@@ -61,7 +61,6 @@ export class ServiceWorker {
 					}
 					const init = { status: 200, statusText: name, headers: [['content-type', blob.type || null]] };
 					init.headers.push(['accept-ranges', 'bytes']);
-					init.headers.push(['cache-control', 'no-store']);
 					blob.arrayBuffer()
 						.then(arrayBuffer => {
 							init.headers.push(['content-length', arrayBuffer.byteLength]);

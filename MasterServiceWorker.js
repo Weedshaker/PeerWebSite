@@ -37,12 +37,13 @@ class MasterServiceWorker {
 		this.doRefreshCache = [location.origin, 'cdn.jsdelivr.net'];
 		this.isStream = ['audioVideo=true', 'swIntercept=false'];
 		this.ipfsPin = ['gateway.ipfs.io'];
+		this.getMessageIsStreamTimeout = 3000;
 		// messaging
 		this.resolvedMessages = new Map(); // only message once per session
 		this.messageChannel = null;
 		// keep track of session to what it resolved. this helps avoiding serving mixed content responses
-		this.sessionUrlsResolvedToFetchCache = [];
-		this.sessionUrlsResolvedToMessage = [];
+		this.urlsContext = new Map();
+		this.sessionResolvedMessageContext = []; // the first time a message is requested it must answer with full range and status 200
 		this.resolveMap = new Map(); // used to resolve after the message response
 		this.clientId = {
 			approved: -1,
@@ -97,8 +98,7 @@ class MasterServiceWorker {
 				this.doGetMessage.push(event.data); // location.origin
 				this.messageChannel.postMessage('!!!ready');
 				this.messageChannel.postMessage(['version', this.devVersion]);
-				this.sessionUrlsResolvedToFetchCache = [];
-				this.sessionUrlsResolvedToMessage = [];
+				this.sessionResolvedMessageContext = [];
 			} else if (event.data && Array.isArray(event.data[0])) {
 				// execute resolving function
 				//console.log('@serviceworker got response:', event.data);
@@ -124,6 +124,9 @@ class MasterServiceWorker {
 					const isStream = !!event.request.headers.get('range') || this.isStream.some(url => event.request.url.includes(url));
 					// only use sw-cache when !getMessage or getMessage but !isStream
 					const getCache = (!getMessage || !isStream) && !this.doNotGetCache.some(url => event.request.url.includes(url));
+					// reset the context
+					this.setUrlsContext(event.request);
+					const isContextFetchCache = this.urlsContext.get(event.request.url) === 'fetchCache';
 					// from here intercept default fetch response
 					if (getMessage || getCache) {
 						event.respondWith(new Promise((resolve, reject) => {
@@ -134,12 +137,10 @@ class MasterServiceWorker {
 								const abortController = new AbortController();
 								const promises = [];
 								if (getFetch) promises.push(this.getFetch(event.request, abortController, getCache).then(response => {
-									this.sessionUrlsResolvedToFetchCache.push(event.request.url);
-									resolveFunc(response, `@serviceworker [${type}] success getFetch for ${event.request.url}`);
+									if (resolveFunc(response, `@serviceworker [${type}] success getFetch for ${event.request.url}`)) this.setUrlsContext(event.request, 'fetchCache');
 								}).catch(error => rejectFunc(`@serviceworker [${type}] getFetch failed for: ${event.request.url}`, error)));
 								if (getCache) promises.push(this.getCache(event.request).then(response => {
-									this.sessionUrlsResolvedToFetchCache.push(event.request.url);
-									resolveFunc(response, `@serviceworker [${type}] success getCache for ${event.request.url}`);
+									if (resolveFunc(response, `@serviceworker [${type}] success getCache for ${event.request.url}`)) this.setUrlsContext(event.request, 'fetchCache');
 									// abort if not fetch itself and cache does not need to be refreshed
 									if (abortController && !this.doRefreshCache.some(url => event.request.url.includes(url))) abortController.abort();
 								}).catch(error => rejectFunc(`@serviceworker [${type}] getCache failed for: ${event.request.url}`, error)));
@@ -147,7 +148,7 @@ class MasterServiceWorker {
 							};
 							let type = 'none';
 							// no message channel request || already resolved with fetch/cache, which forces it to not mix fetch/cache with responses from message in the same session. This would have sideeffects that seeking doesn't work after intial 0- was resolved by fetch/cache
-							if (!getMessage || (this.sessionUrlsResolvedToFetchCache.includes(event.request.url) && (getCache || getFetch))) { // !getMessage && getCache
+							if (!getMessage || (isContextFetchCache && (getCache || getFetch))) { // !getMessage && getCache
 								type = 'fetchVsCache';
 								fetchCache(resolveFunc, this.getRejectFunc(reject, getFetch ? 2 : 1), undefined, type);
 								return;
@@ -157,9 +158,8 @@ class MasterServiceWorker {
 								if (this.resolvedMessages.has(event.request.url)) {
 									type = 'message.catch(fetch)';
 									const rejectFunc = this.getRejectFunc(reject, 2);
-									this.getMessage(event.request).then(response => {
-										this.sessionUrlsResolvedToMessage.push(event.request.url);
-										resolveFunc(response, `@serviceworker [${type}] success getMessage for ${event.request.url}`);
+									this.getMessage(event.request, this.sessionResolvedMessageContext.includes(event.request.url)).then(response => {
+										if (resolveFunc(response, `@serviceworker [${type}] success getMessage for ${event.request.url}`)) this.setUrlsContext(event.request, 'message');
 									}).catch(error => {
 										rejectFunc(`@serviceworker [${type}] getMessage failed for: ${event.request.url}`, error);
 										fetchCache(resolveFunc, rejectFunc, error, type);
@@ -168,12 +168,13 @@ class MasterServiceWorker {
 									return;
 								}
 								// is stream and message is not resolved yet, so prio get fetch/cache
-								type = 'fetch.finally(message)';
+								type = `message.timeout(fetch), ${this.getMessageIsStreamTimeout}ms`;
 								const rejectFunc = this.getRejectFunc(reject, 2);
-								fetchCache(resolveFunc, rejectFunc, undefined, type).finally(() => this.getMessage(event.request).then(response => {
-									this.sessionUrlsResolvedToMessage.push(event.request.url);
-									resolveFunc(response, `@serviceworker [${type}] success getMessage for ${event.request.url}`);
-								}).catch(error => rejectFunc(`@serviceworker [${type}] getMessage failed for: ${event.request.url}`, error)));
+								const fetchTimeout = setTimeout(() => fetchCache(resolveFunc, rejectFunc, undefined, type), this.getMessageIsStreamTimeout);
+								this.getMessage(event.request, this.sessionResolvedMessageContext.includes(event.request.url)).then(response => {
+									clearTimeout(fetchTimeout);
+									if (resolveFunc(response, `@serviceworker [${type}] success getMessage for ${event.request.url}`)) this.setUrlsContext(event.request, 'message');
+								}).catch(error => rejectFunc(`@serviceworker [${type}] getMessage failed for: ${event.request.url}`, error));
 								return;
 							}
 							// getMessage && isStream
@@ -181,9 +182,8 @@ class MasterServiceWorker {
 							type = 'fetchVsCacheVsMessage';
 							const rejectFunc = this.getRejectFunc(reject, getCache && getFetch ? 3 : 2);
 							fetchCache(resolveFunc, rejectFunc, undefined, type);
-							this.getMessage(event.request).then(response => {
-								this.sessionUrlsResolvedToMessage.push(event.request.url);
-								resolveFunc(response, `@serviceworker [${type}] success getMessage for ${event.request.url}`);
+							this.getMessage(event.request, this.sessionResolvedMessageContext.includes(event.request.url)).then(response => {
+								if (resolveFunc(response, `@serviceworker [${type}] success getMessage for ${event.request.url}`)) this.setUrlsContext(event.request, 'message');
 							}).catch(error => rejectFunc(`@serviceworker [${type}] getMessage failed for: ${event.request.url}`, error));
 						}));
 					}
@@ -213,18 +213,22 @@ class MasterServiceWorker {
 		});
 	}
 	// don't overwrite to cache since it is already at indexedDB
-	getMessage(request, setCache = false, overwrite = false) {
+	getMessage(request, getRange = false, setCache = false, overwrite = false) {
 		// TODO: don't send message twice until resolvedMessages has been set
 		// new message
 		return new Promise((resolve, reject) => {
 			const resolveFunc = response => {
-				this.newPartialResponse(request, response).then(result => {
-					const [request, response, position] = result;
+				if (getRange) {
+					this.newPartialResponse(request, response).then(result => {
+						const [request, response, position] = result;
+						resolve(response);
+					}).catch(result => {
+						const [request, response, position, error] = result;
+						reject(`ServiceWorker: Could not stream message for ${request.url}, because of ${error && error.message}`);
+					});
+				} else {
 					resolve(response);
-				}).catch(result => {
-					const [request, response, position, error] = result;
-					reject(`ServiceWorker: Could not stream message for ${request.url}, because of ${error && error.message}`);
-				});
+				}
 			};
 			// already messaged answer with such
 			if (this.resolvedMessages.has(request.url)) return resolveFunc(new Response(...this.resolvedMessages.get(request.url)));
@@ -298,8 +302,7 @@ class MasterServiceWorker {
 	newPartialResponse(request, response) {
 		return new Promise(resolve => {
 			// if this is the first response in this session, deliver the complete response
-			//if (!this.sessionUrlsResolvedToMessage.includes(request.url)) return resolve([request, response, 0]);
-			const position = request.headers.get('range') ? Number(/^bytes\=(\d+)\-$/g.exec(request.headers.get('range'))[1]) || 0 : false;
+			const position = this.getRangePosition(request.headers);
 			// ==> resolve like a normal response since !isStream
 			if (position === false) return resolve([request, response, position]);
 			response.clone().arrayBuffer().then(arrayBuffer => {
@@ -317,7 +320,7 @@ class MasterServiceWorker {
 						statusText: 'Partial Content',
 						headers: [
 							['accept-ranges', response.headers.get('accept-ranges')],
-							['cache-control', response.headers.get('cache-control')],
+							['cache-control', 'no-store'],
 							['content-type', response.headers.get('content-type')],
 							['content-length', response.headers.get('content-length')],
 							['content-range', `bytes ${position}-${arrayBuffer.byteLength - 1}/${arrayBuffer.byteLength}`]
@@ -328,26 +331,42 @@ class MasterServiceWorker {
 			}).catch(error => resolve([request, response, position, error]));
 		});
 	}
+	getRangePosition(headers) {
+		return headers.get('range') ? Number(/^bytes\=(\d+)\-$/g.exec(headers.get('range'))[1]) || 0 : false;
+	}
 	getResolveFunc(resolve) {
 		let counter = 0;
 		return (response, message) => {
 			counter++;
 			let resolved = false;
-			if (resolved = (counter <= 1)) resolve(response);
+			if ((resolved = (counter <= 1))) resolve(response);
 			if (message) console.info(message, `resolved: ${resolved}`);
+			return resolved;
 		}
 	}
 	getRejectFunc(reject, max = 2) {
 		let counter = 0;
 		return (url, error) => {
 			counter++;
-			if (counter >= max) reject(error || `ServiceWorker: No response for ${url}`);
+			let rejected = false;
+			if ((rejected = (counter >= max))) reject(error || `ServiceWorker: No response for ${url}`);
 			if (error) this.error(error, url);
+			return rejected;
 		}
 	}
 	error(error, request, toReturn) {
 		console[typeof error === 'string' || error && error.message && error.message.includes('user aborted a request') ? 'info' : 'warn']('ServiceWorker Error:', error, request);
 		return toReturn;
+	}
+	setUrlsContext(request, context) {
+		if (context) {
+			if (context === 'message') this.sessionResolvedMessageContext.push(request.url);
+			return this.urlsContext.set(request.url,  context);
+		}
+		// when content is requested from range 0
+		if (!this.getRangePosition(request.headers)) return this.urlsContext.set(request.url,  'open');
+		// if range > 0 but no context was set === new request => fallback to default fetchCache
+		if (!this.urlsContext.has(request.url)) this.urlsContext.set(request.url,  'fetchCache');
 	}
 	get isOnline() {
 		return self.navigator.onLine;
