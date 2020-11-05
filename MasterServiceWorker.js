@@ -125,7 +125,7 @@ class MasterServiceWorker {
 					// only use sw-cache when !getMessage or getMessage but !isStream
 					const getCache = (!getMessage || !isStream) && !this.doNotGetCache.some(url => event.request.url.includes(url));
 					// reset the context
-					this.setUrlsContext(event.request);
+					this.setUrlsContext(event.request); // TODO: evtl. it could also be done to reset the context, resp. the requested range with a 205 or 416 https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 					const isContextFetchCache = this.urlsContext.get(event.request.url) === 'fetchCache';
 					// from here intercept default fetch response
 					if (getMessage || getCache) {

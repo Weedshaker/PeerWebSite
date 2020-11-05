@@ -41,7 +41,6 @@ export default class Player {
     this.setVolume() // initial set last volume
     this.setMode() // initial set last mode
     this.allControls.forEach(control => this.onError(control)) // extended error handling
-    if (this.mode !== 'loop-machine' && !this.isPlayerOpen()) this.currentControl.focus()
   }
 
   // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
@@ -360,6 +359,7 @@ export default class Player {
   addControlsBehavior (section) {
     // title
     this.titleText = section.querySelector('.title span')
+    section.querySelector('.title').addEventListener('click', event => this.scrollToEl())
     // open/close player
     this.playerControls = section.querySelector('.controls')
     section.querySelector('.player').addEventListener('click', event => {
@@ -411,16 +411,14 @@ export default class Player {
     localStorage.setItem('lastVolume', volume)
   }
 
-  scrollToEl (el) {
-    if (!this.isPlayerOpen()) {
-      const rect = el.getBoundingClientRect()
-      // check if the element is outside the viewport, otherwise don't scroll
-      if (rect && (rect.top < 0 || rect.left < 0 || rect.bottom > (window.innerHeight || document.documentElement.clientHeight) || rect.right > (window.innerWidth || document.documentElement.clientWidth))) {
-        setTimeout(() => {
-            el.focus()
-            el.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'})
-        }, 500)
-      }
+  scrollToEl (el = this.currentControl) {
+    const rect = el.getBoundingClientRect()
+    // check if the element is outside the viewport, otherwise don't scroll
+    if (rect && (rect.top < 0 || rect.left < 0 || rect.bottom > (window.innerHeight || document.documentElement.clientHeight) || rect.right > (window.innerWidth || document.documentElement.clientWidth))) {
+      setTimeout(() => {
+          el.focus()
+          el.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'})
+      }, 500)
     }
   }
 
@@ -466,6 +464,8 @@ export default class Player {
   openPlayer (playerControls = this.playerControls, toggle = false) {
     const command = toggle ? 'toggle' : 'add'
     playerControls.classList[command]('open')
+    let header = null
+    if (playerControls.classList.contains('open') && (header = document.querySelector('body > header'))) header.classList.add('down')
     this.setTitleText()
   }
 
@@ -483,9 +483,13 @@ export default class Player {
     this.playBtn.classList.add('is-playing')
     this.setTitleText(undefined, control)
     if (this.mode !== 'loop-machine') {
-      this.loadCurrentTime(control) // do this because ios does not swollow currentTime set at loadedmetadata
+      // if shorter than 10min
+      if (this.mode === 'random' && control.duration < 600) {
+        this.setCurrentTime(control, 0)
+      } else {
+        this.loadCurrentTime(control) // do this because ios does not swollow currentTime set at loadedmetadata
+      }
       this.pauseAll(control)
-      if (!this.isSender) this.scrollToEl(control) // only at receiver, otherwise the toolbar will be above the fold
     }
   }
 
@@ -549,7 +553,8 @@ export default class Player {
   }
 
   nextRandom () {
-    const controls = this.allReadyControls
+    // randomly choose from time to time some control which is not ready yet, to kickoff loading
+    const controls = Math.floor(Math.random() * 2) ? this.allReadyControls : this.allControls
     const control = controls[Math.floor(Math.random() * controls.length)]
     if (control) {
       if (control === this.currentControl) return this.nextRandom()
@@ -592,7 +597,7 @@ export default class Player {
   isLoading (loading, control) {
     if (control !== this.currentControl) return false
     if (loading) {
-      if (this.mode === 'random' && !this.html.classList.contains('loading')) this.setWaitingToPlayTimeout()
+      if (this.mode === 'random' && !this.html.classList.contains('loading') && !this.currentControl.paused) this.setWaitingToPlayTimeout()
       if (this.mode !== 'loop-machine') this.html.classList.add('loading')
     } else {
       this.html.classList.remove('loading')

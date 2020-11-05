@@ -31,48 +31,58 @@ body > header {
     flex-wrap: wrap;
     justify-content: flex-end;
     user-select: none;
+    padding: 2px;
+    position: sticky;
+    top: 0;
+    background-color: rgba(51, 51, 51, 0.5);
+    z-index: 1000;
+    transform: translateY(-100%);
+    transition: transform 0.2s ease-out;
 }
-header > div.flex {
+body > header.down {
+    transform: unset;
+}
+body > header > div.flex {
     display: flex;
     justify-content: space-around;
     align-items: center;
     flex-grow: 1;
     flex-wrap: wrap;
 }
-header > div.flex iframe {
+body > header > div.flex iframe {
     border-radius: unset !important;
 }
-header > div.flex a {
+body > header > div.flex a {
     padding: 2px 0;
     text-align: center;
 }
-header > div.flex .recycle, header > div.flex .edit, header > div.flex .player {
+body > header > div.flex .recycle, body > header > div.flex .edit, body > header > div.flex .player {
     display: flex;
     align-items: center;
     font-size: 30px;
     padding: 0 10px;
     text-decoration: none;
 }
-header > div.flex .recycle {
+body > header > div.flex .recycle {
     color: green;
 }
-header > div.flex .edit {
+body > header > div.flex .edit {
     color: red;
     display: none;
 }
 body[type="ipfs"] header > div.flex .edit, body[type="magnet"] header > div.flex .edit, body[issender="false"] header > div.flex .edit {
     display: flex;
 }
-header > div.flex .player {
+body > header > div.flex .player {
     color: yellow;
 }
-header label {
+body > header label {
     color: white;
     font-size: 12px;
     display: flex;
     align-items: center;
 }
-header button.mui-btn {
+body > header button.mui-btn {
     height: auto;
     white-space: normal;
     line-height: 15px;
@@ -90,24 +100,24 @@ p:empty {
     color: #FFF;
     background-color: rgb(91, 235, 91);
 }
-header button.mui-btn:hover label {
+body > header button.mui-btn:hover label {
     color: black;
 }
-header label span {
+body > header label span {
     margin-right: 2px;
 }
-header .mui-checkbox > label input[type="checkbox"] {
+body > header .mui-checkbox > label input[type="checkbox"] {
     margin-top: 0;
 }
-header .headerReceiver {
+body > header .headerReceiver {
     color: white;
     font-size: 10px;
 }
-header .headerReceiver.hasQr {
+body > header .headerReceiver.hasQr {
     display: flex;
     align-items: center;
 }
-header .headerReceiver.hasQr > .qr {
+body > header .headerReceiver.hasQr > .qr {
     padding-left: 10px;
     order: 2;
 }

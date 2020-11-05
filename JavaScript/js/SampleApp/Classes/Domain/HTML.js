@@ -20,10 +20,10 @@ export class HTML extends MasterHTML {
 		switch(name){
 			case 'open-or-join-room':
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
-				const header = $(`<header>
+				const header = $(`<header class="down">
 					<div id="info" class="flex">
 						<div class="offline">YOU ARE OFFLINE!!!</div>
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.50<span id="sw-version"></span>; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.51<span id="sw-version"></span>; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
 				// add edit and player htmlelements
@@ -45,6 +45,7 @@ export class HTML extends MasterHTML {
 					}
 				});
 				this.containers = [header];
+				this.stickyHeader(header);
 				// specific only for receiver
 				const headerReceiver = $('<div class="headerReceiver"><span class="qr"></span></div>');
 				if (!isSender) this.addQrCode(headerReceiver, undefined, 'receiverLoading');
@@ -309,5 +310,20 @@ export class HTML extends MasterHTML {
 			alert(text)
 			localStorage.setItem(name, 'informed')
 		}
+	}
+	stickyHeader($header) {
+		const listenToScroll = () => {
+			const lastScroll = window.scrollY;
+			setTimeout(() => {
+				// if header sub window (eg. player) is open || direction || top
+				if (!!document.querySelector('header > div > section > section.open') || window.scrollY <= lastScroll || window.scrollY <= $header.height() + 5) {
+					$header.addClass('down');
+				} else {
+					$header.removeClass('down');
+				}
+				window.addEventListener('scroll', listenToScroll, {once: true});
+			}, 200);
+		};
+		window.addEventListener('scroll', listenToScroll, {once: true});
 	}
 }
