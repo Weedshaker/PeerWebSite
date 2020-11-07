@@ -82,6 +82,7 @@ class MasterServiceWorker {
 	addActivateEventListener() {
 		//console.log('@serviceworker listening to activate event');
 		self.addEventListener('activate', event => {
+			this.resolvedMessages.clear();
 			//console.log('@serviceworker got activated!');
 			//https://developer.mozilla.org/en-US/docs/Web/API/Clients/claim
 			event.waitUntil(self.clients.claim());
