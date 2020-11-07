@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.18';
+		this.devVersion = '0.19';
         this.precache = [
             './',
 			'./index.html',
@@ -122,8 +122,8 @@ class MasterServiceWorker {
 					// controller
 					const getMessage = this.messageChannel && !this.doNotGetMessage.some(url => event.request.url.includes(url)) && this.doGetMessage.some(url => event.request.url.includes(url));
 					const isStream = !!event.request.headers.get('range') || this.isStream.some(url => event.request.url.includes(url));
-					// only use sw-cache when !getMessage or getMessage but !isStream
-					const getCache = (!getMessage || !isStream) && !this.doNotGetCache.some(url => event.request.url.includes(url));
+					// only use sw-cache when !getMessage or getMessage but !isStream /* message was not reliable when offline, reintroduced cache for streams */
+					const getCache = /*(!getMessage || !isStream) && */!this.doNotGetCache.some(url => event.request.url.includes(url));
 					// reset the context
 					this.setUrlsContext(event.request); // TODO: evtl. it could also be done to reset the context, resp. the requested range with a 205 or 416 https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 					const isContextFetchCache = this.urlsContext.get(event.request.url) === 'fetchCache';
@@ -131,6 +131,7 @@ class MasterServiceWorker {
 					if (getMessage || getCache) {
 						event.respondWith(new Promise((resolve, reject) => {
 							const getFetch = this.isOnline;
+							const fetchCacheCount = getFetch && getCache ? 2 : 1;
 							const resolveFunc = this.getResolveFunc(resolve);
 							const fetchCache = (resolveFunc, rejectFunc, error, type = 'none') => {
 								if (!getFetch && !getCache) return Promise.resolve(rejectFunc(`@serviceworker resolvedMessages failed with no fallback for: ${event.request.url}`, error));
@@ -150,14 +151,15 @@ class MasterServiceWorker {
 							// no message channel request || already resolved with fetch/cache, which forces it to not mix fetch/cache with responses from message in the same session. This would have sideeffects that seeking doesn't work after intial 0- was resolved by fetch/cache
 							if (!getMessage || (isContextFetchCache && (getCache || getFetch))) { // !getMessage && getCache
 								type = 'fetchVsCache';
-								fetchCache(resolveFunc, this.getRejectFunc(reject, getFetch ? 2 : 1), undefined, type);
+								fetchCache(resolveFunc, this.getRejectFunc(reject, fetchCacheCount), undefined, type);
 								return;
 							}
-							if (isStream) { // getMessage && isStream && !getCache
+							// give a heads up 3000ms chance for message to resolve first for streams
+							if (isStream) { // getMessage && isStream && /* reallowed cache on stream */ !getCache
 								// message with full response got already resolved
 								if (this.resolvedMessages.has(event.request.url)) {
 									type = 'message.catch(fetch)';
-									const rejectFunc = this.getRejectFunc(reject, 2);
+									const rejectFunc = this.getRejectFunc(reject, 1 + fetchCacheCount);
 									this.getMessage(event.request, this.sessionResolvedMessageContext.includes(event.request.url)).then(response => {
 										if (resolveFunc(response, `@serviceworker [${type}] success getMessage for ${event.request.url}`)) this.setUrlsContext(event.request, 'message');
 									}).catch(error => {
@@ -169,7 +171,7 @@ class MasterServiceWorker {
 								}
 								// is stream and message is not resolved yet, so prio get fetch/cache
 								type = `message.timeout(fetch), ${this.getMessageIsStreamTimeout}ms`;
-								const rejectFunc = this.getRejectFunc(reject, 2);
+								const rejectFunc = this.getRejectFunc(reject, 1 + fetchCacheCount);
 								const fetchTimeout = setTimeout(() => fetchCache(resolveFunc, rejectFunc, undefined, type), this.getMessageIsStreamTimeout);
 								this.getMessage(event.request, this.sessionResolvedMessageContext.includes(event.request.url)).then(response => {
 									clearTimeout(fetchTimeout);
@@ -177,10 +179,11 @@ class MasterServiceWorker {
 								}).catch(error => rejectFunc(`@serviceworker [${type}] getMessage failed for: ${event.request.url}`, error));
 								return;
 							}
+							// race all against each other and avoid any delays (see isStream above)
 							// getMessage && isStream
 							// is not stream and we race all fetch vs cache vs message
 							type = 'fetchVsCacheVsMessage';
-							const rejectFunc = this.getRejectFunc(reject, getCache && getFetch ? 3 : 2);
+							const rejectFunc = this.getRejectFunc(reject, fetchCacheCount + 1);
 							fetchCache(resolveFunc, rejectFunc, undefined, type);
 							this.getMessage(event.request, this.sessionResolvedMessageContext.includes(event.request.url)).then(response => {
 								if (resolveFunc(response, `@serviceworker [${type}] success getMessage for ${event.request.url}`)) this.setUrlsContext(event.request, 'message');

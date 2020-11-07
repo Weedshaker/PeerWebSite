@@ -32,15 +32,17 @@ body > header {
     justify-content: flex-end;
     user-select: none;
     padding: 2px;
+}
+body > header.hasPlayer:not(.isTop).down {
     position: sticky;
-    top: 0;
+    top: 2px;
+    left: 2px;
     background-color: rgba(51, 51, 51, 0.5);
     z-index: 1000;
-    transform: translateY(-100%);
-    transition: transform 0.2s ease-out;
+    max-width: max-content;
 }
-body > header.down {
-    transform: unset;
+body > header.hasPlayer:not(.isTop).down > #info > *:not(#player) {
+    display: none;
 }
 body > header > div.flex {
     display: flex;

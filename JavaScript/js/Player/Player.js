@@ -23,8 +23,9 @@ export default class Player {
     this.onErrorExtendedToSourceIds = []
   }
   
-  connect (isSender) {
+  connect (isSender, parent) {
     this.isSender = isSender
+    this.parent = parent
     // wait for the first media to load metadata bevor the player options initialize
     document.body.addEventListener('loadedmetadata', event => this.init(), { once: true, capture: true })
     document.body.addEventListener('loadedmetadata', event => this.refreshedInit(), true)
@@ -35,6 +36,7 @@ export default class Player {
     if (!this.html) return console.warn('SST: Player could not be started due to lack of html el hook #' + this.id)
     this.addControlsBehavior(this.renderHTML(this.renderCSS()))
     this.addEventListeners()
+    if (this.parent) this.parent.classList.add('hasPlayer')
   }
   
   refreshedInit () {

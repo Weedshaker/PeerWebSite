@@ -20,10 +20,10 @@ export class HTML extends MasterHTML {
 		switch(name){
 			case 'open-or-join-room':
 				this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
-				const header = $(`<header class="down">
+				const header = $(`<header class="down isTop">
 					<div id="info" class="flex">
 						<div class="offline">YOU ARE OFFLINE!!!</div>
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.52<span id="sw-version"></span>; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.53<span id="sw-version"></span>; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
 				// add edit and player htmlelements
@@ -79,7 +79,7 @@ export class HTML extends MasterHTML {
 
 				$('#info').append(headerReceiver);
 
-				this.Player.connect(isSender);
+				this.Player.connect(isSender, header.get(0));
 
 				return [sender, receiver, webrtcButton, counterWebTorrent];
 		}
@@ -315,11 +315,18 @@ export class HTML extends MasterHTML {
 		const listenToScroll = () => {
 			const lastScroll = window.scrollY;
 			setTimeout(() => {
-				// if header sub window (eg. player) is open || direction || top
-				if (!!document.querySelector('header > div > section > section.open') || window.scrollY <= $header.height() + 5 || (Math.abs(window.scrollY - lastScroll) > 30 && window.scrollY <= lastScroll)) {
+				// is top
+				if (window.scrollY <= $header.height() + 5) {
 					$header.addClass('down');
-				} else if (Math.abs(window.scrollY - lastScroll) > 30) {
-					$header.removeClass('down');
+					$header.addClass('isTop');
+				} else {
+					// if header sub window (eg. player) is open || direction scroll && min 30 pixel scrolled
+					if (!!document.querySelector('header > div > section > section.open') || (Math.abs(window.scrollY - lastScroll) > 30 && window.scrollY <= lastScroll)) {
+						$header.addClass('down');
+					} else if (Math.abs(window.scrollY - lastScroll) > 30) {
+						$header.removeClass('down');
+					}
+					$header.removeClass('isTop');
 				}
 				window.addEventListener('scroll', listenToScroll, {once: true});
 			}, 200);
