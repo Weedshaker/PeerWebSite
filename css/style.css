@@ -33,15 +33,15 @@ body > header {
     user-select: none;
     padding: 2px;
 }
-body > header.hasPlayer:not(.isTop).down {
-    position: sticky;
-    top: 2px;
-    left: 2px;
+body > header.hasPlayer:not(.isTop).down > #info > #player {
     background-color: rgba(51, 51, 51, 0.5);
     z-index: 1000;
-    max-width: max-content;
+    position: fixed;
+    top: 2px;
+    right: 2px;
+    border-radius: 10px;
 }
-body > header.hasPlayer:not(.isTop).down > #info > *:not(#player) {
+#player {
     display: none;
 }
 body > header > div.flex {
@@ -358,7 +358,4 @@ body.viewer #receiver {
     border: 1px solid red;
     padding: 7px;
     border-radius: 4px;
-}
-#player {
-    display: none;
 }
