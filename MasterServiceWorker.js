@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.19';
+		this.devVersion = '0.20';
         this.precache = [
             './',
 			'./index.html',
@@ -134,17 +134,19 @@ class MasterServiceWorker {
 							const getFetch = this.isOnline;
 							const fetchCacheCount = getFetch && getCache ? 2 : 1;
 							const resolveFunc = this.getResolveFunc(resolve);
+							const abortController = new AbortController();
 							const fetchCache = (resolveFunc, rejectFunc, error, type = 'none') => {
 								if (!getFetch && !getCache) return Promise.resolve(rejectFunc(`@serviceworker resolvedMessages failed with no fallback for: ${event.request.url}`, error));
-								const abortController = new AbortController();
 								const promises = [];
 								if (getFetch) promises.push(this.getFetch(event.request, abortController, getCache).then(response => {
 									if (resolveFunc(response, `@serviceworker [${type}] success getFetch for ${event.request.url}`)) this.setUrlsContext(event.request, 'fetchCache');
 								}).catch(error => rejectFunc(`@serviceworker [${type}] getFetch failed for: ${event.request.url}`, error)));
 								if (getCache) promises.push(this.getCache(event.request).then(response => {
-									if (resolveFunc(response, `@serviceworker [${type}] success getCache for ${event.request.url}`)) this.setUrlsContext(event.request, 'fetchCache');
-									// abort if not fetch itself and cache does not need to be refreshed
-									if (abortController && !this.doRefreshCache.some(url => event.request.url.includes(url))) abortController.abort();
+									if (resolveFunc(response, `@serviceworker [${type}] success getCache for ${event.request.url}`)) {
+										this.setUrlsContext(event.request, 'fetchCache');
+										// abort if not fetch itself and cache does not need to be refreshed
+										if (abortController && !this.doRefreshCache.some(url => event.request.url.includes(url))) abortController.abort();
+									}
 								}).catch(error => rejectFunc(`@serviceworker [${type}] getCache failed for: ${event.request.url}`, error)));
 								return Promise.all(promises);
 							};
@@ -173,10 +175,20 @@ class MasterServiceWorker {
 								// is stream and message is not resolved yet, so prio get fetch/cache
 								type = `message.timeout(fetch), ${this.getMessageIsStreamTimeout}ms`;
 								const rejectFunc = this.getRejectFunc(reject, 1 + fetchCacheCount);
-								const fetchTimeout = setTimeout(() => fetchCache(resolveFunc, rejectFunc, undefined, type), this.getMessageIsStreamTimeout);
+								let isFetchCaching = false;
+								const fetchCacheTimeout = setTimeout(() => {
+									fetchCache(resolveFunc, rejectFunc, undefined, type);
+									isFetchCaching = true;
+								}, this.getMessageIsStreamTimeout);
 								this.getMessage(event.request, this.sessionResolvedMessageContext.includes(event.request.url)).then(response => {
-									clearTimeout(fetchTimeout);
-									if (resolveFunc(response, `@serviceworker [${type}] success getMessage for ${event.request.url}`)) this.setUrlsContext(event.request, 'message');
+									if (resolveFunc(response, `@serviceworker [${type}] success getMessage for ${event.request.url}`)) {
+										this.setUrlsContext(event.request, 'message');
+										if (!isFetchCaching) {
+											clearTimeout(fetchCacheTimeout);
+										} else if (abortController) {
+											abortController.abort();
+										}
+									}
 								}).catch(error => rejectFunc(`@serviceworker [${type}] getMessage failed for: ${event.request.url}`, error));
 								return;
 							}
@@ -187,7 +199,10 @@ class MasterServiceWorker {
 							const rejectFunc = this.getRejectFunc(reject, fetchCacheCount + 1);
 							fetchCache(resolveFunc, rejectFunc, undefined, type);
 							this.getMessage(event.request, this.sessionResolvedMessageContext.includes(event.request.url)).then(response => {
-								if (resolveFunc(response, `@serviceworker [${type}] success getMessage for ${event.request.url}`)) this.setUrlsContext(event.request, 'message');
+								if (resolveFunc(response, `@serviceworker [${type}] success getMessage for ${event.request.url}`)) {
+									this.setUrlsContext(event.request, 'message');
+									if (abortController) abortController.abort();
+								}
 							}).catch(error => rejectFunc(`@serviceworker [${type}] getMessage failed for: ${event.request.url}`, error));
 						}));
 					}
