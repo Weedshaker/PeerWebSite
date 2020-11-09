@@ -536,7 +536,7 @@ export default class Player {
   next (onlyReady = false, respectRandom = true) {
     if (respectRandom && this.mode === 'random') return this.nextRandom()
     const controls = onlyReady ? this.allReadyControls : this.allControls
-    const index = this.currentControlIndex
+    const index = controls.indexOf(this.currentControl) !== -1 ? controls.indexOf(this.currentControl) : this.currentControlIndex
     const control = controls[index + 1 >= controls.length ? 0 : index + 1]
     if (control) {
       this.play(control)
