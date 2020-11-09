@@ -65,7 +65,7 @@ export default class Player {
         if (this.mode === 'repeat-one' || this.mode === 'loop-machine') {
           this.play(event.target)
         } else {
-          this.next(true)
+          this.next()
         }
       }
 		}, true)
