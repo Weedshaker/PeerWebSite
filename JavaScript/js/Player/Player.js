@@ -603,6 +603,7 @@ export default class Player {
       if (this.mode !== 'loop-machine') this.html.classList.add('loading')
     } else {
       this.html.classList.remove('loading')
+      control.classList.remove('ipfsLoading')
     }
   }
 
