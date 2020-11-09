@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.20';
+		this.devVersion = '0.21';
         this.precache = [
             './',
 			'./index.html',
@@ -119,7 +119,7 @@ class MasterServiceWorker {
 				if (event.clientId !== undefined) this.clientId.recent = event.clientId;
 				if (event.respondWith && event.request && event.request.method && event.request.method !== 'POST' && event.request.url && event.request.headers) {
 					// pin ipfs
-					if (this.ipfsPin.some(url => event.request.url.includes(url))) this.messageChannel.postMessage(['info', event.request.url]);
+					if (this.messageChannel && this.ipfsPin.some(url => event.request.url.includes(url))) this.messageChannel.postMessage(['info', event.request.url]);
 					// controller
 					const getMessage = this.messageChannel && !this.doNotGetMessage.some(url => event.request.url.includes(url)) && this.doGetMessage.some(url => event.request.url.includes(url));
 					const isStream = !!event.request.headers.get('range') || this.isStream.some(url => event.request.url.includes(url));
