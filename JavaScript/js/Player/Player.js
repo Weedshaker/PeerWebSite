@@ -21,6 +21,18 @@ export default class Player {
 
     this.randomQueue = []
     this.onErrorExtendedToSourceIds = []
+    // meassure the pause event to play event time to execute different commands
+    // this is necessary to execute next or prev track, since the browser does not support this properly
+    this.resetPausePlayCommands = (control = null, timeout = null) => {
+      if (this.pausePlayCommands && this.pausePlayCommands.timeout) clearTimeout(this.pausePlayCommands.timeout)
+      this.pausePlayCommands = {
+        control,
+        counter: 0,
+        timeout,
+        timeoutMs: 1000
+      }
+    }
+    this.resetPausePlayCommands()
   }
   
   connect (isSender, parent) {
@@ -51,12 +63,24 @@ export default class Player {
 			if (this.validateEvent(event)) {
         this.play(event.target, true)
         this.isLoading(false, event.target)
+        // pausePlay commands
+        if (this.pausePlayCommands.control === event.target) this.pausePlayCommands.counter++
       }
     }, true)
     document.body.addEventListener('pause', event => {
 			if (this.validateEvent(event)) {
         this.pause(event.target, true)
         this.isLoading(false, event.target)
+        // pausePlay commands
+        if (this.pausePlayCommands.control === event.target) {
+          this.pausePlayCommands.counter++
+        } else {
+          this.resetPausePlayCommands(event.target, setTimeout(() => {
+            if (this.pausePlayCommands.counter === 1) this.next()
+            if (this.pausePlayCommands.counter === 3) this.prev(false)
+            this.resetPausePlayCommands()
+          }, this.pausePlayCommands.timeoutMs))
+        }
       }
     }, true)
     // loop all audio + video
