@@ -23,13 +23,14 @@ export default class Player {
     this.onErrorExtendedToSourceIds = []
     // meassure the pause event to play event time to execute different commands
     // this is necessary to execute next or prev track, since the browser does not support this properly
+    // note: timeout is not a direct function of event and not able to trigger new audio controls
     this.resetPausePlayCommands = (control = null, timeout = null) => {
       if (this.pausePlayCommands && this.pausePlayCommands.timeout) clearTimeout(this.pausePlayCommands.timeout)
       this.pausePlayCommands = {
         control,
         counter: 0,
         timeout,
-        timeoutMs: 3000
+        timeoutMs: 2000
       }
     }
     this.resetPausePlayCommands()
@@ -64,7 +65,10 @@ export default class Player {
         this.play(event.target, true)
         this.isLoading(false, event.target)
         // pausePlay commands
-        if (this.pausePlayCommands.control === event.target) this.pausePlayCommands.counter++
+        if (this.pausePlayCommands.control === event.target) {
+          this.pausePlayCommands.counter++
+          if (this.pausePlayCommands.counter === 1) this.next()
+        }
       }
     }, true)
     document.body.addEventListener('pause', event => {
@@ -75,11 +79,7 @@ export default class Player {
         if (this.pausePlayCommands.control === event.target) {
           this.pausePlayCommands.counter++
         } else {
-          this.resetPausePlayCommands(event.target, setTimeout(() => {
-            if (this.pausePlayCommands.counter === 1) this.next()
-            if (this.pausePlayCommands.counter === 3) this.prev(false)
-            this.resetPausePlayCommands()
-          }, this.pausePlayCommands.timeoutMs))
+          this.resetPausePlayCommands(event.target, setTimeout(() => this.resetPausePlayCommands(), this.pausePlayCommands.timeoutMs))
         }
       }
     }, true)

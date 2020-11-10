@@ -61,7 +61,7 @@ This beta application has been only tested in Chrome. Don't expect miracles, it'
 ### Road map
 0. Download all media, harmonize sst_download behavior + figcaption
 
-1. Tide up Code (split out stuff into submodules), make font-sizes variable (expl. style.css:249), get rid of jspm, fix Tests, move hosting to [IPFS](https://ipfs.io/), move UI to WebComponents based Event Driven Architecture, replace http://goqr.me/api/ with local qr code generator (this could be a privacy concern, if this ever gets high usage as well as github as a hoster itself and tinyurl + gtm... just to keep this in mind.)
+1. Tide up Code (split out stuff into submodules), make font-sizes variable (expl. style.css:249), get rid of jspm, fix Tests, move hosting to [IPFS](https://ipfs.io/), move UI to WebComponents based Event Driven Architecture, replace http://goqr.me/api/ with local qr code generator (this could be a privacy concern, if this ever gets high usage as well as github as a hoster itself and tinyurl + gtm is going to be removed once reached 100 daily users or 100 github stars... just to keep this in mind.)
 
 2. Increase stability by more carefully handle webtorrent and webrtc events, likely with a [es6 Proxy Wrapper](https://weedshaker.github.io/ProxifyJS/)
 
