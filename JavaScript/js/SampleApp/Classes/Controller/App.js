@@ -146,7 +146,7 @@ export class App extends MasterApp {
 				$('.headerReceiver > .counterWebRTC').hide();
 			} else if (this.checkHashType(location.hash) === 'ipfs') {
 				const cid = location.hash.substr(6);
-				this.IPFS.raceFetchVsCat(cid).then(text => {
+				this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => {
 					this.IPFS.pinCid(cid);
 					this.HTML.setData(this.receiveCont, {message: text});
 					this.HTML.setTitle(this.HTML.getFirstText(text));
@@ -166,7 +166,7 @@ export class App extends MasterApp {
 		} else if (this.checkHashType(location.hash) === 'ipfs') {
 			if (this.Editor.getData().length < 12) this.Editor.setData(undefined, this.HTML.loadingAnimation, 'code')
 			const cid = location.hash.substr(6);
-			this.IPFS.raceFetchVsCat(cid).then(text => {
+			this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => {
 				this.IPFS.pinCid(cid);
 				this.Editor.setData(undefined, text, 'code');
 				this.HTML.setTitle();

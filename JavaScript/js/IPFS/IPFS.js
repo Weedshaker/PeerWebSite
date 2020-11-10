@@ -26,10 +26,10 @@ export class IPFS {
         // file.link, which depends on this.baseUrl is only used at EditorSummernote and has an error handling "onFetchError" to findPeers
         return this.node.then(node => node.add({path, content})).then(file => Object.assign({link: this.baseUrl + file.cid}, file));
     }
-    fetch(cid, type = 'text', abortController = new AbortController()){
+    fetch(cid, type = 'text', abortController = new AbortController(), queryString = ''){
         return new Promise((resolve, reject) => {
 			// Fetch
-			fetch(this.baseUrl + cid, {signal: abortController.signal}).then(response => {
+			fetch(this.baseUrl + cid + queryString, {signal: abortController.signal}).then(response => {
 				if (this.validateResponse(response)) {
                     try {
                         resolve(type ? response[type]() : response);
@@ -56,11 +56,11 @@ export class IPFS {
             return chunksIterator.next().then(consume); // kick off the recursive function
         });
     }
-    raceFetchVsCat(cid, type){
+    raceFetchVsCat(cid, type, queryString){
         return new Promise((resolve, reject) => {
             const rejectFunc = this.getRejectFunc(reject, 2);
             const abortController = new AbortController();
-            this.fetch(cid, type, abortController).then(result => {
+            this.fetch(cid, type, abortController, queryString).then(result => {
                 console.info(`@IPFS: Got Page ${cid} through fetch`);
                 resolve(result);
             }).catch(rejectFunc);
