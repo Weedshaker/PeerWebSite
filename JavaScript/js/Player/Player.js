@@ -29,7 +29,7 @@ export default class Player {
         control,
         counter: 0,
         timeout,
-        timeoutMs: 2000
+        timeoutMs: 3000
       }
     }
     this.resetPausePlayCommands()
