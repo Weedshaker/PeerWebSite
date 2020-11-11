@@ -86,6 +86,7 @@ export default class Player {
     // loop all audio + video
 		document.body.addEventListener('ended', event => {
 			if (this.validateEvent(event)) {
+        this.resetPausePlayCommands()
         if (this.mode === 'repeat-one' || this.mode === 'loop-machine') {
           this.play(event.target)
         } else {
@@ -106,7 +107,10 @@ export default class Player {
       }
     }, true)
     document.body.addEventListener('seeked', event => {
-			if (this.validateEvent(event)) this.saveCurrentTime(event.target)
+			if (this.validateEvent(event)) {
+        this.resetPausePlayCommands()
+        this.saveCurrentTime(event.target)
+      }
     }, true)
     // is media playing or not
     document.body.addEventListener('canplay', event => {
