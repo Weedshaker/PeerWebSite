@@ -174,6 +174,7 @@ export class EditorSummernote extends MasterEditor {
 			this.loadFile(files, text, container);
 		}else if (type === 'ipfs') {
 			super.loadFile(files, text, container, false).then(results => {
+				const addSpacerAfter = results && results[0] && results[0].type &&results[0].type[0] !== 'a';
 				results.forEach(result => {
 					const outerNode = (result.audioVideo || result.source);
 					outerNode.classList.add('ipfsLoading');
@@ -221,7 +222,7 @@ export class EditorSummernote extends MasterEditor {
 						this.changeEvent(this.getData(), container[0].id);
 					});
 				});
-				this.setData(container, document.createElement('p'), 'insertNode'); // trying to get cursor focus after node
+				if (addSpacerAfter) this.setData(container, document.createElement('p'), 'insertNode'); // trying to get cursor focus after node
 			});
 		}else{
 			super.loadFile(files, text, container);
