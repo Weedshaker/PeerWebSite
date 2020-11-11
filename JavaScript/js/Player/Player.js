@@ -34,8 +34,6 @@ export default class Player {
       }
     }
     this.resetPausePlayCommands()
-    // start all controls once at the first user interaction, smartphones else block resetPausePlay
-    this.allStartedOnce = false
   }
   
   connect (isSender, parent) {
@@ -397,17 +395,7 @@ export default class Player {
     section.querySelector('.clo').addEventListener('click', event => this.playerControls.classList.remove('open'))
     // play
     this.playBtn = section.querySelector('.play')
-    this.playBtn.querySelector('.play').addEventListener('click', event => {
-      if (!this.allStartedOnce) {
-        // for mobile once play all to activate them and make them playable without user interaction
-        this.allStartedOnce = true
-        const currentControl = this.currentControl
-        this.playAll()
-        this.pauseAll(currentControl)
-      } else {
-        this.play()
-      }
-    })
+    this.playBtn.querySelector('.play').addEventListener('click', event => this.play())
     this.playBtn.querySelector('.pause').addEventListener('click', event => this.pause())
     this.playBtn.querySelector('.loading').addEventListener('dblclick', event => {
       let source = null
