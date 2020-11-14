@@ -10,10 +10,11 @@ import {ServiceWorker} from 'ServiceWorker/ServiceWorker.js';
 
 export class MasterApp {
 	constructor(){
+		this.isSender = !location.hash || (localStorage.getItem('channels') || '').includes(`[${location.hash}]`);
 		this.WebRTC = new WebRTC();
 		this.WebTorrentReceiver = new WebTorrentReceiver();
 		this.WebTorrentSeeder = new WebTorrentSeeder();
-		this.IPFS = new IPFS();
+		this.IPFS = new IPFS(this.isSender);
 		this.Editor = new EditorSummernote(this.WebTorrentSeeder, this.IPFS);
 		this.HTML = new HTML(this.WebTorrentReceiver, this.WebTorrentSeeder, this.Editor, this.WebRTC, this.IPFS, this);
 		this.ServiceWorker = new ServiceWorker(undefined, undefined, [this.WebTorrentReceiver.getBlobByFileName.bind(this.WebTorrentReceiver), this.WebTorrentSeeder.getBlobByFileName.bind(this.WebTorrentSeeder)], [this.IPFS.getBlobByFileCID.bind(this.IPFS)], [this.IPFS.pin.bind(this.IPFS)]);

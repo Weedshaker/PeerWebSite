@@ -7,7 +7,6 @@ export class App extends MasterApp {
 		super();
 	}
 	createElements(name = 'open-or-join-room'){
-		this.isSender = !location.hash || (localStorage.getItem('channels') || '').includes(`[${location.hash}]`);
 		document.body.setAttribute('isSender', this.isSender);
 		this.checkHashType(location.hash); // sets attribute for hash type magnet, ipfs, webrtc
 		this.originalHash = location.hash;

@@ -2,7 +2,9 @@ import { mime } from './helpers/mimeTypes.js';
 
 // Debug: http://localhost:3000/index_debug.html#ipfs:QmT8dAKuCVQ7TTHV5ezNFE272cs15PyigJGV663GHeen6t
 export class IPFS {
-	constructor(){
+	constructor(isSender){
+        this.isSender = isSender;
+
         // should be 'ipfs://' but browsers do not yet support that url scheme, once this gateway would get blocked or overloaded the files have to be fixed through the service worker
         this.baseUrl = 'https://gateway.ipfs.io/ipfs/'; // must have "onFetchError" error handling, when used at add
         // https://blog.ipfs.io/2020-07-20-js-ipfs-0-48/
@@ -97,6 +99,7 @@ export class IPFS {
         return null;
     }
     onFetchError(event, url, name, type, isAudioVideo, el){
+        if (this.isSender) return false;
         const sanitize = () => {
             type = type.split(',');
             // findPeer and don't be dependend on this.baserUrl
