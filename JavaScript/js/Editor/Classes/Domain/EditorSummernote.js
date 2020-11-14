@@ -231,7 +231,7 @@ export class EditorSummernote extends MasterEditor {
 	loadFile(files, text, container = this.container){
 		// append file
 		let node = document.createElement(this.torrentNodeName);
-		node.id = this.Helper.getRandomString(); // give each node an id, so that virtual-dom doesn't mix up things
+		//node.id = this.Helper.getRandomString(); // give each node an id, so that virtual-dom doesn't mix up things
 		// disable codeview until file is loaded, otherwise it doesn't get added when in codeview
 		$('.btn-codeview').first().addClass('disabled').attr('disabled', true);
 		// console.log(App.Editor.areTorrentsLoading()); console.log(App.Editor.WebTorrent.torrents);  console.log(App.Editor.WebTorrent.client.torrents); console.log(App.Editor.WebTorrent.nodes);
