@@ -184,14 +184,7 @@ export class EditorSummernote extends MasterEditor {
 					this.IPFS.add(result.name, result.content).then(file => {
 						// sw do not intercept videos for streaming but give mimetype down
 						file.link += `?filename=${result.name}${result.audioVideo ? '&audioVideo=true' : ''}`;
-						if (result.type[0] === 'img') {
-							outerNode.addEventListener('load', event => {
-								outerNode.classList.remove('ipfsLoading');
-								this.changeEvent(this.getData(), container[0].id);
-							});
-						} else {
-							outerNode.classList.remove('ipfsLoading');
-						}
+						outerNode.classList.remove('ipfsLoading');
 						// static error handling which also works at receiver
 						if (result.type[0] === 'a') {
 							outerNode.setAttribute('download', result.name);
