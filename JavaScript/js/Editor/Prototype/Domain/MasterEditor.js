@@ -25,7 +25,7 @@ export class MasterEditor {
 				const setData = () => {
 					const type = file.type.includes('image') ? ['img', 'src'] : file.type.includes('video') ? ['video', 'src'] : file.type.includes('audio') ? ['audio', 'src'] : ['a', 'href'];
 					let node = document.createElement(type[0]);
-					//node.id = this.Helper.getRandomString(); // give each node an id, so that virtual-dom doesn't mix up things
+					node.id = this.Helper.createFileId(file); // give each node an id, so that virtual-dom doesn't mix up things
 					let source = null;
 					if (type[0] === 'video' || type[0] === 'audio') {
 						node.controls = true;

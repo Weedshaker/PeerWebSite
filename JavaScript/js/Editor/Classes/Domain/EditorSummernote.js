@@ -125,9 +125,9 @@ export class EditorSummernote extends MasterEditor {
 	remove(container = this.container){
 		container.summernote('destroy');
 	}
-	getData(container = this.container){
+	getData(container = this.container, repairHTML = false){
 		// fix possible html errors before getting the data
-		this.setData(undefined, container.summernote('code'), 'code');
+		if (repairHTML) this.setData(undefined, container.summernote('code'), 'code');
 		return container.summernote('code');
 	}
 	setData(container = this.container, data = '', type = 'insertText'){
@@ -226,7 +226,7 @@ export class EditorSummernote extends MasterEditor {
 	loadFile(files, text, container = this.container){
 		// append file
 		let node = document.createElement(this.torrentNodeName);
-		//node.id = this.Helper.getRandomString(); // give each node an id, so that virtual-dom doesn't mix up things
+		node.id = this.Helper.createFilesId(files); // give each node an id, so that virtual-dom doesn't mix up things
 		// disable codeview until file is loaded, otherwise it doesn't get added when in codeview
 		$('.btn-codeview').first().addClass('disabled').attr('disabled', true);
 		// console.log(App.Editor.areTorrentsLoading()); console.log(App.Editor.WebTorrent.torrents);  console.log(App.Editor.WebTorrent.client.torrents); console.log(App.Editor.WebTorrent.nodes);

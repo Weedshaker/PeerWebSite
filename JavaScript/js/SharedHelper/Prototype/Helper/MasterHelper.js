@@ -23,4 +23,38 @@ export class MasterHelper {
 			return (Math.random() * new Date().getTime()).toString(36).replace(/\./g, '');
 		}
 	}
+	/**
+	 * creates id's from files (api Hook)
+	 * 
+	 * @param {FileList} files 
+	 * @returns {number}
+	 * @memberof Helper
+	 */
+	createFilesId(files){
+		if (!files.length) return this.createFileId(files[0]);
+		let str = 0;
+		for(let file of files){
+			str += this.createFileId(file);
+		}
+		return str;
+	}
+	/**
+	 * creates id's from files (api Hook)
+	 * 
+	 * @param {File} file 
+	 * @returns {number}
+	 * @memberof Helper
+	 */
+	createFileId(file){
+		return this.getHash(`${file.lastModified}${file.name}${file.size}`);
+	}
+	getHash(str){
+		let hash = 0, i, chr;
+		for(i = 0; i < str.length; i++){
+			chr   = str.charCodeAt(i);
+			hash  = ((hash << 5) - hash) + chr;
+			hash |= 0; // Convert to 32bit integer
+		}
+		return Math.abs(hash);
+	}
 }

@@ -139,9 +139,9 @@ body > header .headerReceiver.hasQr > .qr {
     height: auto;
 }
 input.note-file-input.form-control::after {
-    content: 'Choose one file at a time to avoid glitches!!!';
+    content: 'If you use WebTorrent: Choose one file at a time to avoid glitches!!!';
     font-size: 10px;
-    color: lightcoral;
+    color: orange;
     white-space: normal;
     padding-top: 2px;
     display: block;
