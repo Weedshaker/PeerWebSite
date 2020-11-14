@@ -126,6 +126,8 @@ export class EditorSummernote extends MasterEditor {
 		container.summernote('destroy');
 	}
 	getData(container = this.container){
+		// fix possible html errors before getting the data
+		this.setData(undefined, container.summernote('code'), 'code');
 		return container.summernote('code');
 	}
 	setData(container = this.container, data = '', type = 'insertText'){
