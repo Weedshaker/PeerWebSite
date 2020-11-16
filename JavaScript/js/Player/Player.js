@@ -65,7 +65,7 @@ export default class Player {
         this.play(event.target, true)
         this.isLoading(false, event.target)
         // pausePlay commands
-        if (this.pausePlayCommands.control === event.target) {
+        if (this.mode === 'random' && this.pausePlayCommands.control === event.target) {
           this.pausePlayCommands.counter++
           if (this.pausePlayCommands.counter === 1) this.next()
         }
@@ -75,18 +75,22 @@ export default class Player {
 			if (this.validateEvent(event)) {
         this.pause(event.target, true)
         this.isLoading(false, event.target)
-        // pausePlay commands
-        if (this.pausePlayCommands.control === event.target) {
-          this.pausePlayCommands.counter++
-        } else {
-          this.resetPausePlayCommands(event.target, setTimeout(() => this.resetPausePlayCommands(), this.pausePlayCommands.timeoutMs))
+        if (this.mode === 'random') {
+          // pausePlay commands
+          if (this.pausePlayCommands.control === event.target) {
+            this.pausePlayCommands.counter++
+          } else {
+            this.resetPausePlayCommands(event.target, setTimeout(() => this.resetPausePlayCommands(), this.pausePlayCommands.timeoutMs))
+          }
         }
       }
     }, true)
     // loop all audio + video
 		document.body.addEventListener('ended', event => {
 			if (this.validateEvent(event)) {
-        this.resetPausePlayCommands()
+        if (this.mode === 'random') this.resetPausePlayCommands()
+        // set control to 0, since this would not work natively for ios
+        this.setCurrentTime(event.target, 0)
         if (this.mode === 'repeat-one' || this.mode === 'loop-machine') {
           this.play(event.target)
         } else {
@@ -108,7 +112,7 @@ export default class Player {
     }, true)
     document.body.addEventListener('seeked', event => {
 			if (this.validateEvent(event)) {
-        this.resetPausePlayCommands()
+        if (this.mode === 'random') this.resetPausePlayCommands()
         this.saveCurrentTime(event.target)
       }
     }, true)
@@ -401,7 +405,15 @@ export default class Player {
     this.playBtn = section.querySelector('.play')
     this.playBtn.querySelector('.play').addEventListener('click', event => this.play())
     this.playBtn.querySelector('.pause').addEventListener('click', event => this.pause())
+    this.playBtn.querySelector('.loading').addEventListener('click', event => {
+      if (!this.loadingClickTimeout) this.loadingClickTimeout = setTimeout(() => {
+        this.isLoading(false, this.currentControl)
+        this.loadingClickTimeout = null
+      }, 200)
+    })
     this.playBtn.querySelector('.loading').addEventListener('dblclick', event => {
+      clearTimeout(this.loadingClickTimeout)
+      this.loadingClickTimeout = null
       let source = null
       if ((source = this.currentControl.querySelector('source')) && typeof source.onerror === 'function') {
         // if it is not already ipfs.cat then trigger it
@@ -622,6 +634,7 @@ export default class Player {
     } else {
       this.html.classList.remove('loop-machine')
     }
+    this.resetPausePlayCommands()
   }
 
   isLoading (loading, control) {
