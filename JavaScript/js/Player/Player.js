@@ -50,11 +50,11 @@ export default class Player {
     this.addControlsBehavior(this.renderHTML(this.renderCSS()))
     this.addEventListeners()
     if (this.parent) this.parent.classList.add('hasPlayer')
+    this.setMode(document.body.innerText.search(/loop.{0,1}ma[s]{0,1}chine/i) !== -1 && 'loop-machine') // initial set last mode
   }
   
   refreshedInit () {
     this.setVolume() // initial set last volume
-    this.setMode() // initial set last mode
     this.allControls.forEach(control => this.onError(control)) // extended error handling
   }
 
@@ -320,10 +320,17 @@ export default class Player {
         #${this.id} section.controls > .sleep > span {
           margin-right: 15px;
         }
-        #${this.id} section.controls > .sleep > input {
+        #${this.id} section.controls > .sleep > input, #${this.id} section.controls > .sleep > span > select {
           border: 0;
           color: black;
           text-align: center;
+        }
+        #${this.id} section.controls > .sleep > span > select {
+          background: transparent;
+          color: white;
+        }
+        #${this.id} section.controls > .sleep > span > select > option {
+          color: black;
         }
         #${this.id} section.controls > .sleep > input.active {
           border: 3px solid;
@@ -382,7 +389,10 @@ export default class Player {
         <i class="seeknext"><span class="glyphicon glyphicon-forward"></span></i><i class="next"><span class="glyphicon glyphicon-step-forward"></i>
         <i class="repeat">
           <div class="repeat-all"><span class="glyphicon glyphicon-refresh"></span></div><div class="repeat-one"><span class="glyphicon glyphicon-repeat"></span></div><div class="random"><span class="glyphicon glyphicon-random"></span></div><div class="loop-machine"><span class="glyphicon glyphicon-equalizer"></span></div>
-        </i><div class="sleep"><span>Sleep in (min.):</span><input type="number" placeholder="0"></div>
+        </i><div class="sleep"><span><select name="sleepMode">
+          <option value="Sleep">Pause</option>
+          <option value="Wake">Play</option>
+        </select> in (min.):</span><input type="number" placeholder="0"></div>
       </section>
     `
     this.html.replaceWith(section)
@@ -439,7 +449,7 @@ export default class Player {
     this.repeatBtn.querySelector('.loop-machine').addEventListener('click', event => this.setMode('repeat-all'))
     // sleep timer
     section.querySelector('.sleep input').addEventListener('change', event => {
-      if (event.target && !isNaN(Number(event.target.value))) this.setTimer(event.target, event.target.value)
+      if (event.target && !isNaN(Number(event.target.value))) this.setTimer(event.target, event.target.value, section.querySelector('.sleep [name=sleepMode]').value === 'Sleep' ? 'pauseAll' : 'play')
     })
   }
 
@@ -524,23 +534,18 @@ export default class Player {
     this.currentControl = control
     this.playBtn.classList.add('is-playing')
     this.setTitleText(undefined, control)
-    if (this.mode !== 'loop-machine') {
-      // if shorter than 10min
-      if (this.mode === 'random' && control.duration < 600) {
-        this.setCurrentTime(control, 0)
-      } else {
-        this.loadCurrentTime(control) // do this because ios does not swollow currentTime set at loadedmetadata
-      }
-      this.pauseAll(control)
+    // if shorter than 10min
+    if (this.mode === 'random' && control.duration < 600) {
+      this.setCurrentTime(control, 0)
+    } else {
+      this.loadCurrentTime(control) // do this because ios does not swollow currentTime set at loadedmetadata
     }
+    if (this.mode !== 'loop-machine') this.pauseAll(control)
   }
 
   playAll (except = null) {
     this.allControls.forEach(control => {
-      if (control !== except && control.paused) {
-        this.play(control, undefined, false)
-        this.setCurrentTime(control, undefined, true)
-      }
+      if (control !== except && control.paused) this.play(control, undefined, false)
     })
   }
 
@@ -649,16 +654,16 @@ export default class Player {
   }
 
   // value is expected in minutes
-  setTimer (input, value) {
+  setTimer (input, value, command = 'pauseAll') {
     input.value = value = Math.floor(value)
     clearTimeout(this.timer)
     if (!value || value <= 0) {
       input.classList.remove('active')
       input.value = 0
-      this.pauseAll()
+      this[command]()
     } else {
       input.classList.add('active')
-      this.timer = setTimeout(() => this.setTimer(input, value - 1), 60000)
+      this.timer = setTimeout(() => this.setTimer(input, value - 1, command), 60000)
     }
     input.blur()
   }
