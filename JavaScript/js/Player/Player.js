@@ -537,7 +537,7 @@ export default class Player {
 
   playAll (except = null) {
     this.allControls.forEach(control => {
-      if (control !== except) {
+      if (control !== except && control.paused) {
         this.play(control, undefined, false)
         this.setCurrentTime(control, undefined, true)
       }
