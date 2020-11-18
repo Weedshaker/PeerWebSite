@@ -67,7 +67,7 @@ export default class Player {
         // pausePlay commands
         if (this.mode === 'random' && this.pausePlayCommands.control === event.target) {
           this.pausePlayCommands.counter++
-          if (this.pausePlayCommands.counter === 1) this.next()
+          if (this.pausePlayCommands.counter === 1) this.next(true)
         }
       }
     }, true)
@@ -579,7 +579,7 @@ export default class Player {
   }
   
   next (onlyReady = false, respectRandom = true) {
-    if (respectRandom && this.mode === 'random') return this.nextRandom()
+    if (respectRandom && this.mode === 'random') return this.nextRandom(onlyReady)
     const controls = onlyReady ? this.allReadyControls : this.allControls
     const index = controls.indexOf(this.currentControl) !== -1 ? controls.indexOf(this.currentControl) : this.currentControlIndex
     const control = controls[index + 1 >= controls.length ? 0 : index + 1]
@@ -599,17 +599,17 @@ export default class Player {
     return this.prev(false, false)
   }
 
-  nextRandom () {
+  nextRandom (onlyReady = true) {
     // randomly choose from time to time some control which is not ready yet, to kickoff loading
-    const controls = Math.floor(Math.random() * 2) ? this.allReadyControls : this.allControls
+    const controls = onlyReady ? this.allReadyControls : this.allControls
     const control = controls[Math.floor(Math.random() * controls.length)]
     if (control) {
-      if (control === this.currentControl) return this.nextRandom()
+      if (control === this.currentControl) return this.nextRandom(onlyReady)
       this.randomQueue.push(control)
       this.play(control)
       return control
     }
-    return this.next(true, false)
+    return this.next(onlyReady, false)
   }
 
   seekPrev () {
@@ -704,7 +704,7 @@ export default class Player {
     const allControls = this.allControls
     let state = 5 // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState + state 5 which means it has control.duration
     let controls = this.filterByReadyState(allControls, state) // 5
-    while (state > 1 && controls.length < 3) {
+    while (state > 1 && controls.length < Math.floor(allControls.length / 1.3)) {
       state--
       controls = this.filterByReadyState(allControls, state) // 4, 3, 2, 1
     }
