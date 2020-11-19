@@ -16,7 +16,7 @@ export default class Player {
     this.prevResetTollerance = 3 // sec., used to decide from when a track would be reset when going to prev track
     this.seekTime = 10 // sec.
     this.keyDownTollerance = 300 // ms
-    this.waitToPlay = 5000
+    this.waitToPlay = 10000
     this.waitingToPlayTimeout = [null, 0]
 
     this.randomQueue = []
