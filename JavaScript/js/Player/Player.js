@@ -34,6 +34,8 @@ export default class Player {
       }
     }
     this.resetPausePlayCommands()
+    // internal use
+    this.respectRandom = true
   }
   
   connect (isSender, parent) {
@@ -65,7 +67,7 @@ export default class Player {
         this.play(event.target, true)
         this.isLoading(false, event.target)
         // pausePlay commands
-        if (this.mode === 'random' && this.pausePlayCommands.control === event.target) {
+        if (this.respectRandom && this.mode === 'random' && this.pausePlayCommands.control === event.target) {
           this.pausePlayCommands.counter++
           if (this.pausePlayCommands.counter === 1) this.next(true)
         }
@@ -75,7 +77,7 @@ export default class Player {
 			if (this.validateEvent(event)) {
         this.pause(event.target, true)
         this.isLoading(false, event.target)
-        if (this.mode === 'random') {
+        if (this.respectRandom && this.mode === 'random') {
           // pausePlay commands
           if (this.pausePlayCommands.control === event.target) {
             this.pausePlayCommands.counter++
@@ -88,7 +90,7 @@ export default class Player {
     // loop all audio + video
 		document.body.addEventListener('ended', event => {
 			if (this.validateEvent(event)) {
-        if (this.mode === 'random') this.resetPausePlayCommands()
+        if (this.respectRandom && this.mode === 'random') this.resetPausePlayCommands()
         // set control to 0, since this would not work natively for ios
         this.setCurrentTime(event.target, 0)
         if (this.mode === 'repeat-one' || this.mode === 'loop-machine') {
@@ -112,7 +114,8 @@ export default class Player {
     }, true)
     document.body.addEventListener('seeked', event => {
 			if (this.validateEvent(event)) {
-        if (this.mode === 'random') this.resetPausePlayCommands()
+        this.respectRandom = true
+        if (this.respectRandom && this.mode === 'random') this.resetPausePlayCommands()
         this.saveCurrentTime(event.target)
       }
     }, true)
@@ -127,7 +130,10 @@ export default class Player {
 			if (this.validateEvent(event)) this.isLoading(false, event.target)
     }, true)
     document.body.addEventListener('seeking', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target)
+			if (this.validateEvent(event)) {
+        this.isLoading(true, event.target)
+        this.respectRandom = false
+      }
     }, true)
     document.body.addEventListener('stalled', event => {
 			if (this.validateEvent(event)) this.isLoading(true, event.target)
@@ -525,17 +531,17 @@ export default class Player {
     return playerControls.classList.contains('open')
   }
 
-  play (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
+  play (control = this.currentControl, eventTriggered = false, respectLoopMachine = true, respectRandom = this.respectRandom) {
     if (!eventTriggered) {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.playAll()
-      if (this.mode === 'random') this.setWaitingToPlayTimeout()
+      if (respectRandom && this.mode === 'random') this.setWaitingToPlayTimeout()
       if (control.paused) return control.play() // this wil trigger the event, which in turn will trigger this function
     }
     this.currentControl = control
     this.playBtn.classList.add('is-playing')
     this.setTitleText(undefined, control)
     // if shorter than 10min
-    if (this.mode === 'random' && control.duration < 600) {
+    if (respectRandom && this.mode === 'random' && control.duration < 600) {
       this.setCurrentTime(control, 0)
     } else {
       this.loadCurrentTime(control) // do this because ios does not swollow currentTime set at loadedmetadata
@@ -563,7 +569,7 @@ export default class Player {
     })
   }
 
-  prev (resetTrack = true, respectRandom = true) {
+  prev (resetTrack = true, respectRandom = this.respectRandom) {
     const controls = this.allControls
     if (resetTrack && this.currentControl.currentTime > this.prevResetTollerance) {
       this.play()
@@ -578,7 +584,7 @@ export default class Player {
     return null
   }
   
-  next (onlyReady = false, respectRandom = true) {
+  next (onlyReady = false, respectRandom = this.respectRandom) {
     if (respectRandom && this.mode === 'random') return this.nextRandom(onlyReady)
     const controls = onlyReady ? this.allReadyControls : this.allControls
     const index = controls.indexOf(this.currentControl) !== -1 ? controls.indexOf(this.currentControl) : this.currentControlIndex
@@ -642,10 +648,10 @@ export default class Player {
     this.resetPausePlayCommands()
   }
 
-  isLoading (loading, control) {
+  isLoading (loading, control, respectRandom = this.respectRandom) {
     if (control !== this.currentControl) return false
     if (loading) {
-      if (this.mode === 'random' && !this.html.classList.contains('loading') && !this.currentControl.paused) this.setWaitingToPlayTimeout()
+      if (respectRandom && this.mode === 'random' && !this.html.classList.contains('loading') && !this.currentControl.paused) this.setWaitingToPlayTimeout()
       if (this.mode !== 'loop-machine') this.html.classList.add('loading')
     } else {
       this.html.classList.remove('loading')
