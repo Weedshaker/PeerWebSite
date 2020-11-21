@@ -31,7 +31,7 @@ export class MasterHelper {
 	 * @memberof Helper
 	 */
 	createFilesId(files){
-		if (!files.length) return this.createFileId(files[0]);
+		if (!files.length) return this.createFileId(files[0] || files);
 		let str = 0;
 		for(let file of files){
 			str += this.createFileId(file);
@@ -41,7 +41,7 @@ export class MasterHelper {
 	/**
 	 * creates id's from files (api Hook)
 	 * 
-	 * @param {File} file 
+	 * @param {File | FileList} file 
 	 * @returns {number}
 	 * @memberof Helper
 	 */
