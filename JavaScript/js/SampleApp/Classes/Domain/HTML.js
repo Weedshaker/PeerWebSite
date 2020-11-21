@@ -46,8 +46,6 @@ export class HTML extends MasterHTML {
 						location.reload();
 					}
 				});
-				// add player htmlelements
-				header.find('#info').append(`<section id="player"></section>`);
 				// add download
 				if (!isSender) {
 					header.find('#info').append(`<a href="#" class="download-all">&#9735;&nbsp;<span class="tiny">Download!</span></a>`);
@@ -60,6 +58,8 @@ export class HTML extends MasterHTML {
 						$('.download-all').remove();
 					});
 				}
+				// add player htmlelements
+				header.find('#info').append(`<section id="player"></section>`);
 				this.containers = [header];
 				this.stickyHeader(header);
 				// specific only for receiver
