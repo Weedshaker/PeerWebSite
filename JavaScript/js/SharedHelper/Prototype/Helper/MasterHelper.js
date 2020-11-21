@@ -77,7 +77,7 @@ export class MasterHelper {
 		this.saveUrl(blobUrl, fileName);
 		if (revoke) window.URL.revokeObjectURL(blobUrl);
 	}
-	saveUrl(url, fileName){
+	saveUrl(url, fileName = 'untitled'){
 		this.a.href = url;
 		this.a.download = fileName;
 		this.a.click();
