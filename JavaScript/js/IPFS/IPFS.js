@@ -1,9 +1,11 @@
 import { mime } from './helpers/mimeTypes.js';
+import {Helper} from 'WebTorrent/Classes/Helper/Helper.js';
 
 // Debug: http://localhost:3000/index_debug.html#ipfs:QmT8dAKuCVQ7TTHV5ezNFE272cs15PyigJGV663GHeen6t
 export class IPFS {
 	constructor(isSender){
         this.isSender = isSender;
+        this.Helper = new Helper();
 
         // should be 'ipfs://' but browsers do not yet support that url scheme, once this gateway would get blocked or overloaded the files have to be fixed through the service worker
         this.baseUrl = 'https://gateway.ipfs.io/ipfs/'; // must have "onFetchError" error handling, when used at add
@@ -138,7 +140,7 @@ export class IPFS {
     }
     digestUrl(url = '') {
         const urlString = url;
-        url = new URL(url);
+        url = new URL(url) || {pathname: '', searchParams: {get: () => null}};
         return {
             cid: url.pathname.split('/').splice(-1)[0] || null,
             filename: url.searchParams.get('filename') || null,
@@ -156,5 +158,20 @@ export class IPFS {
 			counter++;
 			if (counter >= max) reject(`@IPFS: No response for ${url}`);
 		}
+    }
+    // download all IPFS files
+    getAllIPFSFiles() {
+        document.querySelectorAll(`[src^="${this.baseUrl}"]`).forEach(node => this.getBlobByFileCID(node.src).then(blob => {
+            const url = this.digestUrl(node.src);
+            if (blob) this.Helper.saveBlob(blob, url.filename || node.getAttribute('data-filename') || node.parentNode && node.parentNode.getAttribute('data-filename'));
+        }));
+        document.querySelectorAll(`[href^="${this.baseUrl}"]`).forEach(node => this.getBlobByFileCID(node.href).then(blob => {
+            const url = this.digestUrl(node.href);
+            if (blob) this.Helper.saveBlob(blob, url.filename || node.getAttribute('data-filename') || node.parentNode && node.parentNode.getAttribute('data-filename'));
+        }));
+        const filename = 'peerWebSite.txt';
+        this.getBlobByFileCID(this.baseUrl + location.hash.substr(6) + `?filename=${filename}`).then(blob => {
+            if (blob) this.Helper.saveBlob(blob, 'peerWebSite.txt');
+        });
 	}
 }

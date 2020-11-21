@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.21';
+		this.devVersion = '0.22';
         this.precache = [
             './',
 			'./index.html',
@@ -32,9 +32,9 @@ class MasterServiceWorker {
 			'https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js',
 		];
 		this.doNotGetMessage = ['socket.io', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', 'herokuapp.com', 'webrtcweb.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
-		this.doGetMessage = ['magnet:', 'magnet/', 'ipfs/']; // + location.origin added below on message
+		this.doGetMessage = ['magnet:', 'magnet/', 'ipfs/'];
 		this.doNotGetCache = ['socket.io', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', 'herokuapp.com', 'webrtcweb.com'];
-		this.doRefreshCache = [location.origin, 'cdn.jsdelivr.net'];
+		this.doRefreshCache = ['cdn.jsdelivr.net']; // + location.origin added below on message
 		this.isStream = ['audioVideo=true', 'swIntercept=false'];
 		this.ipfsPin = ['gateway.ipfs.io'];
 		this.getMessageIsStreamTimeout = 3000;
@@ -96,7 +96,7 @@ class MasterServiceWorker {
 				this.clientId.approved = this.clientId.recent;
 				// save messageChannel
 				this.messageChannel = event.ports[0];
-				this.doGetMessage.push(event.data); // location.origin
+				this.doRefreshCache.push(event.data); // location.origin
 				this.messageChannel.postMessage('!!!ready');
 				this.messageChannel.postMessage(['version', this.devVersion]);
 				this.sessionResolvedMessageContext = [];

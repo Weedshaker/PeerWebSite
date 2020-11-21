@@ -640,7 +640,7 @@ export class MasterWebTorrent {
 		});
 	}
 	getAllTorrents() {
-		this.Helper.saveData(this.client.torrents.map(torrent => torrent.magnetURI).join("\n\n---\n\n"), `peerWebSiteTorrents_${this.Helper.getRandomString()}.txt`);
+		this.Helper.saveText(this.client.torrents.map(torrent => torrent.magnetURI).join("\n\n---\n\n"), `peerWebSiteTorrents_${this.Helper.getRandomString()}.txt`);
 	}
 	getAllTorrentFiles() {
 		this.client.torrents.forEach(torrent => {
