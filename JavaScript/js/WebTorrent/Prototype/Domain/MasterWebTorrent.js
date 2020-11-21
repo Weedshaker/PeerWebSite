@@ -99,7 +99,7 @@ export class MasterWebTorrent {
 			controls: Boolean, // Show video/audio player controls (default: true)
 			maxBlobLength: Number, // Files above this size will skip the "blob" strategy and fail (default: 200 * 1000 * 1000 bytes)
 			*/
-			autoplay: false,
+			autoplay: true, // TODO: Bug append callback is not called when not autoplay true https://github.com/webtorrent/webtorrent/issues/1967
 			muted: false,
 			controls: true
 		};

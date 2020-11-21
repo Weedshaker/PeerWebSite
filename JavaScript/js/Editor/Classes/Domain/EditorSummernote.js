@@ -24,7 +24,8 @@ export class EditorSummernote extends MasterEditor {
 		super();
 		this.WebTorrent = WebTorrent;
 		this.IPFS = IPFS;
-		this.torrentNodeName = 'figure';
+		this.torrentNodeName = 'span';
+		this.torrentNodeNameAudioVideo = 'figure';
 
 		this.container = null;
 		this.summernote = $.summernote;
@@ -66,15 +67,19 @@ export class EditorSummernote extends MasterEditor {
 				onMediaDelete: ($target, container) => {
 					// remove element in container
 					$target.remove();
-					const nodeList = document.evaluate(`//${this.torrentNodeName}[@data-blobs[contains(., '${$target[0].src}')]]`, document, null, XPathResult.ANY_TYPE, null);
-					let node = nodeList.iterateNext(); // it is supposed to be empty before deleting
-					while (node && node.childNodes.length !== 0) {
-						node = nodeList.iterateNext();
-					}
-					if(node){
-						if (node.nextSibling && node.nextSibling.innerHTML === '') node.nextSibling.remove(); // remove buffer element added at line 176, this is used for setting focus after torrentNode
-						node.remove();
-					}
+					const removeByEvaluate = nodeName => {
+						const nodeList = document.evaluate(`//${nodeName}[@data-blobs[contains(., '${$target[0].src}')]]`, document, null, XPathResult.ANY_TYPE, null);
+						let node = nodeList.iterateNext(); // it is supposed to be empty before deleting
+						while (node && node.childNodes.length !== 0) {
+							node = nodeList.iterateNext();
+							if(node){
+								if (node.nextSibling && node.nextSibling.innerHTML === '') node.nextSibling.remove(); // remove buffer element added at line 176, this is used for setting focus after torrentNode
+								node.remove();
+							}
+						}
+					};
+					removeByEvaluate(this.torrentNodeName);
+					removeByEvaluate(this.torrentNodeNameAudioVideo);
 				}
 			},
 			hint: {
@@ -225,7 +230,11 @@ export class EditorSummernote extends MasterEditor {
 	}
 	loadFile(files, text, container = this.container){
 		// append file
-		let node = document.createElement(this.torrentNodeName);
+		let elementType = this.torrentNodeName;
+		$.each(files, (i, file) => {
+			if (file && (file.type.includes('video') || file.type.includes('audio'))) elementType = this.torrentNodeNameAudioVideo;
+		});
+		let node = document.createElement(elementType);
 		node.id = this.Helper.createFilesId(files); // give each node an id, so that virtual-dom doesn't mix up things
 		// disable codeview until file is loaded, otherwise it doesn't get added when in codeview
 		$('.btn-codeview').first().addClass('disabled').attr('disabled', true);

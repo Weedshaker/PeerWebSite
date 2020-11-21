@@ -23,11 +23,13 @@ export class HTML extends MasterHTML {
 				const header = $(`<header class="down isTop">
 					<div id="info" class="flex">
 						<div class="offline">YOU ARE OFFLINE!!!</div>
-						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe><a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.78<span id="sw-version"></span>; Visit Github for more Infos!</a> <a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
+						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.78<span id="sw-version"></span>; Visit Github for more Infos!</a>
+						<a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
-				// add edit and player htmlelements
-				header.find('#info').append(`<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">${!isSender ? 'Edit!' : 'Abort Editing!'}</span></a><section id="player"></section>`);
+				// add edit
+				header.find('#info').append(`<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">${!isSender ? 'Edit!' : 'Abort Editing!'}</span></a>`);
 				header.find('.edit').click(event => {
 					event.preventDefault();
 					if (!isSender) {
@@ -44,6 +46,17 @@ export class HTML extends MasterHTML {
 						location.reload();
 					}
 				});
+				// add player htmlelements
+				header.find('#info').append(`<section id="player"></section>`);
+				// add download
+				if (!isSender) {
+					header.find('#info').append(`<a href="#" class="download-all">&#9735;&nbsp;<span class="tiny">Download All!</span></a>`);
+					header.find('.download-all').click(event => {
+						event.preventDefault();
+						this.WebTorrent.getAllTorrentFiles();
+						this.IPFS.getAllIPFSFiles();
+					});
+				}
 				this.containers = [header];
 				this.stickyHeader(header);
 				// specific only for receiver
