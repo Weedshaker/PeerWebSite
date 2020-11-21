@@ -16,7 +16,7 @@ export default class Player {
     this.prevResetTollerance = 3 // sec., used to decide from when a track would be reset when going to prev track
     this.seekTime = 10 // sec.
     this.keyDownTollerance = 300 // ms
-    this.waitToPlay = 10000
+    this.waitToPlay = 7000
     this.waitingToPlayTimeout = [null, 0]
 
     this.randomQueue = []
@@ -607,7 +607,9 @@ export default class Player {
 
   nextRandom (onlyReady = true) {
     // randomly choose from time to time some control which is not ready yet, to kickoff loading
-    const controls = onlyReady ? this.allReadyControls : this.allControls
+    let controls = onlyReady ? this.allReadyControls : this.allControls
+    if (this.randomQueue.length >= controls.length) this.randomQueue.splice(0, this.randomQueue.length / 2) // clear ranedom queue to release songs to be played random
+    controls = controls.filter(control => !this.randomQueue.includes(control))
     const control = controls[Math.floor(Math.random() * controls.length)]
     if (control) {
       if (control === this.currentControl) return this.nextRandom(onlyReady)
@@ -681,7 +683,7 @@ export default class Player {
 
   resetWaitingToPlayTimeout() {
     if (this.waitingToPlayTimeout[0]) {
-      if (this.waitingToPlayTimeout[1] > 1) { // timeupdate can happen for two times timeupdate (0,1) without actually playing
+      if (this.waitingToPlayTimeout[1] > 5) { // timeupdate can happen for two times timeupdate (0,1) without actually playing
         clearTimeout(this.waitingToPlayTimeout[0])
         this.waitingToPlayTimeout = [null, 0]
       } else {
