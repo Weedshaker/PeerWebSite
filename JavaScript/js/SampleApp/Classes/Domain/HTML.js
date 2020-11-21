@@ -24,7 +24,7 @@ export class HTML extends MasterHTML {
 					<div id="info" class="flex">
 						<div class="offline">YOU ARE OFFLINE!!!</div>
 						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
-						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.78<span id="sw-version"></span>; Visit Github for more Infos!</a>
+						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.79<span id="sw-version"></span>; Visit Github for more Infos!</a>
 						<a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
@@ -50,11 +50,14 @@ export class HTML extends MasterHTML {
 				header.find('#info').append(`<section id="player"></section>`);
 				// add download
 				if (!isSender) {
-					header.find('#info').append(`<a href="#" class="download-all">&#9735;&nbsp;<span class="tiny">Download All!</span></a>`);
+					header.find('#info').append(`<a href="#" class="download-all">&#9735;&nbsp;<span class="tiny">Download!</span></a>`);
 					header.find('.download-all').click(event => {
 						event.preventDefault();
-						this.WebTorrent.getAllTorrentFiles();
-						this.IPFS.getAllIPFSFiles();
+						if (confirm('This feature does not yet support any progress indication. WebTorrent + IPFS files will be downloaded as soon as available. Please, be patient when downloading... Do you want to download all?')) {
+							this.WebTorrent.getAllTorrentFiles();
+							this.IPFS.getAllIPFSFiles();
+						}
+						$('.download-all').remove();
 					});
 				}
 				this.containers = [header];
