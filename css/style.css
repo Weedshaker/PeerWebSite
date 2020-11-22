@@ -71,6 +71,9 @@ body > header > div.flex .recycle {
 body > header > div.flex .edit, body > header > div.flex .download-all {
     display: none;
 }
+body > header > div.flex .download-all > .tiny > span.filesLoading ~ span.donwload-files-counter {
+    margin-left: 10px;
+}
 body[type="ipfs"] header > div.flex .edit, body[type="magnet"] header > div.flex .edit, body[issender="false"] header > div.flex .edit {
     display: flex;
     color: red;
@@ -78,6 +81,10 @@ body[type="ipfs"] header > div.flex .edit, body[type="magnet"] header > div.flex
 body[type="ipfs"] header > div.flex .download-all, body[type="magnet"] header > div.flex .download-all {
     display: flex;
     color: cornflowerblue;
+}
+body[type="ipfs"] header > div.flex .download-all.done, body[type="magnet"] header > div.flex .download-all.done {
+    color: lightgray;
+    font-style: italic;
 }
 body > header > div.flex .player {
     color: yellow;
@@ -128,6 +135,8 @@ body > header .headerReceiver.hasQr > .qr {
 }
 .tiny {
     font-size: 8px;
+    display: flex;
+    align-items: center;
 }
 #sender, #receiver, .note-editor, #controls{
     min-width: fit-content;
@@ -299,7 +308,7 @@ span[style="font-size: 36px;"] {
     font-size: clamp(1rem, 5vw, 36px) !important;
 }
 */
-:empty.blobLoading, :empty.torrentLoading, :empty.ipfsLoading, .ipfsLoading, :empty.receiverLoading, .receiverLoading {
+:empty.blobLoading, :empty.torrentLoading, :empty.ipfsLoading, .ipfsLoading, :empty.filesLoading, .filesLoading, :empty.receiverLoading, .receiverLoading {
     display: inline-block;
 	width: 30px;
 	height: 30px;
@@ -316,6 +325,10 @@ span[style="font-size: 36px;"] {
 }
 :empty.ipfsLoading, .ipfsLoading {
     border-color: blue;
+    box-shadow: 0 0 25px 2px lightblue;
+}
+:empty.filesLoading, .filesLoading {
+    border-color: cornflowerblue;
     box-shadow: 0 0 25px 2px lightblue;
 }
 :empty.receiverLoading, .receiverLoading {

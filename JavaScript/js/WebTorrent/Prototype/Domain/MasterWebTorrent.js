@@ -642,14 +642,17 @@ export class MasterWebTorrent {
 	getAllTorrents() {
 		this.Helper.saveText(this.client.torrents.map(torrent => torrent.magnetURI).join("\n\n---\n\n"), `peerWebSiteTorrents_${this.Helper.getRandomString()}.txt`);
 	}
-	getAllTorrentFiles() {
+	getAllTorrentFiles(callback = () => {}) {
+		const length = this.client.torrents.length;
 		this.client.torrents.forEach(torrent => {
 			torrent.files.forEach(file => {
 				file.getBlobURL((err, url) => {
+					callback();
 					if (err) return console.warn(err);
-					this.Helper.saveBlobUrl(url, file.name);
+					this.Helper.saveBlobUrl(url, file.name === 'peerWebSite.txt' ? `peerWebSite_${torrent.infoHash}.txt` : file.name);
 				});
 			});
 		});
+		return length;
 	}
 }
