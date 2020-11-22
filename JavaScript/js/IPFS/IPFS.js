@@ -173,12 +173,12 @@ export class IPFS {
         src.forEach(node => this.getBlobByFileCID(node.src).then(blob => {
 			callback(!!blob);
             const url = this.digestUrl(node.src);
-            if (blob) this.Helper.saveBlob(blob, url.filename || node.getAttribute('data-filename') || node.parentNode && node.parentNode.getAttribute('data-filename'));
+            if (blob) this.Helper.saveBlob(blob, node.getAttribute('data-filename') || node.parentNode && node.parentNode.getAttribute('data-filename') || url.filename);
         }));
         href.forEach(node => this.getBlobByFileCID(node.href).then(blob => {
 			callback(!!blob);
             const url = this.digestUrl(node.href);
-            if (blob) this.Helper.saveBlob(blob, url.filename || node.getAttribute('data-filename') || node.parentNode && node.parentNode.getAttribute('data-filename'));
+            if (blob) this.Helper.saveBlob(blob, node.getAttribute('data-filename') || node.parentNode && node.parentNode.getAttribute('data-filename') || url.filename);
         }));
         const cid = location.hash.substr(6);
         const filename = 'peerWebSite.txt';
