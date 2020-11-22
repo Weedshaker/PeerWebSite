@@ -188,14 +188,14 @@ export class EditorSummernote extends MasterEditor {
 					// https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/FILES.md#returns
 					this.IPFS.add(result.name, result.content).then(file => {
 						// sw do not intercept videos for streaming but give mimetype down
-						file.link += `?filename=${result.name}${result.audioVideo ? '&audioVideo=true' : ''}`;
+						file.link += `?filename=${this.sanitizForInlineError(result.name)}${result.audioVideo ? '&audioVideo=true' : ''}`;
 						outerNode.classList.remove('ipfsLoading');
 						// static error handling which also works at receiver
 						if (result.type[0] === 'a') {
 							outerNode.setAttribute('download', result.name);
-							outerNode.setAttribute('onclick', `${this.IPFS.ipfs_onerror}(event, '${this.sanitizForInlineError(file.link)}', '${this.sanitizForInlineError(result.name)}', '${result.type}', ${!!result.audioVideo}, this);`);
+							outerNode.setAttribute('onclick', `${this.IPFS.ipfs_onerror}(event, '${file.link}', '${this.sanitizForInlineError(result.name)}', '${result.type}', ${!!result.audioVideo}, this);`);
 						} else {
-							result.source.setAttribute('onerror', `${this.IPFS.ipfs_onerror}(null, '${this.sanitizForInlineError(file.link)}', '${this.sanitizForInlineError(result.name)}', '${result.type}', ${!!result.audioVideo}, this);`);
+							result.source.setAttribute('onerror', `${this.IPFS.ipfs_onerror}(null, '${file.link}', '${this.sanitizForInlineError(result.name)}', '${result.type}', ${!!result.audioVideo}, this);`);
 						}
 						result.source[result.type[1]] = file.link;
 						// video wouldn't play on seeder if not newly set
@@ -256,6 +256,6 @@ export class EditorSummernote extends MasterEditor {
 		p.replaceWith(node);
 	}
 	sanitizForInlineError(str) {
-		return str.replace(/[\'\"]/g, '');
+		return encodeURIComponent(str.replace(/[\'\"\&\?\!\@\#\$\%\^\*\(\)\+\/\\]/g, ''));
 	}
 }
