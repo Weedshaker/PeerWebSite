@@ -41,8 +41,11 @@ body > header.hasPlayer:not(.isTop).down > #info > #player {
     right: 2px;
     border-radius: 10px;
 }
-#player {
+#player, #player-placeholder {
     display: none;
+}
+body > header.hasPlayer:not(.isTop).down > #info > #player-placeholder {
+    display: block !important;
 }
 body > header > div.flex {
     display: flex;

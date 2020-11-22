@@ -48,6 +48,7 @@ export default class Player {
 
   init () {
     this.html = document.querySelector('#' + this.id)
+    this.htmlPlaceholder = document.querySelector('#' + this.id + '-placeholder')
     if (!this.html) return console.warn('SST: Player could not be started due to lack of html el hook #' + this.id)
     this.addControlsBehavior(this.renderHTML(this.renderCSS()))
     this.addEventListeners()
@@ -403,6 +404,7 @@ export default class Player {
     `
     this.html.replaceWith(section)
     this.html = section
+    this.htmlPlaceholder.innerHTML = '<span class="player">&#9836;&nbsp;<span class="tiny">Player</span></span>';
     return section
   }
 
