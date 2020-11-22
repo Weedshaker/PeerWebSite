@@ -24,7 +24,7 @@ export class HTML extends MasterHTML {
 					<div id="info" class="flex">
 						<div class="offline">YOU ARE OFFLINE!!!</div>
 						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
-						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.80<span id="sw-version"></span>; Visit Github for more Infos!</a>
+						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.81<span id="sw-version"></span>; Visit Github for more Infos!</a>
 						<a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
@@ -51,19 +51,22 @@ export class HTML extends MasterHTML {
 					header.find('#info').append(`<a href="#" class="download-all">&#9735;&nbsp;<span class="tiny">Download</span></a>`);
 					header.one('click', '.download-all', event => {
 						event.preventDefault();
-						let counter = this.parent.checkHashType(location.hash) === 'magnet' ? -1 : 0; // IPFS always counts one even its webtorrent
-						let total = this.parent.checkHashType(location.hash) === 'magnet' ? -1 : 0; // IPFS always counts one even its webtorrent
+						const startCounterAt = this.parent.checkHashType(location.hash) === 'magnet' ? -1 : 0; // IPFS always counts one even its webtorrent
+						let counter = startCounterAt;
+						let failedCount = startCounterAt;
+						let total = startCounterAt;
 						let done = false;
-						const callback = (count = true) => {
+						const callback = (success, count = true) => {
+							if (!success) failedCount++;
 							if (count) counter++;
 							done = counter >= total;
-							header.find('.download-all > .tiny').html(`${done ? '' : '<span class="filesLoading"></span>'}<span class="donwload-files-counter">${counter} of ${total} file${total === 1 ? '' : 's'} downloaded</span>`)
+							header.find('.download-all > .tiny').html(`${done ? '' : '<span class="filesLoading"></span>'}<span class="donwload-files-counter">${counter} of ${total} file${total === 1 ? '' : 's'} fetched of which <span style="color: ${failedCount === 0 ? 'green' : 'red'}">${failedCount} failed to download</span>.</span>`)
 							if (done) $('.download-all').addClass('done');
 						};
 						if (confirm('This feature does not yet support any progress by file size. WebTorrent + IPFS files will be downloaded as soon as available. Please, be patient... Do you want to continue?')) {
 							total += this.WebTorrent.getAllTorrentFiles(callback);
 							total += this.IPFS.getAllIPFSFiles(callback);
-							callback(false);
+							callback(true, false);
 						} else {
 							$('.download-all').remove();
 						}

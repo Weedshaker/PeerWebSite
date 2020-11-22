@@ -160,24 +160,30 @@ export class IPFS {
 		}
     }
     // download all IPFS files
-    getAllIPFSFiles(callback = () => {}) {
-        const src = document.querySelectorAll(`[src^="${this.baseUrl}"]`);
-        const href = document.querySelectorAll(`[href^="${this.baseUrl}"]`);
-		const length = src.length + href.length + 1;
+    getAllIPFSFiles(callback = success => {}) {
+        const src = [];
+        document.querySelectorAll(`[src^="${this.baseUrl}"]`).forEach(node => {
+            if (src.every(srcNode => srcNode.src !== node.src)) src.push(node); // only add a link once
+        });
+        const href = [];
+        document.querySelectorAll(`[href^="${this.baseUrl}"]`).forEach(node => {
+            if (href.every(hrefNode => hrefNode.href !== node.href) && src.every(srcNode => srcNode.src !== node.href)) href.push(node); // only add a link once
+        });
+        const length = src.length + href.length + 1;
         src.forEach(node => this.getBlobByFileCID(node.src).then(blob => {
-			callback();
+			callback(!!blob);
             const url = this.digestUrl(node.src);
             if (blob) this.Helper.saveBlob(blob, url.filename || node.getAttribute('data-filename') || node.parentNode && node.parentNode.getAttribute('data-filename'));
         }));
         href.forEach(node => this.getBlobByFileCID(node.href).then(blob => {
-			callback();
+			callback(!!blob);
             const url = this.digestUrl(node.href);
             if (blob) this.Helper.saveBlob(blob, url.filename || node.getAttribute('data-filename') || node.parentNode && node.parentNode.getAttribute('data-filename'));
         }));
         const cid = location.hash.substr(6);
         const filename = 'peerWebSite.txt';
         this.getBlobByFileCID(this.baseUrl + cid + `?filename=${filename}`).then(blob => {
-			callback();
+			callback(!!blob);
             if (blob) this.Helper.saveBlob(blob, `peerWebSite_${cid}.txt`);
         });
         return length;
