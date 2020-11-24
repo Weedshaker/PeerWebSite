@@ -57,6 +57,7 @@ export default class Player {
 			if (this.validateEvent(event)) {
         this.play(event.target, true)
         this.isLoading(false, event.target)
+        this.setDocumentTitle()
         if (this.respectRandom && this.mode === 'random') {
           this.setTimeout('waitToPlay', () => this.nextRandom(true), this.waitToPlayMs, event.target, true)
           // pausePlay commands
@@ -68,6 +69,7 @@ export default class Player {
 			if (this.validateEvent(event)) {
         this.pause(event.target, true)
         this.isLoading(false, event.target)
+        this.setDocumentTitle(true)
         if (this.respectRandom && this.mode === 'random') {
           this.clearTimeout('waitToPlay', event.target)
           // pausePlay commands
@@ -98,6 +100,7 @@ export default class Player {
 			if (this.validateEvent(event)) {
         this.saveCurrentTime(event.target)
         this.isLoading(false, event.target)
+        this.setDocumentTitle()
         if (this.respectRandom && this.mode === 'random') this.setTimeout('waitToPlay', () => this.nextRandom(true), this.waitToPlayMs, event.target, false)
       }
     }, true)
@@ -492,19 +495,39 @@ export default class Player {
     if (ignoreSeeking || !control.seeking) control.currentTime = time
   }
 
-  getControlTitle (control) {
+  getControlTitle (control = this.currentControl) {
     let text = '...'
     if (!control) return text
     const figcaption = control.parentElement && control.parentElement.querySelector('figcaption') && control.parentElement.querySelector('figcaption').textContent || ''
     return figcaption ? figcaption : control.getAttribute('data-filename') ? control.getAttribute('data-filename') : control.getAttribute('download') ? control.getAttribute('download') : text
   }
 
-  setTitleText (titleText = this.titleText, control = this.currentControl) {
+  setTitleText (titleText = this.titleText, control) {
     titleText.textContent = this.getControlTitle(control)
     if (titleText.offsetWidth > titleText.parentElement.offsetWidth) {
       titleText.classList.add('marquee')
     } else {
       titleText.classList.remove('marquee')
+    }
+  }
+
+  setDocumentTitle () {
+    this.documentTitle = document.title
+    let length = -1
+    /*
+    const progressIcons = ['ↈ', 'ↂ', 'ↀ', 'ↂ']
+    let progressIconCounter = -1
+    const progress = () => progressIcons[(progressIconCounter = progressIconCounter + 1 < progressIcons.length ? progressIconCounter + 1 : 0)]
+    */
+    this.setDocumentTitle = (reset = false) => {
+      if (reset) {
+        length = -1
+        return document.title = this.documentTitle
+      }
+      const title = this.getControlTitle() + ' | '
+      length = length + 1 >= title.length ? 0 : length + 1
+      //document.title = `${progress()} ${title.substr(length)} | ${title.substr(0, length)}`
+      document.title = title.substr(length) + title.substr(0, length)
     }
   }
 
