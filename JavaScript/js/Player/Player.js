@@ -16,16 +16,14 @@ export default class Player {
     this.prevResetTollerance = 3 // sec., used to decide from when a track would be reset when going to prev track
     this.seekTime = 10 // sec., used for seek steps
     this.keyDownTollerance = 300 // ms, used to decide from holding down a key to start seeking
-    this.waitToPlayMs = 5000 // ms, in random mode waiting for play before skipping to next
-    // meassure the pause event to play event time to execute different commands
-    // this is necessary to execute next or prev track, since the browser does not support this properly
-    // note: timeout is not a direct function of event and not able to trigger new audio controls to play as well as a bluetooth button event can't start a fresh audio
-    this.waitSkipAtPausePlayMs = 2000 // ms, in between pushing pause <-> play to skip to next random song
+    this.waitToPlayMs = 7000 // ms, in random mode waiting for play before skipping to next
+    // NOTE: tried pause/play quick command to skip to next but did not work on mobile except of starting all songs: this.waitSkipAtPausePlayMs = 2000 // ms, in between pushing pause <-> play to skip to next random song
 
     // internal use
     this.randomQueue = []
     this.onErrorExtendedToSourceIds = []
     this.respectRandom = true
+    this.waitToPlayTimeout = null
   }
   
   connect (isSender, parent) {
@@ -81,7 +79,6 @@ export default class Player {
         this.saveCurrentTime(event.target)
         this.isLoading(false, event.target)
         this.setDocumentTitle()
-        if (this.respectRandom && this.mode === 'random') this.setTimeout('waitToPlay', () => this.nextRandom(true), this.waitToPlayMs, event.target, false)
       }
     }, true)
     document.body.addEventListener('seeked', event => {
@@ -545,17 +542,10 @@ export default class Player {
     this.setTitleText(undefined, control)
     this.setDocumentTitle()
     if (this.mode !== 'loop-machine') this.pauseAll(control)
-    if (respectRandom && this.mode === 'random') {
-      // if shorter than 10min
-      if (control.duration < 1000) {
-        this.setCurrentTime(control, 0)
-      } else {
-        this.loadCurrentTime(control) // do this because ios does not swollow currentTime set at loadedmetadata
-      }
-      // start tracking if it plays else nextRandom
-      this.setTimeout('waitToPlay', () => this.nextRandom(true), this.waitToPlayMs, control, true)
-      // pausePlay commands
-      if (this['waitSkipAtPausePlay'] && this['waitSkipAtPausePlay'].control === control) this['waitSkipAtPausePlay'].play = true
+    if (respectRandom && this.mode === 'random' && control.duration < 1000) {
+      this.setCurrentTime(control, 0)
+    } else {
+      this.loadCurrentTime(control) // do this because ios does not swollow currentTime set at loadedmetadata
     }
   }
 
@@ -565,7 +555,7 @@ export default class Player {
     })
   }
 
-  pause (control = this.currentControl, eventTriggered = false, respectLoopMachine = true, respectRandom = this.respectRandom) {
+  pause (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
     if (!eventTriggered) {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.pauseAll()
       if (!control.paused) return control.pause() // this wil trigger the event, which in turn will trigger this function
@@ -574,13 +564,6 @@ export default class Player {
     }
     if (this.currentControl === control) this.playBtn.classList.remove('is-playing')
     this.setDocumentTitle(true) // reset document.title to original title
-    if (respectRandom && this.mode === 'random') {
-      this.clearTimeout('waitToPlay', control)
-      // pausePlay commands
-      this.setTimeout('waitSkipAtPausePlay', () => {
-        if (this['waitSkipAtPausePlay'] && this['waitSkipAtPausePlay'].play) this.nextRandom(false)
-      }, this.waitSkipAtPausePlayMs, control, true)
-    }
   }
 
   pauseAll (except = null) {
@@ -665,13 +648,18 @@ export default class Player {
     this.html.className = this.mode
   }
 
-  isLoading (loading, control, respectRandom = this.respectRandom) {
+  isLoading (loading, control) {
     if (control !== this.currentControl) return false
     if (loading) {
       if (this.mode !== 'loop-machine') this.html.classList.add('loading')
+      if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
+        clearTimeout(this.waitToPlayTimeout)
+        this.waitToPlayTimeout = setTimeout(() => this.nextRandom(true), this.waitToPlayMs)
+      }
     } else {
       this.html.classList.remove('loading')
       control.classList.remove('ipfsLoading')
+      if (this.mode === 'random') clearTimeout(this.waitToPlayTimeout)
     }
   }
 
@@ -688,27 +676,6 @@ export default class Player {
       this.timer = setTimeout(() => this.setTimer(input, value - 1, command), 60000)
     }
     input.blur()
-  }
-
-  setTimeout(name, timeoutFunc, timeoutMs = 2000, control = null, force = false) {
-    if (!name || !timeoutFunc) return console.warn('Player: Stuff is missing to set a new timeout...', {name, control, timeoutFunc})
-    if (this[name]) {
-      if (!force && control && this[name].control && this[name].control !== control) return console.warn('Player: Can not set a new timeout before expiration...', {name, existingControl: this[name] && this[name].control, requestedControl: control})
-      if (this[name].timeout) clearTimeout(this[name].timeout)
-    }
-    this[name] = {
-      control,
-      timeout: setTimeout(() => {
-        timeoutFunc()
-        this[name] = null
-      }, timeoutMs)
-    }
-  }
-
-  clearTimeout(name, control = null) {
-    if (!name || !this[name] || (control && this[name].control && this[name].control !== control)) return console.warn('Player: Stuff is missing to cancel a timeout, it expired already or cancel is targeting the wrong control...', {name, control, thisName: this[name], existingControl: this[name] && this[name].control, requestedControl: control})
-    clearTimeout(this[name].timeout)
-    this[name] = null
   }
 
   onError (control) {
