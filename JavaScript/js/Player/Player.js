@@ -355,6 +355,16 @@ export default class Player {
         #${this.id}.loading > section.controls > .play > div.play, #${this.id}.loading > section.controls > .play > div.pause {
           display: none;
         }
+        #${this.id} > section.controls > .play > div.pause > .glyphicon-stop {
+          display: none;
+        }
+        #${this.id}.random > section.controls > .play > div.pause > .glyphicon-stop {
+          display: block;
+        }
+        #${this.id}.random > section.controls > .play > div.pause > .glyphicon-pause {
+          display: none;
+        }
+
         @keyframes active {
           from {border-color: rgb(255, 0, 0, 0);}
           50% {border-color: rgb(255, 0, 0, 1);}
@@ -382,7 +392,7 @@ export default class Player {
       <section class="controls">
         <div class="title"><span>...</span></div><i class="clo"><span class="glyphicon glyphicon-remove"></span></i>
         <i class="prev"><span class="glyphicon glyphicon-step-backward"></i><i class="seekprev"><span class="glyphicon glyphicon-backward"></span></span></i>
-          <i class="play"><div class="play"><span class="glyphicon glyphicon-play"></span></div><div class="pause"><span class="glyphicon glyphicon-pause"></span></div><div class="loading"></div></i>
+          <i class="play"><div class="play"><span class="glyphicon glyphicon-play"></span></div><div class="pause"><span class="glyphicon glyphicon-pause"></span><span class="glyphicon glyphicon-stop"></span></div><div class="loading"></div></i>
         <i class="seeknext"><span class="glyphicon glyphicon-forward"></span></i><i class="next"><span class="glyphicon glyphicon-step-forward"></i>
         <i class="repeat">
           <div class="repeat-all"><span class="glyphicon glyphicon-refresh"></span></div><div class="repeat-one"><span class="glyphicon glyphicon-repeat"></span></div><div class="random"><span class="glyphicon glyphicon-random"></span></div><div class="loop-machine"><span class="glyphicon glyphicon-equalizer"></span></div>
@@ -552,7 +562,7 @@ export default class Player {
     this.playBtn.classList.add('is-playing')
     this.setTitleText(undefined, control)
     // if shorter than 10min
-    if (respectRandom && this.mode === 'random' && control.duration < 600) {
+    if (respectRandom && this.mode === 'random' && control.duration < 1000) {
       this.setCurrentTime(control, 0)
     } else {
       this.loadCurrentTime(control) // do this because ios does not swollow currentTime set at loadedmetadata
@@ -653,11 +663,7 @@ export default class Player {
     if (mode) this.mode = mode
     this.repeatBtn.className = 'repeat' // reset to initial
     this.repeatBtn.classList.add(this.mode)
-    if (this.mode === 'loop-machine') {
-      this.html.classList.add('loop-machine')
-    } else {
-      this.html.classList.remove('loop-machine')
-    }
+    this.html.className = this.mode
   }
 
   isLoading (loading, control, respectRandom = this.respectRandom) {
