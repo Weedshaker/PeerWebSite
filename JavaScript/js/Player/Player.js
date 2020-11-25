@@ -335,12 +335,14 @@ export default class Player {
         #${this.id} > section.controls > .play > div.pause > .glyphicon-stop {
           display: none;
         }
+        /*
         #${this.id}.random > section.controls > .play > div.pause > .glyphicon-stop {
           display: block;
         }
         #${this.id}.random > section.controls > .play > div.pause > .glyphicon-pause {
           display: none;
         }
+        */
 
         @keyframes active {
           from {border-color: rgb(255, 0, 0, 0);}
@@ -471,7 +473,7 @@ export default class Player {
 
   loadCurrentTime (control, removeItem = true) {
     const currentTime = Number(localStorage.getItem(`currentTime_${control.id}`)) || 0
-    if (currentTime && currentTime !== control.currentTime) {
+    if (currentTime && currentTime !== control.currentTime && !(this.respectRandom && this.mode === 'random')) {
       this.setCurrentTime(control, currentTime, true)
       if (removeItem) localStorage.removeItem(`currentTime_${control.id}`) // only to be set once, then can be deleted
     }
@@ -530,7 +532,7 @@ export default class Player {
     return playerControls.classList.contains('open')
   }
 
-  play (control = this.currentControl, eventTriggered = false, respectLoopMachine = true, respectRandom = this.respectRandom) {
+  play (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
     if (!eventTriggered) {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.playAll()
       if (control.paused) return control.play() // this wil trigger the event, which in turn will trigger this function
@@ -542,11 +544,7 @@ export default class Player {
     this.setTitleText(undefined, control)
     this.setDocumentTitle()
     if (this.mode !== 'loop-machine') this.pauseAll(control)
-    if (respectRandom && this.mode === 'random' && control.duration < 1000) {
-      this.setCurrentTime(control, 0)
-    } else {
-      this.loadCurrentTime(control) // do this because ios does not swollow currentTime set at loadedmetadata
-    }
+    this.loadCurrentTime(control) // do this because ios does not swollow currentTime set at loadedmetadata
   }
 
   playAll (except = null) {
