@@ -51,15 +51,26 @@ export default class Player {
 
   // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
   addEventListeners() {
-		document.body.addEventListener('play', event => {
-			if (this.validateEvent(event)) this.play(event.target, true)
+    // is media playing or not
+    document.body.addEventListener('canplay', event => {
+			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
-    document.body.addEventListener('pause', event => {
-			if (this.validateEvent(event)) this.pause(event.target, true)
+    document.body.addEventListener('canplaythrough', event => {
+			if (this.validateEvent(event)) this.isLoading(true, event.target)
+    }, true)
+    document.body.addEventListener('complete', event => {
+			if (this.validateEvent(event)) this.isLoading(false, event.target)
+    }, true)
+    document.body.addEventListener('durationchange 	', event => {
+			if (this.validateEvent(event)) this.isLoading(true, event.target)
+    }, true)
+    document.body.addEventListener('emptied 	', event => {
+			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
     // loop all audio + video
 		document.body.addEventListener('ended', event => {
 			if (this.validateEvent(event)) {
+        this.isLoading(false, event.target)
         // set control to 0, since this would not work natively for ios
         this.setCurrentTime(event.target, 0)
         if (this.mode === 'repeat-one' || this.mode === 'loop-machine') {
@@ -68,34 +79,31 @@ export default class Player {
           this.next()
         }
       }
-		}, true)
-		// keep all at same volume
-		document.body.addEventListener('volumechange', event => {
-			if (this.validateEvent(event)) this.setVolume(event.target.volume)
-		}, true)
-		// save last currentTime
-		document.body.addEventListener('timeupdate', event => {
-			if (this.validateEvent(event)) {
-        this.saveCurrentTime(event.target)
-        this.isLoading(false, event.target)
-        this.setDocumentTitle()
-      }
+    }, true)
+    document.body.addEventListener('loadeddata', event => {
+			if (this.validateEvent(event)) this.isLoading(true, event.target)
+    }, true)
+    document.body.addEventListener('loadedmetadata', event => {
+			if (this.validateEvent(event)) this.isLoading(true, event.target)
+    }, true)
+    document.body.addEventListener('pause', event => {
+			if (this.validateEvent(event)) this.pause(event.target, true)
+    }, true)
+		document.body.addEventListener('play', event => {
+			if (this.validateEvent(event)) this.play(event.target, true)
+    }, true)
+    document.body.addEventListener('playing', event => {
+			if (this.validateEvent(event)) this.isLoading(true, event.target)
+    }, true)
+    document.body.addEventListener('ratechange', event => {
+			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
     document.body.addEventListener('seeked', event => {
 			if (this.validateEvent(event)) {
+        this.isLoading(true, event.target)
         this.respectRandom = true
         this.saveCurrentTime(event.target)
       }
-    }, true)
-    // is media playing or not
-    document.body.addEventListener('canplay', event => {
-			if (this.validateEvent(event)) this.isLoading(false, event.target)
-    }, true)
-    document.body.addEventListener('canplaythrough', event => {
-			if (this.validateEvent(event)) this.isLoading(false, event.target)
-    }, true)
-    document.body.addEventListener('playing', event => {
-			if (this.validateEvent(event)) this.isLoading(false, event.target)
     }, true)
     document.body.addEventListener('seeking', event => {
 			if (this.validateEvent(event)) {
@@ -109,6 +117,18 @@ export default class Player {
     document.body.addEventListener('suspend', event => {
 			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
+		// save last currentTime
+		document.body.addEventListener('timeupdate', event => {
+			if (this.validateEvent(event)) {
+        this.isLoading(false, event.target)
+        this.saveCurrentTime(event.target)
+        this.setDocumentTitle()
+      }
+    }, true)
+    // keep all at same volume
+		document.body.addEventListener('volumechange', event => {
+			if (this.validateEvent(event)) this.setVolume(event.target.volume)
+		}, true)
     document.body.addEventListener('waiting', event => {
 			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
@@ -537,7 +557,7 @@ export default class Player {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.playAll()
       if (control.paused) return control.play() // this wil trigger the event, which in turn will trigger this function
     } else {
-      this.isLoading(false, control)
+      this.isLoading(true, control)
     }
     this.currentControl = control
     this.playBtn.classList.add('is-playing')
