@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.22';
+		this.devVersion = '0.23';
         this.precache = [
             './',
 			'./index.html',
@@ -31,9 +31,9 @@ class MasterServiceWorker {
 			'https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js',
 			'https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js',
 		];
-		this.doNotGetMessage = ['socket.io', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', 'herokuapp.com', 'webrtcweb.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
+		this.doNotGetMessage = ['socket.io', 'libp2p.io', 'dns.google', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', 'herokuapp.com', 'webrtcweb.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
 		this.doGetMessage = ['magnet:', 'magnet/', 'ipfs/'];
-		this.doNotGetCache = ['socket.io', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', 'herokuapp.com', 'webrtcweb.com'];
+		this.doNotGetCache = ['socket.io', 'libp2p.io', 'dns.google', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', 'herokuapp.com', 'webrtcweb.com'];
 		this.doRefreshCache = ['cdn.jsdelivr.net']; // + location.origin added below on message
 		this.isStream = ['audioVideo=true', 'swIntercept=false'];
 		this.ipfsPin = ['gateway.ipfs.io'];
