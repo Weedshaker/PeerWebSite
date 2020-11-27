@@ -553,11 +553,10 @@ export default class Player {
   }
 
   play (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
+    this.isLoading(true, control)
     if (!eventTriggered) {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.playAll()
       if (control.paused) return control.play() // this wil trigger the event, which in turn will trigger this function
-    } else {
-      this.isLoading(true, control)
     }
     this.currentControl = control
     this.playBtn.classList.add('is-playing')
@@ -574,11 +573,10 @@ export default class Player {
   }
 
   pause (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
+    this.isLoading(false, control)
     if (!eventTriggered) {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.pauseAll()
       if (!control.paused) return control.pause() // this wil trigger the event, which in turn will trigger this function
-    } else {
-      this.isLoading(false, control)
     }
     if (this.currentControl === control) this.playBtn.classList.remove('is-playing')
     this.setDocumentTitle(true) // reset document.title to original title
