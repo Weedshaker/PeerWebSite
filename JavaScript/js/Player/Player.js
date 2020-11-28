@@ -694,7 +694,7 @@ export default class Player {
       }
     } else {
       this.html.classList.remove('loading')
-      control.classList.remove('ipfsLoading')
+      if (control === this.currentControl) control.classList.remove('ipfsLoading')
       if (this.mode === 'random') clearTimeout(this.waitToPlayTimeout)
     }
   }
