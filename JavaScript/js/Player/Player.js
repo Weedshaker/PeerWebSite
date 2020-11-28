@@ -553,7 +553,7 @@ export default class Player {
   }
 
   play (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
-    this.isLoading(true, control, true)
+    this.isLoading(true, control, !eventTriggered)
     if (!eventTriggered) {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.playAll()
       if (control.paused) return control.play() // this wil trigger the event, which in turn will trigger this function
@@ -573,7 +573,7 @@ export default class Player {
   }
 
   pause (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
-    this.isLoading(false, control, true)
+    this.isLoading(false, control, !eventTriggered)
     if (!eventTriggered) {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.pauseAll()
       if (!control.paused) return control.pause() // this wil trigger the event, which in turn will trigger this function
@@ -670,7 +670,16 @@ export default class Player {
       if (this.mode !== 'loop-machine') this.html.classList.add('loading')
       if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
         clearTimeout(this.waitToPlayTimeout)
-        this.waitToPlayTimeout = setTimeout(() => this.nextRandom(true), this.waitToPlayMs)
+        this.waitToPlayTimeout = setTimeout(() => {
+          // forced === play/pause/loading icon click only on user interaction or triggered by isLoading timeout
+          if (force) {
+            this.nextRandom(true) // will trigger a new isLoading timeout with force = true
+          // mostly event triggered
+          } else {
+            this.pause() // will trigger a new isLoading timeout with force = true
+            this.play() // cancel pause isLoading and will trigger a new isLoading timeout with force = true
+          }
+        }, this.waitToPlayMs)
       }
     } else {
       this.html.classList.remove('loading')
