@@ -424,7 +424,7 @@ export default class Player {
     this.playBtn.querySelector('.pause').addEventListener('click', event => this.pause())
     this.playBtn.querySelector('.loading').addEventListener('click', event => {
       if (!this.loadingClickTimeout) this.loadingClickTimeout = setTimeout(() => {
-        this.isLoading(false, this.currentControl)
+        this.isLoading(false, this.currentControl, true)
         this.loadingClickTimeout = null
       }, 200)
     })
@@ -553,7 +553,7 @@ export default class Player {
   }
 
   play (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
-    this.isLoading(true, control)
+    this.isLoading(true, control, true)
     if (!eventTriggered) {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.playAll()
       if (control.paused) return control.play() // this wil trigger the event, which in turn will trigger this function
@@ -573,7 +573,7 @@ export default class Player {
   }
 
   pause (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
-    this.isLoading(false, control)
+    this.isLoading(false, control, true)
     if (!eventTriggered) {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.pauseAll()
       if (!control.paused) return control.pause() // this wil trigger the event, which in turn will trigger this function
@@ -664,8 +664,8 @@ export default class Player {
     this.html.className = this.mode
   }
 
-  isLoading (loading, control) {
-    if (control !== this.currentControl) return false
+  isLoading (loading, control, force = false) {
+    if (!force && control !== this.currentControl) return false
     if (loading) {
       if (this.mode !== 'loop-machine') this.html.classList.add('loading')
       if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
