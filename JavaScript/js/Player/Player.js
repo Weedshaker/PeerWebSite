@@ -733,19 +733,33 @@ export default class Player {
 
   get allReadyControls () {
     const allControls = this.allControls
-    let state = 5 // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState + state 5 which means it has control.duration
-    let controls = this.filterByReadyState(allControls, state) // 5
-    while (state > 1 && controls.length < Math.floor(allControls.length / 1.3)) {
+    let state = 9 // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState + state 5 which means it has control.duration
+    let controls = this.filterByReadyState(allControls, state) // 9
+    while (state > 0 && controls.length < Math.floor(allControls.length / 1.3)) {
       state--
-      controls = this.filterByReadyState(allControls, state) // 4, 3, 2, 1
+      controls = this.filterByReadyState(allControls, state) // (9 init 3 lines above), 8, 7, 6, 5, 4, 3, 2, 1, 0
     }
     return controls
   }
 
-  filterByReadyState (controls, state = 4) {
+  filterByReadyState (controls, state = 9) {
     return controls.filter(control => {
-      if (state === 5) return !!control.duration && control.readyState === 4
-      return control.readyState >= state
+      switch (state) {
+        case 9:
+          return !!control.duration && control.readyState === 4
+        case 8:
+          return !!control.duration && control.readyState === 3
+        case 7:
+          return !!control.duration && control.readyState === 2
+        case 6:
+          return !!control.duration && control.readyState === 1
+        case 5:
+          return !!control.duration
+        case 0:
+          return true
+        default:
+          return control.readyState >= state
+      }
     })
   }
 
