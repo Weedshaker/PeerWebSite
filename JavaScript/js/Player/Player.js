@@ -671,6 +671,15 @@ export default class Player {
       if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
         clearTimeout(this.waitToPlayTimeout)
         this.waitToPlayTimeout = setTimeout(() => {
+          // nextRandom and pause / play as reactions on loading === true timeout will always trigger some events which will have force === false which will always reset as pause/play
+          // for this reason we try random
+          if(!!Math.floor(Math.random() * 2)){
+            this.nextRandom(true)
+          } else {
+            this.pause()
+            this.play()
+          }
+          /*
           // forced === play/pause/loading icon click only on user interaction or triggered by isLoading timeout
           if (force) {
             this.nextRandom(true) // will trigger a new isLoading timeout with force = true
@@ -679,6 +688,8 @@ export default class Player {
             this.pause() // will trigger a new isLoading timeout with force = true
             this.play() // cancel pause isLoading and will trigger a new isLoading timeout with force = true
           }
+          */
+
         }, this.waitToPlayMs)
       }
     } else {
