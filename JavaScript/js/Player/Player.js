@@ -16,11 +16,12 @@ export default class Player {
     this.prevResetTollerance = 3 // sec., used to decide from when a track would be reset when going to prev track
     this.seekTime = 10 // sec., used for seek steps
     this.keyDownTollerance = 300 // ms, used to decide from holding down a key to start seeking
-    this.waitToPlayMs = 3500 // ms, in random mode waiting for play before skipping to next (every pause/play action will trigger multiple of native events which will reset isLoading nextRandom and postpone the nextRandom to trigger)
+    this.waitToPlayMs = 2000 // ms, in random mode waiting for play before skipping to next (every pause/play action will trigger multiple of native events which will reset isLoading nextRandom and postpone the nextRandom to trigger)
     // NOTE: tried pause/play quick command to skip to next but did not work on mobile except of starting all songs: this.waitSkipAtPausePlayMs = 2000 // ms, in between pushing pause <-> play to skip to next random song
 
     // internal use
     this.randomQueue = []
+    this._loadedmetadataControls = []
     this.onErrorExtendedToSourceIds = []
     this.respectRandom = true
     this.waitToPlayTimeout = null
@@ -30,11 +31,14 @@ export default class Player {
     this.isSender = isSender
     this.parent = parent
     // wait for the first media to load metadata bevor the player options initialize
-    document.body.addEventListener('loadedmetadata', event => this.init(), { once: true, capture: true })
-    document.body.addEventListener('loadedmetadata', event => this.refreshedInit(), true)
+    document.body.addEventListener('loadedmetadata', event => this.init(event), { once: true, capture: true })
+    document.body.addEventListener('loadedmetadata', event => this.refreshedInit(event), true)
   }
 
-  init () {
+  init (event) {
+    if (this.validateEvent(event) && !this.currentControlIndex) this.currentControl = event.target
+    let header = null
+    if ((header = document.querySelector('body > header'))) header.classList.add('down')
     this.html = document.querySelector('#' + this.id)
     this.htmlPlaceholder = document.querySelector('#' + this.id + '-placeholder')
     if (!this.html) return console.warn('SST: Player could not be started due to lack of html el hook #' + this.id)
@@ -44,7 +48,8 @@ export default class Player {
     this.setMode(document.body.innerText.search(/loop.{0,1}ma[s]{0,1}chine/i) !== -1 && 'loop-machine') // initial set last mode
   }
   
-  refreshedInit () {
+  refreshedInit (event) {
+    if (this.validateEvent(event)) this._loadedmetadataControls.push(event.target)
     this.setVolume() // initial set last volume
     this.allControls.forEach(control => this.onError(control)) // extended error handling
   }
@@ -541,6 +546,10 @@ export default class Player {
   }
 
   openPlayer (playerControls = this.playerControls, toggle = false) {
+    if (!this.openedPlayer) {
+      this.openedPlayer = true
+      this.play()
+    }
     const command = toggle ? 'toggle' : 'add'
     playerControls.classList[command]('open')
     let header = null
@@ -603,7 +612,7 @@ export default class Player {
     return null
   }
   
-  next (onlyReady = false, respectRandom = this.respectRandom) {
+  next (onlyReady, respectRandom = this.respectRandom) {
     if (respectRandom && this.mode === 'random') return this.nextRandom(onlyReady)
     const controls = onlyReady ? this.allReadyControls : this.allControls
     const index = controls.indexOf(this.currentControl) !== -1 ? controls.indexOf(this.currentControl) : this.currentControlIndex
@@ -624,7 +633,8 @@ export default class Player {
     return this.prev(false, false)
   }
 
-  nextRandom (onlyReady = true) {
+  nextRandom (onlyReady) {
+    if (onlyReady === undefined) onlyReady = !!Math.floor(Math.random() * 2)
     // randomly choose from time to time some control which is not ready yet, to kickoff loading
     let controls = onlyReady ? this.allReadyControls : this.allControls
     if (this.randomQueue.length >= controls.length) this.randomQueue.splice(0, this.randomQueue.length / 2) // clear ranedom queue to release songs to be played random
@@ -674,7 +684,7 @@ export default class Player {
           // nextRandom and pause / play as reactions on loading === true timeout will always trigger some events which will have force === false which will always reset as pause/play
           // for this reason we try random
           if(!!Math.floor(Math.random() * 2)){
-            this.nextRandom(!!Math.floor(Math.random() * 2))
+            this.nextRandom()
           } else {
             this.pause()
             this.play()
@@ -732,10 +742,10 @@ export default class Player {
   }
 
   get allReadyControls () {
-    const allControls = this.allControls
+    const allControls = this.loadedmetadataControls
     let state = 9 // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState + state 5 which means it has control.duration
     let controls = this.filterByReadyState(allControls, state) // 9
-    while (state > 0 && controls.length < Math.floor(allControls.length / 1.3)) {
+    while (state > 0 && controls.every(control => this.randomQueue.includes(control))) {
       state--
       controls = this.filterByReadyState(allControls, state) // (9 init 3 lines above), 8, 7, 6, 5, 4, 3, 2, 1, 0
     }
@@ -744,6 +754,7 @@ export default class Player {
 
   filterByReadyState (controls, state = 9) {
     return controls.filter(control => {
+      if (control.classList.contains('ipfsLoading')) return false
       switch (state) {
         case 9:
           return !!control.duration && control.readyState === 4
@@ -761,6 +772,10 @@ export default class Player {
           return control.readyState >= state
       }
     })
+  }
+
+  get loadedmetadataControls () {
+    return this._loadedmetadataControls.filter(control => this.allControls.includes(control))
   }
 
   set currentControlIndex (index) {
