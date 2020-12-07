@@ -683,11 +683,11 @@ export default class Player {
         this.waitToPlayTimeout = setTimeout(() => {
           // nextRandom and pause / play as reactions on loading === true timeout will always trigger some events which will have force === false which will always reset as pause/play
           // for this reason we try random
-          if(!!Math.floor(Math.random() * 2)){
-            this.nextRandom()
-          } else {
+          if(!!control.duration && !!Math.floor(Math.random() * 2)){
             this.pause()
             this.play()
+          } else {
+            this.nextRandom()
           }
           /*
           // forced === play/pause/loading icon click only on user interaction or triggered by isLoading timeout
@@ -799,6 +799,6 @@ export default class Player {
   }
 
   get mode () {
-    return localStorage.getItem(`mode_${location.hash}`) || 'repeat-all'
+    return localStorage.getItem(`mode_${location.hash}`) || 'random'
   }
 }
