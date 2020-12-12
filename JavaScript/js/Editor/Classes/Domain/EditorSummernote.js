@@ -63,6 +63,43 @@ export class EditorSummernote extends MasterEditor {
 				onFileUpload: (files, text) => {
 					if(files.length > 0) this.loadFileInit(files, text, undefined, false);
 				},
+				onPaste: $event => {
+					if (localStorage.getItem('fileType') === 'webrtc') return true;
+					const clipboardData = ($event.originalEvent || $event).clipboardData;
+					const files = []; // files can be received sync and for that straight stored as file obj
+					const promises = []; // strings con not be received sync but by callback, for that stored in promises resolving to string
+					Array.from(clipboardData.items).forEach(item => {
+						if (item.kind === 'file') {
+							files.push(item.getAsFile());
+						} else if (item.kind === 'string') {
+							promises.push(new Promise(resolve => item.getAsString(string => resolve(string))));
+						}
+					});
+					if (!!files.length) {
+						let text = files[0].name;
+						if (!!promises.length) {
+							Promise.all(promises).then(strings => {
+								text = `${strings.reduce((prev, curr) => {
+									const match = curr.match(/alt="(.*?)"/)
+									if (match && match[1]) return prev ? (prev += `_${match[1]}`) : match[1]
+									return prev
+								}, '')}${text ? `_${text}` : ''}`;
+								this.loadFileInit(files, text);
+							});
+						} else {
+							this.loadFileInit(files, text);
+						}
+						// remove the default added base64 string
+						$event.preventDefault();
+						$event.isDefaultPrevented();
+						$event.stopPropagation();
+						$event.isPropagationStopped();
+						$event.stopImmediatePropagation();
+						$event.isImmediatePropagationStopped();
+						return false;
+					}
+					return true;
+				},
 				// trash icon
 				onMediaDelete: ($target, container) => {
 					// remove element in container
@@ -190,6 +227,11 @@ export class EditorSummernote extends MasterEditor {
 						// sw do not intercept videos for streaming but give mimetype down
 						file.link += `?filename=${this.sanitizForInlineError(result.name)}${result.audioVideo ? '&audioVideo=true' : ''}`;
 						outerNode.classList.remove('ipfsLoading');
+						// workaround for not showing any indication on loading the image when png (jpg's are covered with style.css background)
+						if (result.type[0] === 'img') {
+							outerNode.classList.add('img-bg')
+							outerNode.addEventListener('load', event => outerNode.classList.remove('img-bg'));
+						}
 						// static error handling which also works at receiver
 						if (result.type[0] === 'a') {
 							outerNode.setAttribute('download', result.name);

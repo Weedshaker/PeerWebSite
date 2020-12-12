@@ -93,6 +93,9 @@
                     $fileBtn = self.$dialog.find('.note-file-btn');
 
                 ui.onDialogShown(self.$dialog, function () {
+                    self.$dialog.find('input[name="fileType"]').click(function (event) {
+                        localStorage.setItem('fileType', self.$dialog.find('input[name="fileType"]:checked').val());
+                    });
                     $fileBtn.click(function (event) {
                         event.preventDefault();
                         localStorage.setItem('fileType', self.$dialog.find('input[name="fileType"]:checked').val());
