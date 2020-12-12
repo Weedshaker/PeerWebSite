@@ -1,4 +1,3 @@
-import { mime } from './helpers/mimeTypes.js';
 import {Helper} from 'WebTorrent/Classes/Helper/Helper.js';
 
 // Debug: http://localhost:3000/index_debug.html#ipfs:QmT8dAKuCVQ7TTHV5ezNFE272cs15PyigJGV663GHeen6t
@@ -81,7 +80,7 @@ export class IPFS {
         return new Promise(resolve => {
             url = this.digestUrl(url);
             let type = '';
-            if (url.cid && url.filename && (type = mime.getType(url.filename, false))) {
+            if (url.cid && url.filename && (type = this.Helper.mime.getType(url.filename, false))) {
                 this.cat(url.cid, true).then(chunks => resolve(new Blob(chunks, { type }))).catch(error => {
                     console.error(`SST_IPFS_onFetchError: Could not find ${url} nor findPeer at el:`, error);
                     resolve(null)
@@ -114,7 +113,7 @@ export class IPFS {
             el.classList.add('ipfsLoading');
             if (isAudioVideo && el.parentElement) el.parentElement.classList.add('ipfsLoading');
             return this.cat(url.cid, true).then(chunks => {
-                el[type[1]] = URL.createObjectURL(new Blob(chunks, { type: mime.getType(name) }));
+                el[type[1]] = URL.createObjectURL(new Blob(chunks, { type: this.Helper.mime.getType(name) }));
                 el.classList.remove('ipfsLoading');
                 if (isAudioVideo && el.parentElement) {
                     el.parentElement.classList.remove('ipfsLoading');

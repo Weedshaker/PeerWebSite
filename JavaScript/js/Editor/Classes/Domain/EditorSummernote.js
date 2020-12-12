@@ -79,11 +79,13 @@ export class EditorSummernote extends MasterEditor {
 						let text = files[0].name;
 						if (!!promises.length) {
 							Promise.all(promises).then(strings => {
-								text = `${strings.reduce((prev, curr) => {
+								const string = strings.reduce((prev, curr) => {
 									const match = curr.match(/alt="(.*?)"/)
 									if (match && match[1]) return prev ? (prev += `_${match[1]}`) : match[1]
 									return prev
-								}, '')}${text ? `_${text}` : ''}`;
+								}, '').split('/').splice(-1)[0];
+								const mime = this.Helper.mime.getType(string, null);
+								text = mime ? string : `${string}_${text}`;
 								this.loadFileInit(files, text);
 							});
 						} else {
