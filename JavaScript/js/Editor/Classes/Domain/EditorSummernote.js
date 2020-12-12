@@ -207,7 +207,7 @@ export class EditorSummernote extends MasterEditor {
 		$('.note-btn-group.btn-group.note-insert').prepend(button.render());
 	}
 	loadFileInit(files, text, container = this.container, image = true){
-		const type = localStorage.getItem('fileType');
+		const type = localStorage.getItem('fileType') || 'ipfs';
 		if (type === 'webtorrent'){
 			// check for doublicated video, this has a browser bug, which eventuelly looses the blob
 			let torrent;
