@@ -57,7 +57,7 @@ export class EditorSummernote extends MasterEditor {
 			// catch drag and drop file
 			callbacks: {
 				// If no WebTorrent remove the onImageUpload callback and let default handle it
-				onImageload: (files, text) => {
+				onImageUpload: (files, text) => {
 					if(files.length > 0) this.loadFileInit(files, text);
 				},
 				onFileUpload: (files, text) => {
