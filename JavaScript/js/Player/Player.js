@@ -642,7 +642,6 @@ export default class Player {
     controls = controls.filter(control => !this.randomQueue.includes(control))
     const control = controls[Math.floor(Math.random() * controls.length)]
     if (control) {
-      if (control === this.currentControl) return this.nextRandom(onlyReady)
       this.randomQueue.push(control)
       this.play(control)
       return control

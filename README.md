@@ -96,4 +96,4 @@ Type `App` in the dev-tools console to expose the whole peerweb.site application
 ### Big Thanks to
 Muaz Khan, Juan Benet, Feross and all others who contributed to this repo and this repos dependencies! Also thanks for your support, using this application, spreading the word and a github star ;-)
 
-*PeerWebSite is released under MIT License . Copyright (c) Silvan Strübi.*
+*PeerWebSite is released under GPL-3.0 License . Copyright (c) Silvan Strübi.*
