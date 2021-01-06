@@ -111,12 +111,16 @@ export class IPFS {
             url = this.digestUrl(url);
             if (!url.cid) return errorFunc('NO cid found!');
             el.classList.add('ipfsLoading');
-            if (isAudioVideo && el.parentElement) el.parentElement.classList.add('ipfsLoading');
+            if (isAudioVideo && el.parentElement) {
+                el.parentElement.classList.add('ipfsLoading');
+                el.parentElement.sst_hasError = true;
+            }
             return this.cat(url.cid, true).then(chunks => {
                 el[type[1]] = URL.createObjectURL(new Blob(chunks, { type: this.Helper.mime.getType(name) }));
                 el.classList.remove('ipfsLoading');
                 if (isAudioVideo && el.parentElement) {
                     el.parentElement.classList.remove('ipfsLoading');
+                    el.parentElement.sst_hasError = false;
                     el.parentElement.innerHTML = el.parentElement.innerHTML;
                 }
             }).catch(error => errorFunc(error));

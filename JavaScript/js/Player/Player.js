@@ -729,7 +729,7 @@ export default class Player {
     if (control && control.id && !this.onErrorExtendedToSourceIds.includes(control.id)) {
       let source = null
       if ((source = control.querySelector('source')) && typeof source.onerror === 'function') control.addEventListener('error', event => {
-        this.isLoading(true, control)
+        this.next(true)
         // if it is not already ipfs.cat then trigger it
         if (!source.classList.contains('ipfsLoading')) source.onerror()
       }, {once: true})
@@ -738,7 +738,8 @@ export default class Player {
   }
 
   get allControls () {
-    return Array.from(document.querySelectorAll('[controls]'))
+    // exclude any loading controls and error controls
+    return Array.from(document.querySelectorAll('[controls]')).filter(control => !control.classList.contains('ipfsLoading') && !control.sst_hasError)
   }
 
   get allReadyControls () {
@@ -754,7 +755,6 @@ export default class Player {
 
   filterByReadyState (controls, state = 9) {
     return controls.filter(control => {
-      if (control.classList.contains('ipfsLoading')) return false
       switch (state) {
         case 9:
           return !!control.duration && control.readyState === 4
