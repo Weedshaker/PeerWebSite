@@ -37,7 +37,7 @@ export default class Player {
   }
 
   init (event) {
-    if (this.validateEvent(event) && !this.currentControlIndex) this.currentControl = event.target
+    if (this.validateEvent(event) && (!this.currentControlIndex || this.mode === 'random')) this.currentControl = event.target
     let header = null
     if ((header = document.querySelector('body > header'))) header.classList.add('down')
     this.html = document.querySelector('#' + this.id)
