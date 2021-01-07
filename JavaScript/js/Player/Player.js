@@ -472,7 +472,7 @@ export default class Player {
 
   setVolume (volume = Number(localStorage.getItem('lastVolume') || 1)) {
     volume = volume > 1 ? 1 : volume < 0 ? 0 : volume
-    this.allPlayableControls.forEach(control => control.volume = volume)
+    this.allControls.forEach(control => control.volume = volume)
     localStorage.setItem('lastVolume', volume)
   }
 
@@ -593,7 +593,7 @@ export default class Player {
   }
 
   pauseAll (except = null) {
-    this.allPlayableControls.forEach(control => {
+    this.allControls.forEach(control => {
       if (control !== except) this.pause(control, undefined, false)
     })
   }
@@ -706,7 +706,11 @@ export default class Player {
       }
     } else {
       this.html.classList.remove('loading')
-      if (control === this.currentControl) control.classList.remove('ipfsLoading')
+      if (control === this.currentControl) {
+        control.classList.remove('ipfsLoading')
+        let source = null
+        if ((source = control.querySelector('source'))) source.classList.remove('ipfsLoading')
+      }
       if (this.mode === 'random') clearTimeout(this.waitToPlayTimeout)
     }
   }
