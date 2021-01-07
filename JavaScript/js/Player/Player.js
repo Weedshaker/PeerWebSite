@@ -129,6 +129,8 @@ export default class Player {
         this.isLoading(false, event.target)
         this.saveCurrentTime(event.target)
         this.setDocumentTitle()
+        // after error there was the case that the button wouldn't switch to play
+        this.playBtn.classList.add('is-playing')
       }
     }, true)
     // keep all at same volume
