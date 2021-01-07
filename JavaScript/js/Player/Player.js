@@ -472,7 +472,7 @@ export default class Player {
 
   setVolume (volume = Number(localStorage.getItem('lastVolume') || 1)) {
     volume = volume > 1 ? 1 : volume < 0 ? 0 : volume
-    this.allControls.forEach(control => control.volume = volume)
+    this.allPlayableControls.forEach(control => control.volume = volume)
     localStorage.setItem('lastVolume', volume)
   }
 
@@ -577,7 +577,7 @@ export default class Player {
   }
 
   playAll (except = null) {
-    this.allControls.forEach(control => {
+    this.allPlayableControls.forEach(control => {
       if (control !== except && control.paused) this.play(control, undefined, false)
     })
   }
@@ -593,13 +593,13 @@ export default class Player {
   }
 
   pauseAll (except = null) {
-    this.allControls.forEach(control => {
+    this.allPlayableControls.forEach(control => {
       if (control !== except) this.pause(control, undefined, false)
     })
   }
 
   prev (resetTrack = true, respectRandom = this.respectRandom) {
-    const controls = this.allControls
+    const controls = this.allPlayableControls
     if (resetTrack && this.currentControl.currentTime > this.prevResetTollerance) {
       this.play()
       return this.setCurrentTime(this.currentControl, undefined, true)
@@ -615,7 +615,7 @@ export default class Player {
   
   next (onlyReady, respectRandom = this.respectRandom) {
     if (respectRandom && this.mode === 'random') return this.nextRandom(onlyReady)
-    const controls = onlyReady ? this.allReadyControls : this.allControls
+    const controls = onlyReady ? this.allReadyControls : this.allPlayableControls
     const index = controls.indexOf(this.currentControl) !== -1 ? controls.indexOf(this.currentControl) : this.currentControlIndex
     const control = controls[index + 1 >= controls.length ? 0 : index + 1]
     if (control) {
@@ -637,7 +637,7 @@ export default class Player {
   nextRandom (onlyReady) {
     if (onlyReady === undefined) onlyReady = !!Math.floor(Math.random() * 2)
     // randomly choose from time to time some control which is not ready yet, to kickoff loading
-    let controls = onlyReady ? this.allReadyControls : this.allControls
+    let controls = onlyReady ? this.allReadyControls : this.allPlayableControls
     if (this.randomQueue.length >= controls.length) this.randomQueue.splice(0, Math.ceil(this.randomQueue.length / 2)) // clear ranedom queue to release songs to be played random
     controls = controls.filter(control => !this.randomQueue.includes(control))
     const control = controls[Math.floor(Math.random() * controls.length)]
@@ -679,6 +679,8 @@ export default class Player {
     if (loading) {
       if (this.mode !== 'loop-machine') this.html.classList.add('loading')
       if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
+        // isLoading is the most called function on any changes, in case onerror did not trigger
+        if (!force && (control.classList.contains('ipfsLoading') || control.sst_hasError)) return this.next(true)
         clearTimeout(this.waitToPlayTimeout)
         this.waitToPlayTimeout = setTimeout(() => {
           // nextRandom and pause / play as reactions on loading === true timeout will always trigger some events which will have force === false which will always reset as pause/play
@@ -738,8 +740,12 @@ export default class Player {
   }
 
   get allControls () {
+    return Array.from(document.querySelectorAll('[controls]'))
+  }
+
+  get allPlayableControls () {
     // exclude any loading controls and error controls
-    return Array.from(document.querySelectorAll('[controls]')).filter(control => !control.classList.contains('ipfsLoading') && !control.sst_hasError)
+    return this.allControls.filter(control => !control.classList.contains('ipfsLoading') && !control.sst_hasError)
   }
 
   get allReadyControls () {
@@ -775,7 +781,7 @@ export default class Player {
   }
 
   get loadedmetadataControls () {
-    return this._loadedmetadataControls.filter(control => this.allControls.includes(control))
+    return this._loadedmetadataControls.filter(control => this.allPlayableControls.includes(control))
   }
 
   set currentControlIndex (index) {
@@ -787,11 +793,11 @@ export default class Player {
   }
   
   set currentControl (control) {
-    this.currentControlIndex = this.allControls.indexOf(control)
+    this.currentControlIndex = this.allPlayableControls.indexOf(control)
   }
 
   get currentControl () {
-    return this.allControls[this.currentControlIndex] || document.createElement('audio')
+    return this.allPlayableControls[this.currentControlIndex] || document.createElement('audio')
   }
 
   set mode (mode) {
