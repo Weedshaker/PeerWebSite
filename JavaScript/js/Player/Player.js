@@ -676,14 +676,15 @@ export default class Player {
     this.html.className = this.mode
   }
 
+  // only force with user interaction eg. play / pause
   isLoading (loading, control, force = false) {
     if (!force && control !== this.currentControl) return false
     if (loading) {
       if (this.mode !== 'loop-machine') this.html.classList.add('loading')
       if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
-        // isLoading is the most called function on any changes, in case onerror did not trigger
-        if (!force && (control.classList.contains('ipfsLoading') || control.sst_hasError)) return this.next(true)
         clearTimeout(this.waitToPlayTimeout)
+        // isLoading is the most called function on any changes, in case onerror did not trigger
+        if (control.classList.contains('ipfsLoading') || control.sst_hasError) return this.next(true)
         this.waitToPlayTimeout = setTimeout(() => {
           // nextRandom and pause / play as reactions on loading === true timeout will always trigger some events which will have force === false which will always reset as pause/play
           // for this reason we try random
