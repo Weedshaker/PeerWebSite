@@ -637,9 +637,14 @@ export default class Player {
   }
 
   nextRandom (onlyReady) {
-    if (onlyReady === undefined) onlyReady = !!Math.floor(Math.random() * 2)
-    // randomly choose from time to time some control which is not ready yet, to kickoff loading
-    let controls = onlyReady ? this.allReadyControls : this.allPlayableControls
+    let allReadyControls = []
+    let controls = []
+    if (onlyReady === false) {
+      controls = this.allPlayableControls
+    } else {
+      allReadyControls = this.allReadyControls
+      controls = !!allReadyControls.length ? allReadyControls : this.allPlayableControls
+    }
     if (this.randomQueue.length >= controls.length) this.randomQueue.splice(0, Math.ceil(this.randomQueue.length / 2)) // clear ranedom queue to release songs to be played random
     controls = controls.filter(control => !this.randomQueue.includes(control))
     const control = controls[Math.floor(Math.random() * controls.length)]
