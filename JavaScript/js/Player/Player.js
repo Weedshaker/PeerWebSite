@@ -690,6 +690,7 @@ export default class Player {
           // for this reason we try random
           if(!!control.duration && !!Math.floor(Math.random() * 2)){
             this.pause()
+            this.setCurrentTime(control, 0)
             this.play()
           } else {
             this.nextRandom()
@@ -764,7 +765,7 @@ export default class Player {
     const allControls = this.loadedmetadataControls
     let state = 9 // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState + state 5 which means it has control.duration
     let controls = this.filterByReadyState(allControls, state) // 9
-    while (state > 0 && controls.every(control => this.randomQueue.includes(control))) {
+    while (state > 0 && (!controls.length || controls.every(control => this.randomQueue.includes(control)))) {
       state--
       controls = this.filterByReadyState(allControls, state) // (9 init 3 lines above), 8, 7, 6, 5, 4, 3, 2, 1, 0
     }
