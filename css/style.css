@@ -267,6 +267,7 @@ span.qr.open {
     z-index: 10000;
 }
 span.qr.open > img {
+    cursor: url('../img/xp-middle-finger.cur'), pointer; /* just kidding, I love you all! */
     margin: auto;
     max-height: 100%;
     max-width: 100%;
@@ -342,6 +343,21 @@ span[style="font-size: 36px;"] {
     from{transform: rotate(0deg); opacity: 0.2;}
     50%{transform: rotate(180deg); opacity: 1.0;}
     to{transform: rotate(360deg); opacity: 0.2;}
+}
+.blobLoadingText {
+    animation: appear 30s ease-out;
+    margin-left: 10px;
+}
+@keyframes appear {
+    0% {
+        opacity: 0;
+    }
+    90% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 /* ProgressBar */
 a.torrentControls{

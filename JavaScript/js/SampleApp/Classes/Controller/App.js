@@ -5,6 +5,8 @@ import {MasterApp} from 'SampleApp/Prototype/Controller/MasterApp.js';
 export class App extends MasterApp {
 	constructor(){
 		super();
+
+		this.receiverWaitMs = 60000; // 1min
 	}
 	createElements(name = 'open-or-join-room'){
 		document.body.setAttribute('isSender', this.isSender);
@@ -108,8 +110,10 @@ export class App extends MasterApp {
 				location.reload();
 			// manually triggered
 			} else if (this.checkHashType(location.hash) === 'magnet') {
+				const timeout = setTimeout(() => location.reload(), this.receiverWaitMs);
 				const torrent = this.WebTorrentReceiver.add(location.hash.substr(1), undefined, undefined, undefined, undefined, torrent => {
 					if (torrent.files && torrent.files[0] && torrent.files[0].name.includes('peerWebSite')) {
+						clearTimeout(timeout);
 						torrent.files[0].getBlob((err, blob) => {
 							const reader = new FileReader();
 							reader.onload = (reader => {
@@ -144,8 +148,10 @@ export class App extends MasterApp {
 				}
 				$('.headerReceiver > .counterWebRTC').hide();
 			} else if (this.checkHashType(location.hash) === 'ipfs') {
+				const timeout = setTimeout(() => location.reload(), this.receiverWaitMs);
 				const cid = location.hash.substr(6);
 				this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => {
+					clearTimeout(timeout);
 					this.IPFS.pinCid(cid);
 					this.HTML.setData(this.receiveCont, {message: text});
 					this.HTML.setTitle(this.HTML.getFirstText(text));

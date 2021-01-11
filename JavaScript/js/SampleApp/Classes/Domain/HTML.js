@@ -24,7 +24,7 @@ export class HTML extends MasterHTML {
 					<div id="info" class="flex">
 						<div class="offline">YOU ARE OFFLINE!!!</div>
 						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
-						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.120<span id="sw-version"></span>; Visit Github for more Infos!</a>
+						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.121<span id="sw-version"></span>; Visit Github for more Infos!</a>
 						<a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
@@ -94,7 +94,7 @@ export class HTML extends MasterHTML {
 				const counterWebTorrent = this.createWebtorrentControls(controls, isSender, headerReceiver);
 				this.containers.push(controls);
 				// main containers
-				this.loadingAnimation = `<span class="blobLoading ${this.parent.checkHashType(location.hash) === 'magnet' ? 'torrentLoading' : this.parent.checkHashType(location.hash) === 'ipfs' ? 'ipfsLoading' : ''}"></span>`;
+				this.loadingAnimation = `<span class="blobLoading ${this.parent.checkHashType(location.hash) === 'magnet' ? 'torrentLoading' : this.parent.checkHashType(location.hash) === 'ipfs' ? 'ipfsLoading' : ''}"></span><span class="blobLoadingText">Please, be patient. Decentralized content can take a while to load...</span>`;
 				let sender = $(`<div id="${this.idNames[2]}">${window.sst && window.sst.karma ? '' : isSender && (this.parent.checkHashType(location.hash) !== 'ipfs' || !/="http.*?gateway\.ipfs\.io.*?#js.*?"/g.test(localStorage.getItem(location.hash)) /* ipfs javascript does not get triggered else */) ? localStorage.getItem(location.hash) || '' : ''}</div>`);
 				this.containers.push(sender);
 				let receiver = $(`<div id="${this.idNames[3]}">${window.sst && window.sst.karma ? '' : isSender ? 'WEBRTC response...' : this.parent.checkHashType(location.hash) !== 'ipfs' || !/="http.*?gateway\.ipfs\.io.*?#js.*?"/g.test(localStorage.getItem(location.hash)) /* ipfs javascript does not get triggered else */ ? localStorage.getItem(location.hash) || this.loadingAnimation : this.loadingAnimation}</div>`);
@@ -255,7 +255,7 @@ export class HTML extends MasterHTML {
 		}
 	}
 	saveData(key = location.hash, data = this.Editor.getData(), retry = true){
-		if (key && data && data.length >= 15) {
+		if (key && data && data.length >= 15 && !data.includes('blobLoadingText')) {
 			try {
 				localStorage.setItem(key, data);
 			} catch (error) {

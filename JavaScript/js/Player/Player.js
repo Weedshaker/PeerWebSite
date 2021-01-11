@@ -16,7 +16,7 @@ export default class Player {
     this.prevResetTollerance = 3 // sec., used to decide from when a track would be reset when going to prev track
     this.seekTime = 10 // sec., used for seek steps
     this.keyDownTollerance = 300 // ms, used to decide from holding down a key to start seeking
-    this.waitToPlayMs = 1999 // ms, in random mode waiting for play before skipping to next (every pause/play action will trigger multiple of native events which will reset isLoading nextRandom and postpone the nextRandom to trigger)
+    this.waitToPlayMs = 999 // ms, in random mode waiting for play before skipping to next (every pause/play action will trigger multiple of native events which will reset isLoading nextRandom and postpone the nextRandom to trigger)
     // Note: EventListener named eg. 'waiting' retrigger the this.isLoading( faster than the waitToPlayMs = 10000 , for this keep it lower
     // NOTE: tried pause/play quick command to skip to next but did not work on mobile except of starting all songs: this.waitSkipAtPausePlayMs = 2000 // ms, in between pushing pause <-> play to skip to next random song
 
@@ -570,6 +570,7 @@ export default class Player {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.playAll()
       if (control.paused) return control.play() // this wil trigger the event, which in turn will trigger this function
     }
+    if (this.mode === 'random' && !this.randomQueue.includes(control)) this.randomQueue.push(control)
     this.currentControl = control
     this.playBtn.classList.add('is-playing')
     this.setTitleText(undefined, control)
@@ -649,7 +650,6 @@ export default class Player {
     controls = controls.filter(control => !this.randomQueue.includes(control))
     const control = controls[Math.floor(Math.random() * controls.length)]
     if (control) {
-      this.randomQueue.push(control)
       this.play(control)
       return control
     }
