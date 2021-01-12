@@ -566,6 +566,7 @@ export default class Player {
   }
 
   play (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
+    this.isLoading(true, control, !eventTriggered)
     if (!eventTriggered) {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.playAll()
       if (control.paused) return control.play() // this wil trigger the event, which in turn will trigger this function
