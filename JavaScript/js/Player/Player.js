@@ -16,7 +16,7 @@ export default class Player {
     this.prevResetTollerance = 3 // sec., used to decide from when a track would be reset when going to prev track
     this.seekTime = 10 // sec., used for seek steps
     this.keyDownTollerance = 300 // ms, used to decide from holding down a key to start seeking
-    this.waitToPlayMs = 10000 // ms, in random mode waiting for play before skipping to next (every pause/play action will trigger multiple of native events which will reset isLoading nextRandom and postpone the nextRandom to trigger)
+    this.waitToPlayMs = 9000 // ms, in random mode waiting for play before skipping to next (every pause/play action will trigger multiple of native events which will reset isLoading nextRandom and postpone the nextRandom to trigger)
     // Note: EventListener named eg. 'waiting' retrigger the this.isLoading( faster than the waitToPlayMs = 10000 , for this keep it lower
     // NOTE: tried pause/play quick command to skip to next but did not work on mobile except of starting all songs: this.waitSkipAtPausePlayMs = 2000 // ms, in between pushing pause <-> play to skip to next random song
 
@@ -696,9 +696,9 @@ export default class Player {
     // skip to next if song fails to play
     clearTimeout(this.waitToPlayTimeout)
     if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
-      // isLoading is the most called function on any changes, in case onerror did not trigger
-      if (control.classList.contains('ipfsLoading') || control.sst_hasError) return this.nextRandom()
       this.waitToPlayTimeout = setTimeout(() => {
+        // isLoading is the most called function on any changes, in case onerror did not trigger
+        if (control.classList.contains('ipfsLoading') || control.sst_hasError) return this.nextRandom()
         if(!!control.duration && !!Math.floor(Math.random() * 2)){
           this.pause()
           this.setCurrentTime(control, 0)
@@ -732,13 +732,13 @@ export default class Player {
       if ((source = control.querySelector('source')) && typeof source.onerror === 'function') {
         control.addEventListener('error', event => {
           control.sst_hasError = true
-          if (this.mode === 'random' && control === this.currentControl) this.nextRandom()
+          this.isLoading(true, control)
           // if it is not already ipfs.cat then trigger it
           if (!source.classList.contains('ipfsLoading')) source.onerror()
         }, {once: true})
         source.addEventListener('error', event => {
           control.sst_hasError = true
-          if (this.mode === 'random' && control === this.currentControl) this.nextRandom()
+          this.isLoading(true, control)
         }, {once: true})
       }
       this.onErrorExtendedToSourceIds.push(control.id)
