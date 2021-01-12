@@ -745,12 +745,12 @@ export default class Player {
       let source = null
       if ((source = control.querySelector('source')) && typeof source.onerror === 'function') {
         control.addEventListener('error', event => {
-          if (control === this.currentControl) this.next(true)
+          if (control === this.currentControl) this.next(true, true)
           // if it is not already ipfs.cat then trigger it
           if (!source.classList.contains('ipfsLoading')) source.onerror()
         }, {once: true})
         source.addEventListener('error', event => {
-          if (control === this.currentControl) this.next(true)
+          if (control === this.currentControl) this.next(true, true)
         })
       }
       this.onErrorExtendedToSourceIds.push(control.id)
