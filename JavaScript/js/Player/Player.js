@@ -16,7 +16,7 @@ export default class Player {
     this.prevResetTollerance = 3 // sec., used to decide from when a track would be reset when going to prev track
     this.seekTime = 10 // sec., used for seek steps
     this.keyDownTollerance = 300 // ms, used to decide from holding down a key to start seeking
-    this.waitToPlayMs = 5000 // ms, in random mode waiting for play before skipping to next (every pause/play action will trigger multiple of native events which will reset isLoading nextRandom and postpone the nextRandom to trigger)
+    this.waitToPlayMs = 15000 // ms, in random mode waiting for play before skipping to next (every pause/play action will trigger multiple of native events which will reset isLoading nextRandom and postpone the nextRandom to trigger)
     // Note: EventListener named eg. 'waiting' retrigger the this.isLoading( faster than the waitToPlayMs = 10000 , for this keep it lower
     // NOTE: tried pause/play quick command to skip to next but did not work on mobile except of starting all songs: this.waitSkipAtPausePlayMs = 2000 // ms, in between pushing pause <-> play to skip to next random song
 
@@ -59,10 +59,10 @@ export default class Player {
   addEventListeners() {
     // is media playing or not
     document.body.addEventListener('canplay', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target)
+			if (this.validateEvent(event)) this.isLoading(false, event.target)
     }, true)
     document.body.addEventListener('canplaythrough', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target)
+			if (this.validateEvent(event)) this.isLoading(false, event.target)
     }, true)
     document.body.addEventListener('complete', event => {
 			if (this.validateEvent(event)) this.isLoading(false, event.target)
@@ -87,7 +87,7 @@ export default class Player {
       }
     }, true)
     document.body.addEventListener('loadeddata', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target)
+			if (this.validateEvent(event)) this.isLoading(false, event.target)
     }, true)
     document.body.addEventListener('loadedmetadata', event => {
 			if (this.validateEvent(event)) this.isLoading(true, event.target)
@@ -102,14 +102,14 @@ export default class Player {
       this.sessionPlayed = true
     }, { capture: true, once: true })
     document.body.addEventListener('playing', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target)
+			if (this.validateEvent(event)) this.isLoading(false, event.target)
     }, true)
     document.body.addEventListener('ratechange', event => {
 			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
     document.body.addEventListener('seeked', event => {
 			if (this.validateEvent(event)) {
-        this.isLoading(true, event.target)
+        this.isLoading(false, event.target)
         this.respectRandom = true
         this.saveCurrentTime(event.target)
       }
@@ -263,6 +263,7 @@ export default class Player {
           justify-content: center;
         }
         #${this.id} section.controls > .title {
+          cursor: pointer;
           grid-area: title;
           justify-content: start;
           overflow: hidden;
@@ -565,7 +566,6 @@ export default class Player {
   }
 
   play (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
-    this.isLoading(true, control, !eventTriggered)
     if (!eventTriggered) {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.playAll()
       if (control.paused) return control.play() // this wil trigger the event, which in turn will trigger this function
@@ -731,13 +731,15 @@ export default class Player {
       let source = null
       if ((source = control.querySelector('source')) && typeof source.onerror === 'function') {
         control.addEventListener('error', event => {
+          control.sst_hasError = true
           if (control === this.currentControl) this.next(true, true)
           // if it is not already ipfs.cat then trigger it
           if (!source.classList.contains('ipfsLoading')) source.onerror()
         }, {once: true})
         source.addEventListener('error', event => {
+          control.sst_hasError = true
           if (control === this.currentControl) this.next(true, true)
-        })
+        }, {once: true})
       }
       this.onErrorExtendedToSourceIds.push(control.id)
     }

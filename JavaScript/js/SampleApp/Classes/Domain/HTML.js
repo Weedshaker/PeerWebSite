@@ -24,7 +24,7 @@ export class HTML extends MasterHTML {
 					<div id="info" class="flex">
 						<div class="offline">YOU ARE OFFLINE!!!</div>
 						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
-						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.123<span id="sw-version"></span>; Visit Github for more Infos!</a>
+						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.124<span id="sw-version"></span>; Visit Github for more Infos!</a>
 						<a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
