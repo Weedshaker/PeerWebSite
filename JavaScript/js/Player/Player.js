@@ -16,7 +16,7 @@ export default class Player {
     this.prevResetTollerance = 3 // sec., used to decide from when a track would be reset when going to prev track
     this.seekTime = 10 // sec., used for seek steps
     this.keyDownTollerance = 300 // ms, used to decide from holding down a key to start seeking
-    this.waitToPlayMs = 15000 // ms, in random mode waiting for play before skipping to next (every pause/play action will trigger multiple of native events which will reset isLoading nextRandom and postpone the nextRandom to trigger)
+    this.waitToPlayMs = 10000 // ms, in random mode waiting for play before skipping to next (every pause/play action will trigger multiple of native events which will reset isLoading nextRandom and postpone the nextRandom to trigger)
     // Note: EventListener named eg. 'waiting' retrigger the this.isLoading( faster than the waitToPlayMs = 10000 , for this keep it lower
     // NOTE: tried pause/play quick command to skip to next but did not work on mobile except of starting all songs: this.waitSkipAtPausePlayMs = 2000 // ms, in between pushing pause <-> play to skip to next random song
 
