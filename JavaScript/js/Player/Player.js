@@ -697,7 +697,7 @@ export default class Player {
     clearTimeout(this.waitToPlayTimeout)
     if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
       // isLoading is the most called function on any changes, in case onerror did not trigger
-      if (control.classList.contains('ipfsLoading') || control.sst_hasError) return this.next(true)
+      if (control.classList.contains('ipfsLoading') || control.sst_hasError) return this.nextRandom()
       this.waitToPlayTimeout = setTimeout(() => {
         if(!!control.duration && !!Math.floor(Math.random() * 2)){
           this.pause()
@@ -732,13 +732,13 @@ export default class Player {
       if ((source = control.querySelector('source')) && typeof source.onerror === 'function') {
         control.addEventListener('error', event => {
           control.sst_hasError = true
-          if (control === this.currentControl) this.next(true, true)
+          if (this.mode === 'random' && control === this.currentControl) this.nextRandom()
           // if it is not already ipfs.cat then trigger it
           if (!source.classList.contains('ipfsLoading')) source.onerror()
         }, {once: true})
         source.addEventListener('error', event => {
           control.sst_hasError = true
-          if (control === this.currentControl) this.next(true, true)
+          if (this.mode === 'random' && control === this.currentControl) this.nextRandom()
         }, {once: true})
       }
       this.onErrorExtendedToSourceIds.push(control.id)
