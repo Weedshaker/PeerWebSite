@@ -16,7 +16,7 @@ export default class Player {
     this.prevResetTollerance = 3 // sec., used to decide from when a track would be reset when going to prev track
     this.seekTime = 10 // sec., used for seek steps
     this.keyDownTollerance = 300 // ms, used to decide from holding down a key to start seeking
-    this.waitToPlayMs = 999 // ms, in random mode waiting for play before skipping to next (every pause/play action will trigger multiple of native events which will reset isLoading nextRandom and postpone the nextRandom to trigger)
+    this.waitToPlayMs = 5000 // ms, in random mode waiting for play before skipping to next (every pause/play action will trigger multiple of native events which will reset isLoading nextRandom and postpone the nextRandom to trigger)
     // Note: EventListener named eg. 'waiting' retrigger the this.isLoading( faster than the waitToPlayMs = 10000 , for this keep it lower
     // NOTE: tried pause/play quick command to skip to next but did not work on mobile except of starting all songs: this.waitSkipAtPausePlayMs = 2000 // ms, in between pushing pause <-> play to skip to next random song
 
@@ -96,8 +96,11 @@ export default class Player {
 			if (this.validateEvent(event)) this.pause(event.target, true)
     }, true)
 		document.body.addEventListener('play', event => {
-			if (this.validateEvent(event)) this.play(event.target, true)
+      if (this.validateEvent(event)) this.play(event.target, true)
     }, true)
+    document.body.addEventListener('play', event => {
+      this.sessionPlayed = true
+    }, { capture: true, once: true })
     document.body.addEventListener('playing', event => {
 			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
@@ -549,10 +552,7 @@ export default class Player {
   }
 
   openPlayer (playerControls = this.playerControls, toggle = false) {
-    if (!this.openedPlayer) {
-      this.openedPlayer = true
-      this.play()
-    }
+    if (!this.sessionPlayed) this.play()
     const command = toggle ? 'toggle' : 'add'
     playerControls.classList[command]('open')
     let header = null
@@ -586,12 +586,12 @@ export default class Player {
   }
 
   pause (control = this.currentControl, eventTriggered = false, respectLoopMachine = true) {
-    this.isLoading(false, control, !eventTriggered)
     if (!eventTriggered) {
       if (respectLoopMachine && this.mode === 'loop-machine') return this.pauseAll()
       if (!control.paused) return control.pause() // this wil trigger the event, which in turn will trigger this function
     }
     if (this.currentControl === control) this.playBtn.classList.remove('is-playing')
+    this.isLoading(false, control, !eventTriggered) // important: isLoading must be after is-playing, otherwise timeout gets triggered
     this.setDocumentTitle(true) // reset document.title to original title
   }
 
@@ -684,43 +684,29 @@ export default class Player {
   // only force with user interaction eg. play / pause
   isLoading (loading, control, force = false) {
     if (!force && control !== this.currentControl) return false
-    if (loading) {
-      if (this.mode !== 'loop-machine') this.html.classList.add('loading')
-      if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
-        clearTimeout(this.waitToPlayTimeout)
-        // isLoading is the most called function on any changes, in case onerror did not trigger
-        if (control.classList.contains('ipfsLoading') || control.sst_hasError) return this.next(true)
-        this.waitToPlayTimeout = setTimeout(() => {
-          // nextRandom and pause / play as reactions on loading === true timeout will always trigger some events which will have force === false which will always reset as pause/play
-          // for this reason we try random
-          if(!!control.duration && !!Math.floor(Math.random() * 2)){
-            this.pause()
-            this.setCurrentTime(control, 0)
-            this.play()
-          } else {
-            this.nextRandom()
-          }
-          /*
-          // forced === play/pause/loading icon click only on user interaction or triggered by isLoading timeout
-          if (force) {
-            this.nextRandom(true) // will trigger a new isLoading timeout with force = true
-          // mostly event triggered
-          } else {
-            this.pause() // will trigger a new isLoading timeout with force = true
-            this.play() // cancel pause isLoading and will trigger a new isLoading timeout with force = true
-          }
-          */
-
-        }, this.waitToPlayMs)
-      }
+    // classes for the player interface
+    if (this.mode !== 'loop-machine' && loading) {
+      this.html.classList.add('loading')
     } else {
       this.html.classList.remove('loading')
-      if (control === this.currentControl) {
-        control.classList.remove('ipfsLoading')
-        let source = null
-        if ((source = control.querySelector('source'))) source.classList.remove('ipfsLoading')
-      }
-      if (this.mode === 'random') clearTimeout(this.waitToPlayTimeout)
+      control.classList.remove('ipfsLoading')
+      let source = null
+      if ((source = control.querySelector('source'))) source.classList.remove('ipfsLoading')
+    }
+    // skip to next if song fails to play
+    clearTimeout(this.waitToPlayTimeout)
+    if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
+      // isLoading is the most called function on any changes, in case onerror did not trigger
+      if (control.classList.contains('ipfsLoading') || control.sst_hasError) return this.next(true)
+      this.waitToPlayTimeout = setTimeout(() => {
+        if(!!control.duration && !!Math.floor(Math.random() * 2)){
+          this.pause()
+          this.setCurrentTime(control, 0)
+          this.play()
+        } else {
+          this.nextRandom()
+        }
+      }, this.waitToPlayMs)
     }
   }
 
@@ -781,13 +767,13 @@ export default class Player {
     return controls.filter(control => {
       switch (state) {
         case 9:
-          return !!control.duration && control.readyState === 4
+          return !!control.duration && control.readyState >= 4
         case 8:
-          return !!control.duration && control.readyState === 3
+          return !!control.duration && control.readyState >= 3
         case 7:
-          return !!control.duration && control.readyState === 2
+          return !!control.duration && control.readyState >= 2
         case 6:
-          return !!control.duration && control.readyState === 1
+          return !!control.duration && control.readyState >= 1
         case 5:
           return !!control.duration
         case 0:
