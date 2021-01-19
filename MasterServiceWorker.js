@@ -30,6 +30,7 @@ class MasterServiceWorker {
 			'./jspm_packages/github/pieroxy/lz-string@1.4.4/libs/lz-string.min.js',
 			'https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js',
 			'https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js',
+			'https://ipfs.io/ipfs/QmdapauyBinux52DUCfhRV44FTWmg6i1krvhQtKDEDWCPZ/lib/orbitdb.min.js'
 		];
 		this.doNotGetMessage = ['socket.io', 'libp2p.io', 'dns.google', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', 'herokuapp.com', 'webrtcweb.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
 		this.doGetMessage = ['magnet:', 'magnet/', 'ipfs/'];

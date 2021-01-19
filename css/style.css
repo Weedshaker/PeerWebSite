@@ -61,7 +61,7 @@ body > header > div.flex a {
     padding: 2px 0;
     text-align: center;
 }
-body > header > div.flex .recycle, body > header > div.flex .edit, body > header > div.flex .download-all, body > header > div.flex .player {
+body > header > div.flex .recycle, body > header > div.flex .edit, body > header > div.flex .download-all, body > header > div.flex .player, body > header > div.flex .orbit-db {
     display: flex;
     align-items: center;
     font-size: 30px;
@@ -91,6 +91,9 @@ body[type="ipfs"] header > div.flex .download-all.done, body[type="magnet"] head
 }
 body > header > div.flex .player {
     color: yellow;
+}
+body > header > div.flex .orbit-db{
+    color: magenta;
 }
 body > header label {
     color: white;

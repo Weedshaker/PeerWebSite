@@ -2,6 +2,7 @@
 
 import {MasterHTML} from 'SampleApp/Prototype/Domain/MasterHTML.js';
 import Player from 'Player/Player.js';
+import OrbitDB from 'OrbitDB/OrbitDB.js';
 
 export class HTML extends MasterHTML {
 	constructor(WebTorrentReceiver, WebTorrentSeeder, Editor, WebRTC, IPFS, parent){
@@ -14,6 +15,7 @@ export class HTML extends MasterHTML {
 		this.parent = parent; // ref to App.js
 
 		this.Player = new Player();
+		this.OrbitDB = new OrbitDB();
 	}
 	createElements(name, attach = '#body', connection = null, isSender = true){
 		attach = $(attach).length > 0 ? attach : 'body';
@@ -24,7 +26,7 @@ export class HTML extends MasterHTML {
 					<div id="info" class="flex">
 						<div class="offline">YOU ARE OFFLINE!!!</div>
 						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
-						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.129<span id="sw-version"></span>; Visit Github for more Infos!</a>
+						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.0<span id="sw-version"></span>; Visit Github for more Infos!</a>
 						<a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
@@ -80,8 +82,8 @@ export class HTML extends MasterHTML {
 						});
 					});
 				}
-				// add player htmlelements
-				header.find('#info').append(`<section id="player"></section><section id="player-placeholder"></section>`);
+				// add player, orbitDB htmlelements
+				header.find('#info').append(`<section id="player"></section><section id="player-placeholder"></section><section id="orbit-db"></section>`);
 				this.containers = [header];
 				this.stickyHeader(header);
 				// specific only for receiver
@@ -118,6 +120,8 @@ export class HTML extends MasterHTML {
 				$('#info').append(headerReceiver);
 
 				this.Player.connect(isSender, header.get(0));
+
+				this.OrbitDB.connect(header.get(0), this.IPFS);
 
 				return [sender, receiver, webrtcButton, counterWebTorrent];
 		}
