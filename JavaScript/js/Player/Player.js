@@ -16,8 +16,8 @@ export default class Player {
     this.prevResetTollerance = 3 // sec., used to decide from when a track would be reset when going to prev track
     this.seekTime = 10 // sec., used for seek steps
     this.keyDownTollerance = 300 // ms, used to decide from holding down a key to start seeking
-    this.waitToPlayMs = 9000 // ms, in random mode waiting for play before skipping to next (every pause/play action will trigger multiple of native events which will reset isLoading nextRandom and postpone the nextRandom to trigger)
-    // Note: EventListener named eg. 'waiting' retrigger the this.isLoading( faster than the waitToPlayMs = 10000 , for this keep it lower
+    this.waitToPlayMs = 5000 // ms, in random mode waiting for play before skipping to next (every pause/play action will trigger multiple of native events which will reset isLoading nextRandom and postpone the nextRandom to trigger)
+    // NOTE: EventListener named eg. 'waiting' retrigger the this.isLoading( faster than the waitToPlayMs = 10000 , for this keep it lower
     // NOTE: tried pause/play quick command to skip to next but did not work on mobile except of starting all songs: this.waitSkipAtPausePlayMs = 2000 // ms, in between pushing pause <-> play to skip to next random song
 
     // internal use
@@ -26,6 +26,7 @@ export default class Player {
     this.onErrorExtendedToSourceIds = []
     this.respectRandom = true
     this.waitToPlayTimeout = null
+    this.isLoadingMemory = new Map()
   }
   
   connect (isSender, parent) {
@@ -446,12 +447,7 @@ export default class Player {
       let source = null
       if ((source = this.currentControl.querySelector('source')) && typeof source.onerror === 'function') {
         // if it is not already ipfs.cat then trigger it
-        if (!source.classList.contains('ipfsLoading')) source.onerror()
-        if (this.currentControl.paused) {
-          this.play()
-        } else {
-          this.pause()
-        }
+        if (!this.hasError(this.currentControl)) source.onerror()
       }
     })
     // prev, next
@@ -698,14 +694,26 @@ export default class Player {
     clearTimeout(this.waitToPlayTimeout)
     if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
       this.waitToPlayTimeout = setTimeout(() => {
-        // isLoading is the most called function on any changes, in case onerror did not trigger
-        if (control.classList.contains('ipfsLoading') || control.sst_hasError) return this.nextRandom()
-        if(!!control.duration && !!Math.floor(Math.random() * 2)){
-          this.pause()
-          this.setCurrentTime(control, 0)
-          this.play()
-        } else {
-          this.nextRandom()
+        if (this.hasError(control)) return this.nextRandom()
+        const key = this.allControls.indexOf(control)
+        const step = key === -1 ? 1 : this.isLoadingMemory.get(key) || 1
+        this.isLoadingMemory.set(key, step + 1)
+        switch (step) {
+          case 1:
+            if (control.currentTime > this.seekTime) {
+              this.seekPrev()
+            } else {
+              this.seekNext()
+            }
+            break
+          case 2:
+            this.nextRandom()
+            let source = null
+            if ((source = control.querySelector('source')) && typeof source.onerror === 'function' && !this.hasError(control)) source.onerror()
+            break
+          default:
+            this.nextRandom()
+            break
         }
       }, this.waitToPlayMs)
     }
@@ -735,7 +743,7 @@ export default class Player {
           control.sst_hasError = true
           this.isLoading(true, control)
           // if it is not already ipfs.cat then trigger it
-          if (!source.classList.contains('ipfsLoading')) source.onerror()
+          if (!this.hasError(control)) source.onerror()
         }, {once: true})
         source.addEventListener('error', event => {
           control.sst_hasError = true
@@ -746,13 +754,17 @@ export default class Player {
     }
   }
 
+  hasError (control) {
+    return control.classList.contains('ipfsLoading') || control.sst_hasError
+  }
+
   get allControls () {
     return Array.from(document.querySelectorAll('[controls]'))
   }
 
   get allPlayableControls () {
     // exclude any loading controls and error controls
-    return this.allControls.filter(control => !control.classList.contains('ipfsLoading') && !control.sst_hasError)
+    return this.allControls.filter(control => !this.hasError(control))
   }
 
   get allReadyControls () {
@@ -800,11 +812,11 @@ export default class Player {
   }
   
   set currentControl (control) {
-    this.currentControlIndex = this.allPlayableControls.indexOf(control)
+    this.currentControlIndex = this.allControls.indexOf(control)
   }
 
   get currentControl () {
-    return this.allPlayableControls[this.currentControlIndex] || document.createElement('audio')
+    return this.allControls[this.currentControlIndex] || document.createElement('audio')
   }
 
   set mode (mode) {
