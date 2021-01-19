@@ -693,8 +693,8 @@ export default class Player {
     // skip to next if song fails to play
     clearTimeout(this.waitToPlayTimeout)
     if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
+      if (this.hasError(control)) return this.nextRandom()
       this.waitToPlayTimeout = setTimeout(() => {
-        if (this.hasError(control)) return this.nextRandom()
         const key = this.allControls.indexOf(control)
         const step = key === -1 ? 1 : this.isLoadingMemory.get(key) || 1
         this.isLoadingMemory.set(key, step + 1)
