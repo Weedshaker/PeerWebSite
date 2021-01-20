@@ -3,9 +3,9 @@
 import OrbitDB from 'OrbitDB/OrbitDB.js';
 
 /**
- * Creates a global OrbitDB managing the audio and video tags
- * Use for debugging: http://localhost:3000/index_debug.html#ipfs:QmT8dAKuCVQ7TTHV5ezNFE272cs15PyigJGV663GHeen6t
- * NOTE: JSPM Transpiler does not allow web components, so we are left with a simple class
+ * Big PROBLEM: https://github.com/orbitdb/orbit-db/issues/844
+ * https://github.com/orbitdb/orbit-db/issues/843
+ * old IPFS versions don't work and new IPFS version are not compatible with Orbit-db
  *
  * @export
  * @attribute {namespace} namespace
@@ -17,7 +17,7 @@ export default class Search extends OrbitDB {
     this.id = id
 
     this.addresses = {
-      searchDB: '/orbitdb/zdpuAso9e5JLqKLy8fr2eRfsMHqZQeSbrBKhqs2BqybiF64fk/search-db'
+      searchDB: '/orbitdb/zdpuAs2TZqMd6XMLrmjZiADXfMDn2nM197miaaAQAM4pvRL48/search-db2'
     }
   }
 
@@ -67,32 +67,40 @@ export default class Search extends OrbitDB {
     })
   }
 
-  put (db = this.searchDB, title) {
+  put (db = this.searchDB, name) {
     db.then(db => {
-      db.put({
-        _id: Date.now(),
-        title,
+      db.put(Date.now(), { name })
+      /*db.put(Date.now(), {
+        name,
         language: navigator.language,
         written: [Date.now()],
-        //accessed: []
-      })
+        accessed: []
+      })*/
     })
   }
 
-  get (db = this.searchDB) {
-    return db.then(db => db.get(''))
+  get (db = this.searchDB, key) {
+    return db.then(db => key ? db.get(key) : db.all)
   }
 
   get searchDB () {
     return this._searchDB || (this._searchDB = new Promise(resolve => {
       this.orbitdb.then(orbitdb => {
         // https://github.com/orbitdb/orbit-db/blob/master/API.md#getkey-1
-        orbitdb.docs(this.addresses.searchDB ? this.addresses.searchDB : 'search-db', {
-          // Give write access to everyone
+        const dbConfig = {
+          // If database doesn't exist, create it
+          create: true,
+          // Don't wait to load from the network
+          sync: false,
+          // Load only the local version of the database
+          // localOnly: true,
+          // Allow anyone to write to the database,
+          // otherwise only the creator of the database can write
           accessController: {
-            write: ['*']
+            write: ['*'],
           }
-        }).then(db => {
+        }
+        orbitdb.keyvalue(this.addresses.searchDB ? this.addresses.searchDB : 'search-db2', dbConfig).then(db => {
           db.events.on('ready', (dbname, heads) => resolve(db))
           db.load()
           if (!this.addresses.searchDB) console.log(db.address.toString())

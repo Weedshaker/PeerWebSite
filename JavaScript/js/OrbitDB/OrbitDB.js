@@ -1,9 +1,9 @@
 // @ts-check
 
 /**
- * Creates a global OrbitDB managing the audio and video tags
- * Use for debugging: http://localhost:3000/index_debug.html#ipfs:QmT8dAKuCVQ7TTHV5ezNFE272cs15PyigJGV663GHeen6t
- * NOTE: JSPM Transpiler does not allow web components, so we are left with a simple class
+ * Big PROBLEM: https://github.com/orbitdb/orbit-db/issues/844
+ * https://github.com/orbitdb/orbit-db/issues/843
+ * old IPFS versions don't work and new IPFS version are not compatible with Orbit-db
  *
  * @export
  * @attribute {namespace} namespace
