@@ -2,7 +2,7 @@
 
 import {MasterHTML} from 'SampleApp/Prototype/Domain/MasterHTML.js';
 import Player from 'Player/Player.js';
-import OrbitDB from 'OrbitDB/OrbitDB.js';
+import Search from 'OrbitDB/Search.js';
 
 export class HTML extends MasterHTML {
 	constructor(WebTorrentReceiver, WebTorrentSeeder, Editor, WebRTC, IPFS, parent){
@@ -15,7 +15,7 @@ export class HTML extends MasterHTML {
 		this.parent = parent; // ref to App.js
 
 		this.Player = new Player();
-		this.OrbitDB = new OrbitDB();
+		this.Search = new Search();
 	}
 	createElements(name, attach = '#body', connection = null, isSender = true){
 		attach = $(attach).length > 0 ? attach : 'body';
@@ -82,7 +82,7 @@ export class HTML extends MasterHTML {
 						});
 					});
 				}
-				// add player, orbitDB htmlelements
+				// add player, Search htmlelements
 				header.find('#info').append(`<section id="player"></section><section id="player-placeholder"></section><section id="orbit-db"></section>`);
 				this.containers = [header];
 				this.stickyHeader(header);
@@ -121,7 +121,7 @@ export class HTML extends MasterHTML {
 
 				this.Player.connect(isSender, header.get(0));
 
-				this.OrbitDB.connect(header.get(0), this.IPFS);
+				this.Search.connect(header.get(0), this.IPFS);
 
 				return [sender, receiver, webrtcButton, counterWebTorrent];
 		}
