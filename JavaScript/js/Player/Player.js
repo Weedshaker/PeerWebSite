@@ -686,9 +686,6 @@ export default class Player {
       this.html.classList.add('loading')
     } else {
       this.html.classList.remove('loading')
-      control.classList.remove('ipfsLoading')
-      let source = null
-      if ((source = control.querySelector('source'))) source.classList.remove('ipfsLoading')
     }
     // skip to next if song fails to play
     clearTimeout(this.waitToPlayTimeout)
