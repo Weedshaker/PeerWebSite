@@ -127,10 +127,16 @@ export default class Player {
     document.body.addEventListener('suspend', event => {
 			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
-		// save last currentTime
+		// is triggered repeatingly during playback
 		document.body.addEventListener('timeupdate', event => {
 			if (this.validateEvent(event)) {
         this.isLoading(false, event.target)
+        // make sure ipfsLoading is removed when it is playing
+        if (event.target === this.currentControl) {
+          event.target.classList.remove('ipfsLoading')
+          let source = null
+          if ((source = event.target.querySelector('source'))) source.classList.remove('ipfsLoading')
+        }
         this.saveCurrentTime(event.target)
         this.setDocumentTitle()
         // after error there was the case that the button wouldn't switch to play
