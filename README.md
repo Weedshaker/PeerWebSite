@@ -21,8 +21,8 @@ Send Texts, Music, Pictures and Videos embedded in HTML with CSS and JavaScript 
 <br clear="right"/>
 
 ### peerweb.site hosted@ipfs
-This is the CID: QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b to use the peerweb.site directly from your ipfs client: `/ipfs/QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b
-[peerweb.site hosted@ipfs](https://gateway.ipfs.io/ipfs/QmRBTRMm3RAmfUXvheg5jAphFSg2Egc3Zi1HyvnfAhxf2b)
+This is the CID: QmQJChGpNVVFvHqWKpmXfGgE5FuFq66DseG2rcejpFDpQW to use the peerweb.site v. beta 0.7.133 directly from your ipfs client: `/ipfs/QmQJChGpNVVFvHqWKpmXfGgE5FuFq66DseG2rcejpFDpQW
+[peerweb.site hosted@ipfs](https://ipfs.io/ipfs/QmQJChGpNVVFvHqWKpmXfGgE5FuFq66DseG2rcejpFDpQW/index_no_tracking.html)
 
 ### Functionalities
 TODO: Extend README to cover new IPFS support!!!
