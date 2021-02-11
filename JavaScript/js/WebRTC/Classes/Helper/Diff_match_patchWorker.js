@@ -9,7 +9,7 @@ export class Diff_match_patchWorker extends MasterWorker {
 
 		this.name = 'Diff_match_patchWorker';
 		this.Helper = new Helper();
-		this.scripts = this.Helper.addBaseURL([`jspm_packages/${System.map['tanaka-de-silva/google-diff-match-patch-js']}/diff_match_patch.js`], false);
+		this.scripts = this.Helper.addBaseURL([`jspm_packages/${System.map['tanaka-de-silva/google-diff-match-patch-js']}/diff_match_patch.js`]);
 	}
 	sendDiff(data){
 		// diff

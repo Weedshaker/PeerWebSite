@@ -9,7 +9,7 @@ export class LZStringWorker extends MasterWorker {
 
 		this.name = 'LZStringWorker';
 		this.Helper = new Helper();
-		this.scripts = this.Helper.addBaseURL([`jspm_packages/${System.map['pieroxy/lz-string']}/libs/lz-string.min.js`], false);
+		this.scripts = this.Helper.addBaseURL([`jspm_packages/${System.map['pieroxy/lz-string']}/libs/lz-string.min.js`]);
 	}
 	sendCompress(data){
 		// compress
