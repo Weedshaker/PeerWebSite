@@ -25,7 +25,7 @@ export class MasterHelper {
 		};
 	}
 	addBaseURL(url = [], relative = true){
-		let locOrigin = relative ? '.' : location.origin;
+		let locOrigin = relative ? '.' : location.href.match('.*\/') && location.href.match('.*\/')[0] || location.origin;
 		return url.map((e) => {
 			if (!this.baseURL && relative && e.includes('./')) return e;
 			return `${locOrigin}/${location.host.includes('github') && relative ? '' : this.baseURL}${e.replace(':', '/')}`;
