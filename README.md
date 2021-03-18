@@ -6,10 +6,17 @@
 2. [IPFS page with audio - Grateful Dead Live borrowed from archive.org](https://peerweb.site/#ipfs:QmT8dAKuCVQ7TTHV5ezNFE272cs15PyigJGV663GHeen6t)
 3. [IPFS page with client side app](https://peerweb.site/#ipfs:QmZb1mx8WXKReT8YmwY6bt1KTz48wqS9KCXwMptCX3UkpM)
 4. [IPFS page with client side app (js + css fed through service worker)](https://peerweb.site/#ipfs:QmP9PpZFt3VirDt5xBe22CAQn8K7QppfER49QRu2ctnLxC)
-5. [IPFS page with Loop Machine](https://peerweb.site/#ipfs:QmNzbP6F52d5cSn3FbaX2YmkFF4qfTZkMoJSBpbZUrVt88)
+5. [IPFS page with Loop Machine](https://peerweb.site/#ipfs:QmNzbP6F52d5cSn3FbaX2YmkFF4qfTZkMoJSBpbZUrVt88)<br />
+***long time hosted from [IPFS Desktop](https://github.com/ipfs-shipyard/ipfs-desktop)***
 
 ### check out the WebTorrent Examples ===>
-1. ~~[WebTorrent page with video](https://peerweb.site/#magnet:?xt=urn:btih:682fc456c6e9d1cb848efe6178fe5f0c26c210fc&dn=peerWebSite.txt&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com) ***hosted from WebTorrent Desktop***~~
+1. [WebTorrent page with video](https://peerweb.site/#magnet:?xt=urn:btih:682fc456c6e9d1cb848efe6178fe5f0c26c210fc&dn=peerWebSite.txt&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com)<br />
+***Long time hosted from [WebTorrent Desktop](https://webtorrent.io/desktop/)***
+
+### Hosting Methods
+1. [IPFS](https://ipfs.io) will propagate the content to the IPFS Distributed Web. Without any requests/hits, the content will remain online up to 30 days, depending the file size. Each content request will extend that lifespan.
+2. WebRTC will directly and live share/stream the content to other devices. The content goes offline with closing the session/tab.
+3. [WebTorrent](https://webtorrent.io) will propagate the content into the Torrent Network. The content will stay online as long as a client/session is active. The content goes offline, once there are no visitors aka. active sessions with that torrent.
 
 ### Description
 Send Texts, Music, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC, WebTorrents or IPFS, live edited P2P as well as static Torrents + IPFS. With WebRTC/WebTorrent (NOT [IPFS - more details](https://ipfs.io/#why)) - No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent/IPFS snapshots. *(Saving in-site WebTorrents is not yet supported.)*
