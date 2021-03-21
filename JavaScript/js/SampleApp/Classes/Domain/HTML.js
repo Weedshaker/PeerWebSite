@@ -157,6 +157,7 @@ export class HTML extends MasterHTML {
 				//https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/NAME.md#ipfsnameresolvevalue-options
 				//https://github.com/ipfs/js-ipfs/blob/master/docs/core-api/KEY.md
 				this.IPFS.name().then(name => {
+					//https://github.com/ipfs-inactive/interface-js-ipfs-core/blob/master/SPEC/NAME.md#namepublish
 					name.publish(file.cid, {allowOffline: false}).then(ipnsObj => {
 						console.log('publish', file.cid, ipnsObj);
 						name.sst_resolve(ipnsObj.name, {nocache: true}).then(cid => console.log('resolve', cid))
@@ -167,6 +168,7 @@ export class HTML extends MasterHTML {
 						// update the clipboard
 						input.val(location.href);
 						this.copyToClipBoard('inputIPFS');
+						name.pubsub.state().then(state=>console.log('state', state))
 					}).catch(error => input.val(`IPFS publish failed: ${error}`));
 				});
 			}).catch(error => input.val(`IPFS add failed: ${error}`));

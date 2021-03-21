@@ -5,7 +5,9 @@ export class IPFS {
         this.baseUrl = 'https://gateway.ipfs.io/ipfs/';
         // https://github.com/ipfs/js-ipfs/blob/master/examples/browser-ipns-publish/index.js
         // TODO: wait for name publish and resolve DHT fixes: https://github.com/ipfs/js-ipfs/issues/2921
-        /*this.node = window.Ipfs.create({
+        // NOTE: IPNS not yet working 2021-03-21
+        /*
+        this.node = window.Ipfs.create({
             libp2p: {
                 config: {
                     dht: {
@@ -14,14 +16,39 @@ export class IPFS {
                     }
                 }
             }
-        });*/
+        });
+        */
         this.node = window.Ipfs.create({
             config: {
                 dht: {
                     enabled: true,
+                },
+                // https://github.com/ipfs/js-ipfs/issues/2779
+                Addresses: {
+                    Swarm: []
                 }
-            }
+            },
+            // https://github.com/ipfs/js-ipfs/blob/bbcaf34111251b142273a5675f4754ff68bd9fa0/examples/browser-ipns-publish/index.js
+            EXPERIMENTAL: { pubsub: true, ipnsPubsub: true },
         });
+       // https://github.com/ipfs/js-ipfs/tree/bf92fb321a66651a63a8b9cc81112f149573826a/examples
+       /*
+        this.node = window.Ipfs.create({
+            start: true,
+            repo: 'source/ipfs',
+            preload: {enabled:false},
+            relay: {enabled: true,
+                hop: {enabled: true,
+                active: true}},
+            EXPERIMENTAL: {pubsub: true},
+            config: { Addresses: { Swarm: [ '/dns4/secure-beyond-12878.herokuapp.com/tcp/443/wss/p2p-webrtc-star/' ],
+            Discovery: { MDNS: { Enabled: true,
+                Interval: 10 },
+            webRTCStar: { Enabled: true } } }
+        }});
+        */
+        // https://www.youtube.com/watch?v=Nv_Teb--1zg pubsub room
+        // https://www.youtube.com/watch?v=-kdx8rJd8rQ collab editing
         this.isIdle = new Promise(resolve => document.readyState !== 'complete' ? window.addEventListener('load', event => setTimeout(() => resolve(), 60000)) : setTimeout(() => resolve(), 60000));
     }
     add(path, content){
