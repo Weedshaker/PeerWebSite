@@ -11,7 +11,7 @@
     1. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.4.jpg">](https://peerweb.site/#ipfs:QmTouehzuLfsuPuHQg2wDKboAwp5h3XZV6eDZ3bSARuUB4)
     2. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.5.jpg">](https://peerweb.site/#ipfs:QmYbXcdirXy5iFizdch5287gtxsUZA9aErqGQ4JfJvvu87)
     3. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.3.jpg">](https://peerweb.site/#ipfs:QmUNAckSAFmpr2GAgSmjMATKb1YmZFhLXrnZBBLqT1sn6N)
-***long time hosted from [IPFS Desktop](https://peerweb.site/#ipfs:QmYbXcdirXy5iFizdch5287gtxsUZA9aErqGQ4JfJvvu87)***
+***long time hosted from [IPFS Desktop](https://github.com/ipfs/ipfs-desktop)***
 
 ### check out the WebTorrent Examples ===>
 1. [WebTorrent page with video](https://peerweb.site/#magnet:?xt=urn:btih:682fc456c6e9d1cb848efe6178fe5f0c26c210fc&dn=peerWebSite.txt&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com)<br />
