@@ -7,7 +7,7 @@
 3. [IPFS page with client side app](https://peerweb.site/#ipfs:QmZb1mx8WXKReT8YmwY6bt1KTz48wqS9KCXwMptCX3UkpM)
 4. [IPFS page with client side app (js + css fed through service worker)](https://peerweb.site/#ipfs:QmP9PpZFt3VirDt5xBe22CAQn8K7QppfER49QRu2ctnLxC)
 5. [IPFS page with Loop Machine](https://peerweb.site/#ipfs:QmNzbP6F52d5cSn3FbaX2YmkFF4qfTZkMoJSBpbZUrVt88)<br />
-6. [IPFS HTML Example using Browsers Developer Tools and saving to IPFS Desktop (3 Steps)](https://peerweb.site/#ipfs:QmTouehzuLfsuPuHQg2wDKboAwp5h3XZV6eDZ3bSARuUB4)
+6. [IPFS HTML Example using Browsers Developer Tools and saving to IPFS Desktop (3 Steps)](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools)
     1. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.4.jpg">](https://peerweb.site/#ipfs:QmTouehzuLfsuPuHQg2wDKboAwp5h3XZV6eDZ3bSARuUB4)
     2. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.5.jpg">](https://peerweb.site/#ipfs:QmYbXcdirXy5iFizdch5287gtxsUZA9aErqGQ4JfJvvu87)
     3. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.3.jpg">](https://peerweb.site/#ipfs:QmUNAckSAFmpr2GAgSmjMATKb1YmZFhLXrnZBBLqT1sn6N)
