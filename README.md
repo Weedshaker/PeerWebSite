@@ -4,11 +4,11 @@
 ### check out the IPFS Examples ===>
 1. [IPFS page with video](https://peerweb.site/#ipfs:QmXLyD6aPKWDdPnAJyrjPrrqTZgTeKXSvgNBHsFgB6Yte5)
 2. [IPFS page with audio - Grateful Dead Live borrowed from archive.org](https://peerweb.site/#ipfs:QmT8dAKuCVQ7TTHV5ezNFE272cs15PyigJGV663GHeen6t)
-3. [IPFS page loading web component](https://peerweb.site/#ipfs:QmRDmhk3Yv8mZN3QZDMiANUdqu7AnMjaEEomwjef1SrJNv)
-4. [IPFS page with client side app](https://peerweb.site/#ipfs:QmZb1mx8WXKReT8YmwY6bt1KTz48wqS9KCXwMptCX3UkpM)
-5. [IPFS page with client side app (js + css fed through service worker)](https://peerweb.site/#ipfs:QmP9PpZFt3VirDt5xBe22CAQn8K7QppfER49QRu2ctnLxC)
-6. [IPFS page with Loop Machine](https://peerweb.site/#ipfs:QmNzbP6F52d5cSn3FbaX2YmkFF4qfTZkMoJSBpbZUrVt88)<br />
-7. [IPFS HTML Example using Browsers Developer Tools and saving to IPFS Desktop (3 Steps)](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools)
+6. [IPFS page with Loop Machine](https://peerweb.site/#ipfs:QmNzbP6F52d5cSn3FbaX2YmkFF4qfTZkMoJSBpbZUrVt88)
+4. [IPFS JavaScript Example using Browsers Developer Tools loading web component](https://peerweb.site/#ipfs:QmRDmhk3Yv8mZN3QZDMiANUdqu7AnMjaEEomwjef1SrJNv)
+5. [IPFS JavaScript Example using Browsers Developer Tools for building client side app](https://peerweb.site/#ipfs:QmZb1mx8WXKReT8YmwY6bt1KTz48wqS9KCXwMptCX3UkpM)
+6. [IPFS JavaScript Example using Browsers Developer Tools for building client side app (js + css fed through service worker)](https://peerweb.site/#ipfs:QmP9PpZFt3VirDt5xBe22CAQn8K7QppfER49QRu2ctnLxC)
+7. [IPFS HTML/CSS Example using Browsers Developer Tools and saving to IPFS Desktop (3 Steps)](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools)
     1. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.4.jpg">](https://peerweb.site/#ipfs:QmTouehzuLfsuPuHQg2wDKboAwp5h3XZV6eDZ3bSARuUB4)
     2. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.5.jpg">](https://peerweb.site/#ipfs:QmYbXcdirXy5iFizdch5287gtxsUZA9aErqGQ4JfJvvu87)
     3. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.3.jpg">](https://peerweb.site/#ipfs:QmUNAckSAFmpr2GAgSmjMATKb1YmZFhLXrnZBBLqT1sn6N)
@@ -32,9 +32,9 @@ Send Texts, Music, Pictures and Videos embedded in HTML with CSS and JavaScript 
 <img src="https://weedshaker.github.io/PeerWebSite/img/screenshot2.png" align="right" width="40%">
 <br clear="right"/>
 
-### peerweb.site [hosted@ipfs](https://ipfs.io/ipfs/QmQJChGpNVVFvHqWKpmXfGgE5FuFq66DseG2rcejpFDpQW/index_no_tracking.html)
-This is the CID: QmQJChGpNVVFvHqWKpmXfGgE5FuFq66DseG2rcejpFDpQW to use the peerweb.site v. beta 0.7.133 directly from your ipfs client: `/ipfs/QmQJChGpNVVFvHqWKpmXfGgE5FuFq66DseG2rcejpFDpQW
-[peerweb.site hosted@ipfs](https://ipfs.io/ipns/k2k4r8mv2ud8gd1gndbpdvcagf6r7qodhyojdxzfq4iwbb04ncxiy1x8/index_no_tracking.html)
+### peerweb.site [hosted@ipfs](https://ipfs.io/ipfs/QmTxSTUd6UYcA5bD4U81YUFoE4NF6gSSqR8ZCCtEHqKQkb/index_no_tracking.html)
+This is the CID: QmTxSTUd6UYcA5bD4U81YUFoE4NF6gSSqR8ZCCtEHqKQkb to use the peerweb.site v. beta 0.7.134 directly from your ipfs client: `/ipfs/QmTxSTUd6UYcA5bD4U81YUFoE4NF6gSSqR8ZCCtEHqKQkb
+[peerweb.site hosted@ipns](https://ipfs.io/ipns/k2k4r8mv2ud8gd1gndbpdvcagf6r7qodhyojdxzfq4iwbb04ncxiy1x8/index_no_tracking.html)
 
 ### We (I) need you!
 More devtools in conjunction with peerweb.site/ipfs/webtorrent/webrtc - tutorials and videos are needed! Please, contribute and PR to get your CID hosted here.
