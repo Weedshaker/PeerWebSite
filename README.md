@@ -4,12 +4,24 @@
 ### check out the IPFS Examples ===>
 1. [IPFS page with video](https://peerweb.site/#ipfs:QmXLyD6aPKWDdPnAJyrjPrrqTZgTeKXSvgNBHsFgB6Yte5)
 2. [IPFS page with audio - Grateful Dead Live borrowed from archive.org](https://peerweb.site/#ipfs:QmT8dAKuCVQ7TTHV5ezNFE272cs15PyigJGV663GHeen6t)
-3. [IPFS page with client side app](https://peerweb.site/#ipfs:QmZb1mx8WXKReT8YmwY6bt1KTz48wqS9KCXwMptCX3UkpM)
-4. [IPFS page with client side app (js + css fed through service worker)](https://peerweb.site/#ipfs:QmP9PpZFt3VirDt5xBe22CAQn8K7QppfER49QRu2ctnLxC)
-5. [IPFS page with Loop Machine](https://peerweb.site/#ipfs:QmNzbP6F52d5cSn3FbaX2YmkFF4qfTZkMoJSBpbZUrVt88)
+3. [IPFS page loading web component](https://peerweb.site/#ipfs:QmRDmhk3Yv8mZN3QZDMiANUdqu7AnMjaEEomwjef1SrJNv)
+4. [IPFS page with client side app](https://peerweb.site/#ipfs:QmZb1mx8WXKReT8YmwY6bt1KTz48wqS9KCXwMptCX3UkpM)
+5. [IPFS page with client side app (js + css fed through service worker)](https://peerweb.site/#ipfs:QmP9PpZFt3VirDt5xBe22CAQn8K7QppfER49QRu2ctnLxC)
+6. [IPFS page with Loop Machine](https://peerweb.site/#ipfs:QmNzbP6F52d5cSn3FbaX2YmkFF4qfTZkMoJSBpbZUrVt88)<br />
+7. [IPFS HTML Example using Browsers Developer Tools and saving to IPFS Desktop (3 Steps)](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools)
+    1. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.4.jpg">](https://peerweb.site/#ipfs:QmTouehzuLfsuPuHQg2wDKboAwp5h3XZV6eDZ3bSARuUB4)
+    2. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.5.jpg">](https://peerweb.site/#ipfs:QmYbXcdirXy5iFizdch5287gtxsUZA9aErqGQ4JfJvvu87)
+    3. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.3.jpg">](https://peerweb.site/#ipfs:QmUNAckSAFmpr2GAgSmjMATKb1YmZFhLXrnZBBLqT1sn6N)
+***long time hosted from [IPFS Desktop](https://github.com/ipfs/ipfs-desktop)***
 
 ### check out the WebTorrent Examples ===>
-1. ~~[WebTorrent page with video](https://peerweb.site/#magnet:?xt=urn:btih:682fc456c6e9d1cb848efe6178fe5f0c26c210fc&dn=peerWebSite.txt&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com) ***hosted from WebTorrent Desktop***~~
+1. [WebTorrent page with video](https://peerweb.site/#magnet:?xt=urn:btih:682fc456c6e9d1cb848efe6178fe5f0c26c210fc&dn=peerWebSite.txt&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com)<br />
+***Long time hosted from [WebTorrent Desktop](https://webtorrent.io/desktop/)***
+
+### Hosting Methods
+1. [IPFS](https://ipfs.io) will propagate the content to the IPFS Distributed Web. Without any requests/hits, the content will remain online up to 30 days, depending the file size. Each content request will extend that lifespan.
+2. WebRTC will directly and live share/stream the content to other devices. The content goes offline with closing the session/tab.
+3. [WebTorrent](https://webtorrent.io) will propagate the content into the Torrent Network. The content will stay online as long as a client/session is active. The content goes offline, once there are no visitors aka. active sessions with that torrent.
 
 ### Description
 Send Texts, Music, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC, WebTorrents or IPFS, live edited P2P as well as static Torrents + IPFS. With WebRTC/WebTorrent (NOT [IPFS - more details](https://ipfs.io/#why)) - No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent/IPFS snapshots. *(Saving in-site WebTorrents is not yet supported.)*
@@ -20,12 +32,15 @@ Send Texts, Music, Pictures and Videos embedded in HTML with CSS and JavaScript 
 <img src="https://weedshaker.github.io/PeerWebSite/img/screenshot2.png" align="right" width="40%">
 <br clear="right"/>
 
-### peerweb.site hosted@ipfs
+### peerweb.site [hosted@ipfs](https://ipfs.io/ipfs/QmQJChGpNVVFvHqWKpmXfGgE5FuFq66DseG2rcejpFDpQW/index_no_tracking.html)
 This is the CID: QmQJChGpNVVFvHqWKpmXfGgE5FuFq66DseG2rcejpFDpQW to use the peerweb.site v. beta 0.7.133 directly from your ipfs client: `/ipfs/QmQJChGpNVVFvHqWKpmXfGgE5FuFq66DseG2rcejpFDpQW
 [peerweb.site hosted@ipfs](https://ipfs.io/ipns/k2k4r8mv2ud8gd1gndbpdvcagf6r7qodhyojdxzfq4iwbb04ncxiy1x8/index_no_tracking.html)
 
+### We (I) need you!
+More devtools in conjunction with peerweb.site/ipfs/webtorrent/webrtc - tutorials and videos are needed! Please, contribute and PR to get your CID hosted here.
+
 ### Functionalities
-TODO: Extend README to cover new IPFS support!!!
+Under construction: Extend README to cover new IPFS support!!!
 
 1. **Use WebTorrent for files**: This will enable WebTorrent for added files. It allows video steaming and will perform better in case your site is file heavy. It is mandatory for multiple files to load efficiently. Although, it may not work well with other browsers but Chrome.
 
