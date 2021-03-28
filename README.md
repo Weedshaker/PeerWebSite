@@ -36,7 +36,7 @@ This is the CID: QmQJChGpNVVFvHqWKpmXfGgE5FuFq66DseG2rcejpFDpQW to use the peerw
 [peerweb.site hosted@ipfs](https://ipfs.io/ipns/k2k4r8mv2ud8gd1gndbpdvcagf6r7qodhyojdxzfq4iwbb04ncxiy1x8/index_no_tracking.html)
 
 ### We (I) need you!
-More devtools- inconjunction peerweb.site/ipfs/webtorrent/webrtc tutorials and videos are needed. Please, produce one and get in touch to host here your CID.
+More devtools in conjunction with peerweb.site/ipfs/webtorrent/webrtc - tutorials and videos are needed! Please, contribute and PR to get your CID hosted here.
 
 ### Functionalities
 Under construction: Extend README to cover new IPFS support!!!
