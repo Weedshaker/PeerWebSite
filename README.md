@@ -19,7 +19,7 @@
 ***Long time hosted from [WebTorrent Desktop](https://webtorrent.io/desktop/)***
 
 ### Hosting Methods
-1. [IPFS](https://ipfs.io) will propagate the content to the IPFS Distributed Web. Without any requests/hits, the content will remain online up to 30 days, depending the file size. Each content request will extend that lifespan.
+1. [IPFS](https://ipfs.io) will propagate the content to the IPFS Distributed Web. Without any requests/hits, the content will remain online up to 30 days, depending the file size. Each content request will extend that lifespan. [What is IPFS? - A Beginner's Guide](https://hackernoon.com/a-beginners-guide-to-ipfs-20673fedd3f)
 2. WebRTC will directly and live share/stream the content to other devices. The content goes offline with closing the session/tab.
 3. [WebTorrent](https://webtorrent.io) will propagate the content into the Torrent Network. The content will stay online as long as a client/session is active. The content goes offline, once there are no visitors aka. active sessions with that torrent.
 
