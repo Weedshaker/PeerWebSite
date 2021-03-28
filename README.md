@@ -11,8 +11,8 @@
 7. [IPFS HTML/CSS Example building a "website" using Browsers Developer Tools and saving to IPFS Desktop (3 Steps)](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools)
     1. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.4.jpg">](https://peerweb.site/#ipfs:QmTouehzuLfsuPuHQg2wDKboAwp5h3XZV6eDZ3bSARuUB4)
     2. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.5.jpg">](https://peerweb.site/#ipfs:QmYbXcdirXy5iFizdch5287gtxsUZA9aErqGQ4JfJvvu87)
-    3. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.3.jpg">](https://peerweb.site/#ipfs:QmUNAckSAFmpr2GAgSmjMATKb1YmZFhLXrnZBBLqT1sn6N)
-***long time hosted from [IPFS Desktop](https://github.com/ipfs/ipfs-desktop)***
+    3. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.3.jpg">](https://peerweb.site/#ipfs:QmUNAckSAFmpr2GAgSmjMATKb1YmZFhLXrnZBBLqT1sn6N)<br />
+***Long time hosted from [IPFS Desktop](https://github.com/ipfs/ipfs-desktop)***
 
 ### check out the WebTorrent Examples ===>
 1. [WebTorrent page with video](https://peerweb.site/#magnet:?xt=urn:btih:682fc456c6e9d1cb848efe6178fe5f0c26c210fc&dn=peerWebSite.txt&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com)<br />
@@ -37,7 +37,7 @@ This is the CID: QmTxSTUd6UYcA5bD4U81YUFoE4NF6gSSqR8ZCCtEHqKQkb to use the peerw
 [peerweb.site hosted@ipns](https://ipfs.io/ipns/k2k4r8mv2ud8gd1gndbpdvcagf6r7qodhyojdxzfq4iwbb04ncxiy1x8/index_no_tracking.html)
 
 ### We (I) need you!
-More devtools in conjunction with peerweb.site/ipfs/webtorrent/webrtc - tutorials and videos are needed! Please, contribute and PR to get your CID hosted here.
+More peerweb.site/ipfs/webtorrent/webrtc in conjunction with browser devtools - Tutorials, Examples, Articles and Videos are needed! Please, contribute and PR to get your Link and CID hosted here.
 
 ### Functionalities
 Under construction: Extend README to cover new IPFS support!!!
