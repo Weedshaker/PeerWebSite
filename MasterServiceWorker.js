@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.23';
+		this.devVersion = '0.24';
         this.precache = [
             './',
 			'./index.html',
@@ -284,8 +284,9 @@ class MasterServiceWorker {
 		});
 	}
 	setCache(request, response, overwrite = true) {
-		// don't cache POST as well as those which doNotGetCache
-		if (request.method === 'POST' || this.doNotGetCache.some(url => request.url.includes(url))) return Promise.resolve(response);
+		// don't cache POST, GET with queries as well as those which doNotGetCache
+		const url = new URL(request.url) || {};
+		if (url.search || request.method === 'POST' || this.doNotGetCache.some(url => request.url.includes(url))) return Promise.resolve(response);
 		return caches.open(this.cacheVersion).then(cache => {
 			const requestClone = request.clone();
 			const responseClone = response.clone();

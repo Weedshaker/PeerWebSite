@@ -153,10 +153,10 @@ export default class Player {
     // keyboard
 		if (!this.isSender) {
 			document.body.addEventListener('keydown', event => {
-				if (event.keyCode === 32 || event.keyCode === 37 || event.keyCode === 39 || event.keyCode === 38 || event.keyCode === 40 || event.keyCode === 80) {
-          event.preventDefault()
-          // open player with "p"
-          if (event.keyCode === 80) {
+				if (event.keyCode === 32 || event.keyCode === 37 || event.keyCode === 39 || event.keyCode === 38 || event.keyCode === 40 || event.keyCode === 112) {
+          // open player with "F1"
+          if (event.keyCode === 112) {
+            event.preventDefault()
             this.openPlayer(undefined, true)
           // volume change
           } else if (event.keyCode === 38 || event.keyCode === 40) {
