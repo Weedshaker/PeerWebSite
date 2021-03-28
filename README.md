@@ -35,8 +35,11 @@ Send Texts, Music, Pictures and Videos embedded in HTML with CSS and JavaScript 
 This is the CID: QmQJChGpNVVFvHqWKpmXfGgE5FuFq66DseG2rcejpFDpQW to use the peerweb.site v. beta 0.7.133 directly from your ipfs client: `/ipfs/QmQJChGpNVVFvHqWKpmXfGgE5FuFq66DseG2rcejpFDpQW
 [peerweb.site hosted@ipfs](https://ipfs.io/ipns/k2k4r8mv2ud8gd1gndbpdvcagf6r7qodhyojdxzfq4iwbb04ncxiy1x8/index_no_tracking.html)
 
+### We (I) need you!
+More devtools- inconjunction peerweb.site/ipfs/webtorrent/webrtc tutorials and videos are needed. Please, produce one and get in touch to host here your CID.
+
 ### Functionalities
-TODO: Extend README to cover new IPFS support!!!
+Under construction: Extend README to cover new IPFS support!!!
 
 1. **Use WebTorrent for files**: This will enable WebTorrent for added files. It allows video steaming and will perform better in case your site is file heavy. It is mandatory for multiple files to load efficiently. Although, it may not work well with other browsers but Chrome.
 
