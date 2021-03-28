@@ -8,7 +8,7 @@ class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
 		this.cacheVersion = 'v1';
-		this.devVersion = '0.24';
+		this.devVersion = '0.25';
         this.precache = [
             './',
 			'./index.html',
@@ -272,7 +272,8 @@ class MasterServiceWorker {
 	getCache(request) {
 		return new Promise((resolve, reject) => {
 			caches.open(this.cacheVersion).then(cache => {
-				cache.match(request, {ignoreSearch: true, ignoreMethod: true, ignoreVary: true}).then(response => {
+				// https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage/match
+				cache.match(request, {ignoreSearch: false, ignoreMethod: true, ignoreVary: true}).then(response => {
 					// only overwrite in case cache response would not validate (not found resolves undefined)
 					if (this.validateStatus(response)) {
 						resolve(response);
@@ -284,9 +285,8 @@ class MasterServiceWorker {
 		});
 	}
 	setCache(request, response, overwrite = true) {
-		// don't cache POST, GET with queries as well as those which doNotGetCache
-		const url = new URL(request.url) || {};
-		if (url.search || request.method === 'POST' || this.doNotGetCache.some(url => request.url.includes(url))) return Promise.resolve(response);
+		// don't cache POST as well as those which doNotGetCache
+		if (request.method === 'POST' || this.doNotGetCache.some(url => request.url.includes(url))) return Promise.resolve(response);
 		return caches.open(this.cacheVersion).then(cache => {
 			const requestClone = request.clone();
 			const responseClone = response.clone();
