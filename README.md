@@ -32,8 +32,8 @@ Send Texts, Music, Pictures and Videos embedded in HTML with CSS and JavaScript 
 <img src="https://weedshaker.github.io/PeerWebSite/img/screenshot2.png" align="right" width="40%">
 <br clear="right"/>
 
-### peerweb.site [hosted@ipfs](https://ipfs.io/ipfs/QmTxSTUd6UYcA5bD4U81YUFoE4NF6gSSqR8ZCCtEHqKQkb/index_no_tracking.html)
-This is the CID: QmTxSTUd6UYcA5bD4U81YUFoE4NF6gSSqR8ZCCtEHqKQkb to use the peerweb.site v. beta 0.7.134 directly from your ipfs client: `/ipfs/QmTxSTUd6UYcA5bD4U81YUFoE4NF6gSSqR8ZCCtEHqKQkb
+### peerweb.site [hosted@ipfs](https://ipfs.io/ipfs/QmVRQEdiqNwVxsMJtrhX8EQRHF3NJj4Aui5jXGUtDhA9Hd/index_no_tracking.html)
+This is the CID: QmVRQEdiqNwVxsMJtrhX8EQRHF3NJj4Aui5jXGUtDhA9Hd to use the peerweb.site v. beta 0.7.134 directly from your ipfs client: `/ipfs/QmVRQEdiqNwVxsMJtrhX8EQRHF3NJj4Aui5jXGUtDhA9Hd
 [peerweb.site hosted@ipns](https://ipfs.io/ipns/k2k4r8mv2ud8gd1gndbpdvcagf6r7qodhyojdxzfq4iwbb04ncxiy1x8/index_no_tracking.html)
 
 ### We (I) need you!
