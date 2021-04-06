@@ -2,7 +2,8 @@
 ## Real Time Peer to Peer Web Site Host from your Browser
 
 ### Tutorials
-[<img src="https://weedshaker.github.io/PeerWebSite/video/tutorialOneThumbnail.gif">](https://weedshaker.github.io/PeerWebSite/video/tutorialOne.mp4 "Tutorial One - Click to Watch!")
+[<img src="https://weedshaker.github.io/PeerWebSite/video/tutorialOneThumbnail.gif">](https://weedshaker.github.io/PeerWebSite/video/tutorialOne.html "Tutorial One - Click to Watch!")<br />
+[Tutorial One](https://weedshaker.github.io/PeerWebSite/video/tutorialOne.html)
 
 ### check out the IPFS Examples ===>
 1. [IPFS page with video](https://peerweb.site/#ipfs:QmXLyD6aPKWDdPnAJyrjPrrqTZgTeKXSvgNBHsFgB6Yte5)
