@@ -16,7 +16,7 @@
     1. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.4.jpg">](https://peerweb.site/#ipfs:QmTMLMyy9CeuaePtani2SM6foLbop7Q1ojckTfmdGXsRhL)
     2. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.5.jpg">](https://peerweb.site/#ipfs:QmexdQt1cak1PoADiw9CZmNNbnwmt4foHogqwRepTefMBS)
     3. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.3.jpg">](https://peerweb.site/#ipfs:QmUNAckSAFmpr2GAgSmjMATKb1YmZFhLXrnZBBLqT1sn6N)
-8. [IPFS HTML/CSS Flyer/digital event add Example [<img src="https://weedshaker.github.io/PeerWebSite/img/flyerExample.PNG">](https://peerweb.site/#ipfs:QmSShgRjfhj8R8LCXbytwAVBEFSQVBuuKgL5PaFhixsp4A)<br />
+8. IPFS HTML/CSS Flyer/digital event add Example: [<img src="https://weedshaker.github.io/PeerWebSite/img/flyerExample.PNG">](https://peerweb.site/#ipfs:QmSShgRjfhj8R8LCXbytwAVBEFSQVBuuKgL5PaFhixsp4A)<br />
 ***Long time hosted from [IPFS Desktop](https://github.com/ipfs/ipfs-desktop)***
 
 ### check out the WebTorrent Examples ===>
