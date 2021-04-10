@@ -15,7 +15,8 @@
 7. [IPFS HTML/CSS Example building a "website" using Browsers Developer Tools and saving to IPFS Desktop (3 Steps)](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools)
     1. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.4.jpg">](https://peerweb.site/#ipfs:QmTMLMyy9CeuaePtani2SM6foLbop7Q1ojckTfmdGXsRhL)
     2. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.5.jpg">](https://peerweb.site/#ipfs:QmexdQt1cak1PoADiw9CZmNNbnwmt4foHogqwRepTefMBS)
-    3. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.3.jpg">](https://peerweb.site/#ipfs:QmUNAckSAFmpr2GAgSmjMATKb1YmZFhLXrnZBBLqT1sn6N)<br />
+    3. [<img src="https://weedshaker.github.io/PeerWebSite/img/screenshot.3.jpg">](https://peerweb.site/#ipfs:QmUNAckSAFmpr2GAgSmjMATKb1YmZFhLXrnZBBLqT1sn6N)
+8. [IPFS HTML/CSS digital flyer/event Example](https://peerweb.site/#ipfs:QmSShgRjfhj8R8LCXbytwAVBEFSQVBuuKgL5PaFhixsp4A)<br />
 ***Long time hosted from [IPFS Desktop](https://github.com/ipfs/ipfs-desktop)***
 
 ### check out the WebTorrent Examples ===>
