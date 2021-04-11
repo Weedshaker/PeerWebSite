@@ -24,9 +24,20 @@
 ***Long time hosted from [WebTorrent Desktop](https://webtorrent.io/desktop/)***
 
 ### Hosting Methods
-1. [IPFS](https://ipfs.io) will propagate the content to the IPFS Distributed Web. Without any requests/hits, the content will remain online up to 30 days, depending the file size. Each content request will extend that lifespan. [What is IPFS? - A Beginner's Guide](https://hackernoon.com/a-beginners-guide-to-ipfs-20673fedd3f). Best for medium sized files up to 50MB.
-2. WebRTC will directly and live share/stream the content to other devices. The content goes offline with closing the session/tab. Works for tiny files.
-3. [WebTorrent](https://webtorrent.io) will propagate the content into the Torrent Network. The content will stay online as long as a client/session is active. The content goes offline, once there are no visitors aka. active sessions with that torrent. Best for large files.
+1. [IPFS](https://ipfs.io) will propagate the content to the IPFS Distributed Web. Without any requests/hits, the content will remain online up to 30 days, depending the file size. Each content request will extend that lifespan. [What is IPFS? - A Beginner's Guide](https://hackernoon.com/a-beginners-guide-to-ipfs-20673fedd3f). Best for medium sized files up to 50MB.<br />
+```
+// get peerInfos
+App.IPFS.node.then(async node => {
+  const peerInfos = await node.swarm.addrs()
+
+  peerInfos.forEach(info => {
+    console.log(info.id)
+    info.addrs.forEach(addr => console.log(addr.toString()))
+  })
+})
+``` 
+4. WebRTC will directly and live share/stream the content to other devices. The content goes offline with closing the session/tab. Works for tiny files.
+5. [WebTorrent](https://webtorrent.io) will propagate the content into the Torrent Network. The content will stay online as long as a client/session is active. The content goes offline, once there are no visitors aka. active sessions with that torrent. Best for large files.
 
 ### Description
 Send Texts, Music, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC, WebTorrents or IPFS, live edited P2P as well as static Torrents + IPFS. With WebRTC/WebTorrent (NOT [IPFS - more details](https://ipfs.io/#why)) - No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent/IPFS snapshots. *(Saving in-site WebTorrents is not yet supported.)*
