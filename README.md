@@ -26,7 +26,7 @@
 ### Hosting Methods
 1. [IPFS](https://ipfs.io) will propagate the content to the IPFS Distributed Web. Without any requests/hits, the content will remain online up to 30 days, depending the file size. Each content request will extend that lifespan. [What is IPFS? - A Beginner's Guide](https://hackernoon.com/a-beginners-guide-to-ipfs-20673fedd3f). Best for medium sized files up to 50MB.<br />
 ```
-// get peerInfos
+// to get peerInfos enter the following into the browser devtools console ===>
 App.IPFS.node.then(async node => {
   const peerInfos = await node.swarm.addrs()
 
