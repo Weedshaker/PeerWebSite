@@ -7,6 +7,8 @@ export class MasterHTML {
 	constructor(WebTorrent){
 		this.Dom = new Dom();
 		this.WebTorrent = WebTorrent;
+		// when properly solved, this should be removed, see TODO below
+		this.someTorrentContainsVideo = false
 	}
 	removeElements(){
 		this.idNames.forEach((e) => {
@@ -32,15 +34,20 @@ export class MasterHTML {
 				['scope', this.WebTorrent],
 				['attributes', [this.WebTorrent.api.container]], // needs to get this as attribute, eventhough default val, otherwise it gets overwritten by returned txt
 			])
-		], undefined, undefined, undefined, () => this.reTriggerSetData());
+		], undefined, undefined, undefined, torrent => this.reTriggerSetData(torrent));
 	}
-	reTriggerSetData() {
+	reTriggerSetData(torrent) {
 		// re-trigger to set certain attributes like style on images after they were appended
-		// TODO: read those attributes out at RegexWorker and set when torrent gets appended
-		clearTimeout(this.reTriggerTimeOutID);
-		this.reTriggerTimeOutID = setTimeout(() => {
-			if (this.lastData) this.setData.apply(this, this.lastData);
-		}, 1000);
+		// TODO: Solve it properly by reading those attributes out at RegexWorker and set when torrent gets appended
+		// TODO: this process breaks webtorrent video streaming, so only use it for none videos
+		// WEBTORRENT pictures will be unformated when there is a video with this hack!!! Term: unformated, unresponsive webtorrent images
+		if (torrent.sst_containsVideo) this.someTorrentContainsVideo = true;
+		if (!this.someTorrentContainsVideo) {
+			clearTimeout(this.reTriggerTimeOutID);
+			this.reTriggerTimeOutID = setTimeout(() => {
+				if (this.lastData) this.setData.apply(this, this.lastData);
+			}, 1000);
+		}
 	}
 	attachButtonEvent(button, sendCont, getDataFunc, event, send){
 		button.on('click', () => {
