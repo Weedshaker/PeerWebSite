@@ -1,5 +1,9 @@
 ---- UI - Server ----
 
+-1) https://github.com/fabioricali/Cryptor (encrypt and make url including password but if not ask for the password on unpacking)
+    https://github.com/SumiMakito/Awesome-qr.js
+    tinyurl generation on click
+
 0) use new build process, preferably native import
 
 1) create new ui
