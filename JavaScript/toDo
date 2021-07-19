@@ -1,6 +1,6 @@
 ---- UI - Server ----
 
--1) set encrypt detection string at start eg. "encrypted:", encrypt/decrypt ask for salt if not supplied by prompt, add functionality to web torrent
+-1) set encrypt detection string at start eg. "encrypted:", encrypt/decrypt ask for salt if not supplied by prompt, add functionality to web torrent, loading icon when encrypting, encrypted icon
 
 0) use new build process, preferably native import
 
