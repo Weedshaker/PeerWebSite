@@ -4,13 +4,14 @@ import {MasterHTML} from 'SampleApp/Prototype/Domain/MasterHTML.js';
 import Player from 'Player/Player.js';
 
 export class HTML extends MasterHTML {
-	constructor(WebTorrentReceiver, WebTorrentSeeder, Editor, WebRTC, IPFS, parent){
+	constructor(WebTorrentReceiver, WebTorrentSeeder, Editor, WebRTC, IPFS, EncryptDecrypt, parent){
 		super(WebTorrentReceiver);
 
 		this.WebTorrentSeeder = WebTorrentSeeder;
 		this.Editor = Editor;
 		this.WebRTC = WebRTC;
 		this.IPFS = IPFS;
+		this.EncryptDecrypt = EncryptDecrypt;
 		this.parent = parent; // ref to App.js
 
 		this.Player = new Player();
@@ -24,7 +25,7 @@ export class HTML extends MasterHTML {
 					<div id="info" class="flex">
 						<div class="offline">YOU ARE OFFLINE!!!</div>
 						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
-						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.135<span id="sw-version"></span>; Visit Github for more Infos!</a>
+						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.0<span id="sw-version"></span>; Visit Github for more Infos!</a>
 						<a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
 					</div>
 				</header>`);
@@ -181,7 +182,7 @@ export class HTML extends MasterHTML {
 		button.click(event => {
 			this.copyToClipBoard('inputIPFS');
 			const data = this.Editor.getData(undefined, true);
-			this.IPFS.add('peerWebSite.txt', data).then(file => {
+			this.IPFS.add('peerWebSite.txt', this.EncryptDecrypt.encrypt(data, '123')).then(file => {
 				// default behavior
 				this.setHash(`ipfs:${file.cid}`);
 				this.saveData();

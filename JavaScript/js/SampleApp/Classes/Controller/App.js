@@ -153,7 +153,7 @@ export class App extends MasterApp {
 				this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => {
 					clearTimeout(timeout);
 					this.IPFS.pinCid(cid);
-					this.HTML.setData(this.receiveCont, {message: text});
+					this.HTML.setData(this.receiveCont, {message: this.EncryptDecrypt.decrypt(text, '123')});
 					this.HTML.setTitle(this.HTML.getFirstText(text));
 				}).catch(error => $('#receiver').text(`An Error occured! ${error}`));
 				$('.headerReceiver > .counterWebRTC').hide();
@@ -173,7 +173,7 @@ export class App extends MasterApp {
 			const cid = location.hash.substr(6);
 			this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => {
 				this.IPFS.pinCid(cid);
-				this.Editor.setData(undefined, text, 'code');
+				this.Editor.setData(undefined, this.EncryptDecrypt.decrypt(text, '123'), 'code');
 				this.HTML.setTitle();
 			}).catch(error => $('#sender').text(`An Error occured! ${error}`));
 		}
