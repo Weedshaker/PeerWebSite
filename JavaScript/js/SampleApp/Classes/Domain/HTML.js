@@ -181,8 +181,7 @@ export class HTML extends MasterHTML {
 		controls.append(button);
 		button.click(event => {
 			this.copyToClipBoard('inputIPFS');
-			const data = this.Editor.getData(undefined, true);
-			this.IPFS.add('peerWebSite.txt', this.EncryptDecrypt.encrypt(data, '123')).then(file => {
+			this.EncryptDecrypt.encrypt(this.Editor.getData(undefined, true), '123').then(text => this.IPFS.add('peerWebSite.txt', text).then(file => {
 				// default behavior
 				this.setHash(`ipfs:${file.cid}`);
 				this.saveData();
@@ -191,7 +190,7 @@ export class HTML extends MasterHTML {
 				// update the clipboard
 				input.val(location.href);
 				this.copyToClipBoard('inputIPFS');
-			}).catch(error => input.val(`IPFS failed: ${error}`));
+			}).catch(error => input.val(`IPFS failed: ${error}`))).catch(error => input.val(`Encrypt failed: ${error}`));
 		});
 		return button;
 	}

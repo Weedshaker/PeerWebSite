@@ -150,12 +150,12 @@ export class App extends MasterApp {
 			} else if (this.checkHashType(location.hash) === 'ipfs') {
 				const timeout = setTimeout(() => location.reload(), this.receiverWaitMs);
 				const cid = location.hash.substr(6);
-				this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => {
+				this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => this.EncryptDecrypt.decrypt(text, '123').then(text => {
 					clearTimeout(timeout);
 					this.IPFS.pinCid(cid);
-					this.HTML.setData(this.receiveCont, {message: this.EncryptDecrypt.decrypt(text, '123')});
+					this.HTML.setData(this.receiveCont, {message: text});
 					this.HTML.setTitle(this.HTML.getFirstText(text));
-				}).catch(error => $('#receiver').text(`An Error occured! ${error}`));
+				}).catch(error => $('#receiver').text(`Decrypt; an Error occured! ${error}`))).catch(error => $('#receiver').text(`IPFS; an Error occured! ${error}`));
 				$('.headerReceiver > .counterWebRTC').hide();
 				$('.headerReceiver > .counterWebTorrent').hide();
 			} else {
@@ -171,11 +171,11 @@ export class App extends MasterApp {
 		} else if (this.checkHashType(location.hash) === 'ipfs') {
 			if (this.Editor.getData().length < 12) this.Editor.setData(undefined, this.HTML.loadingAnimation, 'code')
 			const cid = location.hash.substr(6);
-			this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => {
+			this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => this.EncryptDecrypt.decrypt(text, '123').then(text => {
 				this.IPFS.pinCid(cid);
-				this.Editor.setData(undefined, this.EncryptDecrypt.decrypt(text, '123'), 'code');
+				this.Editor.setData(undefined, text, 'code');
 				this.HTML.setTitle();
-			}).catch(error => $('#sender').text(`An Error occured! ${error}`));
+			}).catch(error => $('#sender').text(`Decrypt; an Error occured! ${error}`))).catch(error => $('#sender').text(`IPFS; an Error occured! ${error}`));
 		}
 	}
 	setReceiverOrSender(isSender){

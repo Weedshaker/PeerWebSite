@@ -1,5 +1,29 @@
+import {MasterWorker} from 'SharedHelper/Prototype/Helper/MasterWorker.js';
+
 // https://github.com/okandavut/hencrypt/blob/master/index.js
-export class EncryptDecrypt {
+export class EncryptDecrypt extends MasterWorker {
+    constructor () {
+        super()
+
+        this.create(this.encrypt);
+        this.encrypt = (text, salt) => {
+            let encryptResolve = null;
+            const encryptPromise = new Promise(resolve => {
+                encryptResolve = resolve;
+            });
+            this.run([text, salt], this.workers[0], encryptedText => encryptResolve(encryptedText));
+            return encryptPromise;
+        }
+        this.create(this.decrypt);
+        this.decrypt = (text, salt) => {
+            let decryptResolve = null;
+            const decryptPromise = new Promise(resolve => {
+                decryptResolve = resolve;
+            });
+            this.run([text, salt], this.workers[1], decryptedText => decryptResolve(decryptedText));
+            return decryptPromise;
+        }
+    }
     encrypt (text, salt) {
         const textToChars = (text) => text.split("").map((c) => c.charCodeAt(0));
         const byteHex = (n) => ("0" + Number(n).toString(16)).substr(-2);

@@ -1,6 +1,6 @@
 ---- UI - Server ----
 
--1) https://github.com/okandavut/hencrypt/blob/master/index.js just do a password
+-1) set encrypt detection string at start eg. "encrypted:", encrypt/decrypt ask for salt if not supplied by prompt, add functionality to web torrent
 
 0) use new build process, preferably native import
 

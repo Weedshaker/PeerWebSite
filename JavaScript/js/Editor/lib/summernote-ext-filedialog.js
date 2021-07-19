@@ -44,7 +44,7 @@
                          `<div class="form-check">
                                 <input class="form-check-input" type="radio" name="fileType" id="fileType1" value="webrtc" ${fileType === 'webrtc' ? 'checked' : ''}>
                                 <label class="form-check-label" for="fileType1">
-                                WebRTC: Base64 embedded (depends on hosting method)
+                                Base64 embedded (depends on hosting method) NOTE: Use only for small files! Can be encrypted.
                                 </label>
                             </div>
                             <div class="form-check">
