@@ -180,7 +180,6 @@ export class HTML extends MasterHTML {
 		let button = $(`<button id="buttonIPFS" class="mui-btn mui-btn--primary"><span class="btnText">IPFS (rather permanent):<br>Take Snapshot & Copy Link</span><span class="qr"></span></button>`);
 		controls.append(button);
 		button.click(event => {
-			this.copyToClipBoard('inputIPFS');
 			this.addQrCode($(button), 'onlyLoading', 'ipfsLoading');
 			this.EncryptDecrypt.encrypt(this.Editor.getData(undefined, true)).then(result => {
 				const {text, encrypted} = result;
@@ -217,7 +216,6 @@ export class HTML extends MasterHTML {
 		let webTorrentCounterID = null;
 		let torrentCreatedData = [];
 		buttonWebTorrent.click(event => {
-			this.copyToClipBoard('inputWebTorrent'); // must kopie when multiple times clicked on same button
 			this.addQrCode($(buttonWebTorrent), 'onlyLoading', 'torrentLoading');
 			this.EncryptDecrypt.encrypt(this.Editor.getData(undefined, true)).then(result => {
 				const {text, encrypted} = result;
