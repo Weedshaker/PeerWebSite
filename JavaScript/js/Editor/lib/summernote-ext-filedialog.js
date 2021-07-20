@@ -44,19 +44,19 @@
                          `<div class="form-check">
                                 <input class="form-check-input" type="radio" name="fileType" id="fileType1" value="webrtc" ${fileType === 'webrtc' ? 'checked' : ''}>
                                 <label class="form-check-label" for="fileType1">
-                                Base64 embedded (depends on hosting method) NOTE: Use only for small files! Can be encrypted.
+                                Base64 embedded (durability depends on hosting method) NOTE: Use only for small files! Can be encrypted.
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="fileType" id="fileType2" value="ipfs" ${fileType === 'ipfs' || !fileType ? 'checked' : ''}>
                                 <label class="form-check-label" for="fileType2">
-                                IPFS: Distributed file system (rather permanent)
+                                IPFS: Distributed file system (rather permanent) NOTE: Can not be encrypted.
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="fileType" id="fileType3" value="webtorrent" ${fileType === 'webtorrent' ? 'checked' : ''}>
                                 <label class="form-check-label" for="fileType3">
-                                WebTorrent: Peer to peer file sharing (transitory)
+                                WebTorrent: Peer to peer file sharing (transitory) NOTE: Can not be encrypted.
                             </label>
                             </div>`;
 

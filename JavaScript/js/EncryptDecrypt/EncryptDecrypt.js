@@ -13,7 +13,7 @@ export class EncryptDecrypt extends MasterWorker {
             const encryptPromise = new Promise(resolve => {
                 encryptResolve = resolve;
             });
-            if (!salt) salt = window.prompt('Enter a password/passphrase in case you want to encrypt the html/text!');
+            if (!salt) salt = window.prompt('Enter a password or passphrase in case you want to encrypt the html/text!?');
             if (salt) {
                 this.run([text, salt], this.workers[0], encryptedText => encryptResolve({text: this.encryptedIndicator + encryptedText, encrypted: true}));
             } else {
@@ -28,7 +28,7 @@ export class EncryptDecrypt extends MasterWorker {
                 decryptResolve = resolve;
             });
             if (text.includes(this.encryptedIndicator)) {
-                if (!salt) salt = window.prompt('Enter a password/passphrase to decrypt this peerweb sites html/text!');
+                if (!salt) salt = window.prompt('Enter a password or passphrase to decrypt this Peer Web Site\'s html/text!');
                 if (salt) {
                     this.run([text.replace(this.encryptedIndicator, ''), salt], this.workers[1], decryptedText => decryptResolve({text: decryptedText, decrypted: true}));
                 } else {

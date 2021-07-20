@@ -36,10 +36,13 @@ App.IPFS.node.then(async node => {
   })
 })
 ``` 
-4. WebRTC will directly and live share/stream the content to other devices. The content goes offline with closing the session/tab. Works for tiny files.
-5. [WebTorrent](https://webtorrent.io) will propagate the content into the Torrent Network. The content will stay online as long as a client/session is active. The content goes offline, once there are no visitors aka. active sessions with that torrent. Best for large files.
+2. [WebTorrent](https://webtorrent.io) will propagate the content into the Torrent Network. The content will stay online as long as a client/session is active. The content goes offline, once there are no visitors aka. active sessions with that torrent. Best for large files.
+3. WebRTC will directly and live share/stream the content to other devices. The content goes offline with closing the session/tab. Works for tiny files.
 
-### Description
+### HTML/Text Encryption and Decryption
+Peer Web Site supports content encryption aka. salting since v. beta 0.8.0. The code regarding this feature can be found at: JavaScript/js/EncryptDecrypt/EncryptDecrypt.js and ensures that the passwords/passphrases do net get saved nor sent anywhere. This is a very convenient feature to secure your content. Although, it can not encrypt IPFS nor WebTorrent files added to your site and purely encrypts the actual content, which you enter through the text editor or devtools, as well as embedded Base64 files.
+
+### General Description
 Send Texts, Music, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC, WebTorrents or IPFS, live edited P2P as well as static Torrents + IPFS. With WebRTC/WebTorrent (NOT [IPFS - more details](https://ipfs.io/#why)) - No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent/IPFS snapshots. *(Saving in-site WebTorrents is not yet supported.)*
 **Note: Cellphone networks on 4g/5g possibly block your WebRTC or WebTorrent connections, which renders PeerWebSite unusable, except you use the IPFS option!!! or you could circumvent network restrictions by using a VPN.**
 **Note: Clear all your PeerWeb - site specific browser data's in case IPFS or other parts stop working. Eg. Limit exceeded, etc.**

@@ -26,7 +26,7 @@ export class HTML extends MasterHTML {
 						<div class="offline">YOU ARE OFFLINE!!!</div>
 						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
 						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.0<span id="sw-version"></span>; Visit Github for more Infos!</a>
-						<a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>
 					</div>
 				</header>`);
 				// add edit
@@ -91,8 +91,8 @@ export class HTML extends MasterHTML {
 				// controls
 				let controls = $('<div id="controls"></div>')
 				this.createIpfsControls(controls);
-				const webrtcButton = this.createWebrtcControls(controls, connection, isSender, headerReceiver);
 				const counterWebTorrent = this.createWebtorrentControls(controls, isSender, headerReceiver);
+				const webrtcButton = this.createWebrtcControls(controls, connection, isSender, headerReceiver);
 				this.containers.push(controls);
 				// main containers
 				this.loadingAnimation = `<span class="blobLoading ${this.parent.checkHashType(location.hash) === 'magnet' ? 'torrentLoading' : this.parent.checkHashType(location.hash) === 'ipfs' ? 'ipfsLoading' : ''}"></span><span class="blobLoadingText">Please, be patient. Decentralized content can take a while to load...</span>`;
