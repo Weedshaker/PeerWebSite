@@ -5,13 +5,20 @@ export class EncryptDecrypt extends MasterWorker {
     constructor () {
         super()
 
+        this.encryptedIndicator = 'SST_Encrypted:'
+
         this.create(this.encrypt);
         this.encrypt = (text, salt) => {
             let encryptResolve = null;
             const encryptPromise = new Promise(resolve => {
                 encryptResolve = resolve;
             });
-            this.run([text, salt], this.workers[0], encryptedText => encryptResolve(encryptedText));
+            if (!salt) salt = window.prompt('Enter a password/passphrase in case you want to encrypt the html/text!');
+            if (salt) {
+                this.run([text, salt], this.workers[0], encryptedText => encryptResolve(this.encryptedIndicator + encryptedText));
+            } else {
+                encryptResolve(text);
+            }
             return encryptPromise;
         }
         this.create(this.decrypt);
@@ -20,7 +27,16 @@ export class EncryptDecrypt extends MasterWorker {
             const decryptPromise = new Promise(resolve => {
                 decryptResolve = resolve;
             });
-            this.run([text, salt], this.workers[1], decryptedText => decryptResolve(decryptedText));
+            if (text.includes(this.encryptedIndicator)) {
+                if (!salt) salt = window.prompt('Enter a password/passphrase to decrypt this peerweb sites html/text!');
+                if (salt) {
+                    this.run([text.replace(this.encryptedIndicator, ''), salt], this.workers[1], decryptedText => decryptResolve(decryptedText));
+                } else {
+                    decryptResolve(text);
+                }
+            } else {
+                decryptResolve(text);
+            }
             return decryptPromise;
         }
     }

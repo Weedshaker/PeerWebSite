@@ -150,7 +150,7 @@ export class App extends MasterApp {
 			} else if (this.checkHashType(location.hash) === 'ipfs') {
 				const timeout = setTimeout(() => location.reload(), this.receiverWaitMs);
 				const cid = location.hash.substr(6);
-				this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => this.EncryptDecrypt.decrypt(text, '123').then(text => {
+				this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => this.EncryptDecrypt.decrypt(text).then(text => {
 					clearTimeout(timeout);
 					this.IPFS.pinCid(cid);
 					this.HTML.setData(this.receiveCont, {message: text});
@@ -171,7 +171,7 @@ export class App extends MasterApp {
 		} else if (this.checkHashType(location.hash) === 'ipfs') {
 			if (this.Editor.getData().length < 12) this.Editor.setData(undefined, this.HTML.loadingAnimation, 'code')
 			const cid = location.hash.substr(6);
-			this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => this.EncryptDecrypt.decrypt(text, '123').then(text => {
+			this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => this.EncryptDecrypt.decrypt(text).then(text => {
 				this.IPFS.pinCid(cid);
 				this.Editor.setData(undefined, text, 'code');
 				this.HTML.setTitle();

@@ -181,7 +181,7 @@ export class HTML extends MasterHTML {
 		controls.append(button);
 		button.click(event => {
 			this.copyToClipBoard('inputIPFS');
-			this.EncryptDecrypt.encrypt(this.Editor.getData(undefined, true), '123').then(text => this.IPFS.add('peerWebSite.txt', text).then(file => {
+			this.EncryptDecrypt.encrypt(this.Editor.getData(undefined, true)).then(text => this.IPFS.add('peerWebSite.txt', text).then(file => {
 				// default behavior
 				this.setHash(`ipfs:${file.cid}`);
 				this.saveData();
