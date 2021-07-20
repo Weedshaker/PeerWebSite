@@ -188,7 +188,7 @@ export class HTML extends MasterHTML {
 					// default behavior
 					this.setHash(`ipfs:${file.cid}`);
 					this.saveData();
-					this.addQrCode($(button), undefined, 'ipfsLoading');
+					this.addQrCode($(button), undefined, 'ipfsLoading', encrypted);
 					this.setTitle();
 					// update the clipboard
 					input.val(location.href);
@@ -233,7 +233,7 @@ export class HTML extends MasterHTML {
 					// default behavior
 					this.setHash(torrent.magnetURI);
 					this.saveData();
-					this.addQrCode($(buttonWebTorrent), undefined, 'torrentLoading');
+					this.addQrCode($(buttonWebTorrent), undefined, 'torrentLoading', encrypted);
 					this.setTitle();
 					// update the clipboard
 					inputWebTorrent.val(location.href);
@@ -302,12 +302,12 @@ export class HTML extends MasterHTML {
 		text = textNode.textContent.match(/>.*?([a-zA-Z\d]{1}[^>]*?)</);
 		return text && text.length && text[1] ? text[1] : '';
 	}
-	addQrCode($el, text = location.href, loadingClass = 'blobLoading') {
+	addQrCode($el, text = location.href, loadingClass = 'blobLoading', encrypted = false) {
 		const $oldImg = $el.find('img');
 		// only loading simply makes the loading icon appearing
-		const src = text === 'onlyLoading' ? text : `https://api.qrserver.com/v1/create-qr-code/?data="${this.encode(text)}"`;
+		const src = `https://api.qrserver.com/v1/create-qr-code/?data="${this.encode(text)}"`;
 		if (!$oldImg || !$oldImg.length || $oldImg.attr('src') !== src) {
-			const img = document.createElement('img');
+			const img = document.createElement(text === 'onlyLoading' ? 'span' : 'img');
 			const $span = $el.find('.qr');
 			img.src = src;
 			img.classList.add(loadingClass);
@@ -322,6 +322,7 @@ export class HTML extends MasterHTML {
 				errorCounter++;
 			};
 			$span.html(img);
+			if (encrypted) $span.append('<span class="glyphicon glyphicon-lock"></span>');
 			$el.addClass('hasQr');
 			$span.off('click').click(event => {
 				event.stopPropagation();
