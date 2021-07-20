@@ -15,9 +15,9 @@ export class EncryptDecrypt extends MasterWorker {
             });
             if (!salt) salt = window.prompt('Enter a password/passphrase in case you want to encrypt the html/text!');
             if (salt) {
-                this.run([text, salt], this.workers[0], encryptedText => encryptResolve(this.encryptedIndicator + encryptedText));
+                this.run([text, salt], this.workers[0], encryptedText => encryptResolve({text: this.encryptedIndicator + encryptedText, encrypted: true}));
             } else {
-                encryptResolve(text);
+                encryptResolve({text, encrypted: false});
             }
             return encryptPromise;
         }
@@ -30,12 +30,12 @@ export class EncryptDecrypt extends MasterWorker {
             if (text.includes(this.encryptedIndicator)) {
                 if (!salt) salt = window.prompt('Enter a password/passphrase to decrypt this peerweb sites html/text!');
                 if (salt) {
-                    this.run([text.replace(this.encryptedIndicator, ''), salt], this.workers[1], decryptedText => decryptResolve(decryptedText));
+                    this.run([text.replace(this.encryptedIndicator, ''), salt], this.workers[1], decryptedText => decryptResolve({text: decryptedText, decrypted: true}));
                 } else {
-                    decryptResolve(text);
+                    decryptResolve({text, decrypted: 'failed'});
                 }
             } else {
-                decryptResolve(text);
+                decryptResolve({text, decrypted: false});
             }
             return decryptPromise;
         }

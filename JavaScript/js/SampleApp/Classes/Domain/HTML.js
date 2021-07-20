@@ -181,16 +181,19 @@ export class HTML extends MasterHTML {
 		controls.append(button);
 		button.click(event => {
 			this.copyToClipBoard('inputIPFS');
-			this.EncryptDecrypt.encrypt(this.Editor.getData(undefined, true)).then(text => this.IPFS.add('peerWebSite.txt', text).then(file => {
-				// default behavior
-				this.setHash(`ipfs:${file.cid}`);
-				this.saveData();
-				this.addQrCode($(button), undefined, 'ipfsLoading');
-				this.setTitle();
-				// update the clipboard
-				input.val(location.href);
-				this.copyToClipBoard('inputIPFS');
-			}).catch(error => input.val(`IPFS failed: ${error}`))).catch(error => input.val(`Encrypt failed: ${error}`));
+			this.EncryptDecrypt.encrypt(this.Editor.getData(undefined, true)).then(result => {
+				const {text, encrypted} = result;
+				this.IPFS.add('peerWebSite.txt', text).then(file => {
+					// default behavior
+					this.setHash(`ipfs:${file.cid}`);
+					this.saveData();
+					this.addQrCode($(button), undefined, 'ipfsLoading');
+					this.setTitle();
+					// update the clipboard
+					input.val(location.href);
+					this.copyToClipBoard('inputIPFS');
+				}).catch(error => input.val(`IPFS failed: ${error}`))
+			}).catch(error => input.val(`Encrypt failed: ${error}`));
 		});
 		return button;
 	}
@@ -214,27 +217,29 @@ export class HTML extends MasterHTML {
 		let torrentCreatedData = [];
 		buttonWebTorrent.click(event => {
 			this.copyToClipBoard('inputWebTorrent'); // must kopie when multiple times clicked on same button
-			// must always be same file name 'peerWebSite' otherwise webtorrent gives us a new magicURI
-			const data = this.Editor.getData(undefined, true);
-			if (!torrentCreatedData.includes(data)) this.WebTorrentSeeder.api.seed(new File([data], 'peerWebSite.txt', { type: 'plain/text', endings: 'native' }), undefined, undefined, undefined, undefined, (torrent) => {
-				// clear interval
-				clearInterval(webTorrentCounterID);
-				webTorrentCounterID = setInterval(() => {
-					counterWebTorrent[0].textContent = `[${torrent.numPeers} peer${torrent.numPeers === 1 ? '' : 's'}]`;
-				}, 1000);
-				// avoid creating the torrent twice
-				torrentCreatedData.push(data);
-				// default behavior
-				this.setHash(torrent.magnetURI);
-				this.saveData();
-				this.addQrCode($(buttonWebTorrent), undefined, 'torrentLoading');
-				this.setTitle();
-				// update the clipboard
-				inputWebTorrent.val(location.href);
-				this.copyToClipBoard('inputWebTorrent');
-				torrent.on('error', error => inputWebTorrent.val(`WebTorrent failed: ${error}`));
-				this.informOnce('buttonWebTorrent');
-			});
+			this.EncryptDecrypt.encrypt(this.Editor.getData(undefined, true)).then(result => {
+				const {text, encrypted} = result;
+				// must always be same file name 'peerWebSite' otherwise webtorrent gives us a new magicURI
+				if (!torrentCreatedData.includes(text)) this.WebTorrentSeeder.api.seed(new File([text], 'peerWebSite.txt', { type: 'plain/text', endings: 'native' }), undefined, undefined, undefined, undefined, (torrent) => {
+					// clear interval
+					clearInterval(webTorrentCounterID);
+					webTorrentCounterID = setInterval(() => {
+						counterWebTorrent[0].textContent = `[${torrent.numPeers} peer${torrent.numPeers === 1 ? '' : 's'}]`;
+					}, 1000);
+					// avoid creating the torrent twice
+					torrentCreatedData.push(text);
+					// default behavior
+					this.setHash(torrent.magnetURI);
+					this.saveData();
+					this.addQrCode($(buttonWebTorrent), undefined, 'torrentLoading');
+					this.setTitle();
+					// update the clipboard
+					inputWebTorrent.val(location.href);
+					this.copyToClipBoard('inputWebTorrent');
+					torrent.on('error', error => inputWebTorrent.val(`WebTorrent failed: ${error}`));
+					this.informOnce('buttonWebTorrent');
+				});
+			}).catch(error => input.val(`Encrypt failed: ${error}`));
 		});
 		this.WebTorrentSeeder.client.on('error', () => {
 			clearInterval(webTorrentCounterID);
