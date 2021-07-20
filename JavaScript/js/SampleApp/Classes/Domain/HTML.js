@@ -181,6 +181,7 @@ export class HTML extends MasterHTML {
 		controls.append(button);
 		button.click(event => {
 			this.copyToClipBoard('inputIPFS');
+			this.addQrCode($(button), 'onlyLoading', 'ipfsLoading');
 			this.EncryptDecrypt.encrypt(this.Editor.getData(undefined, true)).then(result => {
 				const {text, encrypted} = result;
 				this.IPFS.add('peerWebSite.txt', text).then(file => {
@@ -217,6 +218,7 @@ export class HTML extends MasterHTML {
 		let torrentCreatedData = [];
 		buttonWebTorrent.click(event => {
 			this.copyToClipBoard('inputWebTorrent'); // must kopie when multiple times clicked on same button
+			this.addQrCode($(buttonWebTorrent), 'onlyLoading', 'torrentLoading');
 			this.EncryptDecrypt.encrypt(this.Editor.getData(undefined, true)).then(result => {
 				const {text, encrypted} = result;
 				// must always be same file name 'peerWebSite' otherwise webtorrent gives us a new magicURI
@@ -302,14 +304,16 @@ export class HTML extends MasterHTML {
 	}
 	addQrCode($el, text = location.href, loadingClass = 'blobLoading') {
 		const $oldImg = $el.find('img');
-		const src = `https://api.qrserver.com/v1/create-qr-code/?data="${this.encode(text)}"`;
+		// only loading simply makes the loading icon appearing
+		const src = text === 'onlyLoading' ? text : `https://api.qrserver.com/v1/create-qr-code/?data="${this.encode(text)}"`;
 		if (!$oldImg || !$oldImg.length || $oldImg.attr('src') !== src) {
 			const img = document.createElement('img');
+			const $span = $el.find('.qr');
 			img.src = src;
 			img.classList.add(loadingClass);
 			img.addEventListener('load', event => img.classList.remove(loadingClass));
 			let errorCounter = 0;
-			img.onerror = error => {
+			if (text !== 'onlyLoading') img.onerror = error => {
 				if (errorCounter < 3) {
 					img.src = img.src;
 				} else {
@@ -317,18 +321,14 @@ export class HTML extends MasterHTML {
 				}
 				errorCounter++;
 			};
-			const $span = $el.find('.qr');
 			$span.html(img);
 			$el.addClass('hasQr');
 			$span.off('click').click(event => {
-				if($span.hasClass('open')){
-					event.stopPropagation();
-				}else{
-					this.shareApi();
-				}
+				event.stopPropagation();
+				if (text !== 'onlyLoading') this.addTinyUrl($el, text);
+				if(!$span.hasClass('open')) this.shareApi();
 				$span.toggleClass('open');
 			});
-			this.addTinyUrl($el, text);
 		}
 	}
 	addTinyUrl($el, text = location.href) {

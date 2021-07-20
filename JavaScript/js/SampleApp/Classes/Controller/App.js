@@ -176,7 +176,8 @@ export class App extends MasterApp {
 		// logic for sender
 		} else if (reload && location.hash && !(localStorage.getItem('channels') || '').includes(`[${location.hash}]`)) {
 			location.reload();
-		} else if (this.checkHashType(location.hash) === 'ipfs') {
+		} else if (!reload && this.checkHashType(location.hash) === 'ipfs') {
+			// on intial load not on hash change, fetch IPFS data
 			if (this.Editor.getData().length < 12) this.Editor.setData(undefined, this.HTML.loadingAnimation, 'code')
 			const cid = location.hash.substr(6);
 			this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => {
