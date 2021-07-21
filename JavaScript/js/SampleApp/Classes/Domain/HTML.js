@@ -4,13 +4,14 @@ import {MasterHTML} from 'SampleApp/Prototype/Domain/MasterHTML.js';
 import Player from 'Player/Player.js';
 
 export class HTML extends MasterHTML {
-	constructor(WebTorrentReceiver, WebTorrentSeeder, Editor, WebRTC, IPFS, parent){
+	constructor(WebTorrentReceiver, WebTorrentSeeder, Editor, WebRTC, IPFS, EncryptDecrypt, parent){
 		super(WebTorrentReceiver);
 
 		this.WebTorrentSeeder = WebTorrentSeeder;
 		this.Editor = Editor;
 		this.WebRTC = WebRTC;
 		this.IPFS = IPFS;
+		this.EncryptDecrypt = EncryptDecrypt;
 		this.parent = parent; // ref to App.js
 
 		this.Player = new Player();
@@ -24,8 +25,8 @@ export class HTML extends MasterHTML {
 					<div id="info" class="flex">
 						<div class="offline">YOU ARE OFFLINE!!!</div>
 						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
-						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.7.135<span id="sw-version"></span>; Visit Github for more Infos!</a>
-						<a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">Start Over!</span></a>
+						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.0<span id="sw-version"></span>; Visit Github for more Infos!</a>
+						<a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>
 					</div>
 				</header>`);
 				// add edit
@@ -90,8 +91,8 @@ export class HTML extends MasterHTML {
 				// controls
 				let controls = $('<div id="controls"></div>')
 				this.createIpfsControls(controls);
-				const webrtcButton = this.createWebrtcControls(controls, connection, isSender, headerReceiver);
 				const counterWebTorrent = this.createWebtorrentControls(controls, isSender, headerReceiver);
+				const webrtcButton = this.createWebrtcControls(controls, connection, isSender, headerReceiver);
 				this.containers.push(controls);
 				// main containers
 				this.loadingAnimation = `<span class="blobLoading ${this.parent.checkHashType(location.hash) === 'magnet' ? 'torrentLoading' : this.parent.checkHashType(location.hash) === 'ipfs' ? 'ipfsLoading' : ''}"></span><span class="blobLoadingText">Please, be patient. Decentralized content can take a while to load...</span>`;
@@ -179,18 +180,20 @@ export class HTML extends MasterHTML {
 		let button = $(`<button id="buttonIPFS" class="mui-btn mui-btn--primary"><span class="btnText">IPFS (rather permanent):<br>Take Snapshot & Copy Link</span><span class="qr"></span></button>`);
 		controls.append(button);
 		button.click(event => {
-			this.copyToClipBoard('inputIPFS');
-			const data = this.Editor.getData(undefined, true);
-			this.IPFS.add('peerWebSite.txt', data).then(file => {
-				// default behavior
-				this.setHash(`ipfs:${file.cid}`);
-				this.saveData();
-				this.addQrCode($(button), undefined, 'ipfsLoading');
-				this.setTitle();
-				// update the clipboard
-				input.val(location.href);
-				this.copyToClipBoard('inputIPFS');
-			}).catch(error => input.val(`IPFS failed: ${error}`));
+			this.addQrCode($(button), 'onlyLoading', 'ipfsLoading');
+			this.EncryptDecrypt.encrypt(this.Editor.getData(undefined, true)).then(result => {
+				const {text, encrypted} = result;
+				this.IPFS.add('peerWebSite.txt', text).then(file => {
+					// default behavior
+					this.setHash(`ipfs:${file.cid}`);
+					this.saveData();
+					this.addQrCode($(button), undefined, 'ipfsLoading', encrypted);
+					this.setTitle();
+					// update the clipboard
+					input.val(location.href);
+					this.copyToClipBoard('inputIPFS');
+				}).catch(error => input.val(`IPFS failed: ${error}`))
+			}).catch(error => input.val(`Encrypt failed: ${error}`));
 		});
 		return button;
 	}
@@ -213,28 +216,30 @@ export class HTML extends MasterHTML {
 		let webTorrentCounterID = null;
 		let torrentCreatedData = [];
 		buttonWebTorrent.click(event => {
-			this.copyToClipBoard('inputWebTorrent'); // must kopie when multiple times clicked on same button
-			// must always be same file name 'peerWebSite' otherwise webtorrent gives us a new magicURI
-			const data = this.Editor.getData(undefined, true);
-			if (!torrentCreatedData.includes(data)) this.WebTorrentSeeder.api.seed(new File([data], 'peerWebSite.txt', { type: 'plain/text', endings: 'native' }), undefined, undefined, undefined, undefined, (torrent) => {
-				// clear interval
-				clearInterval(webTorrentCounterID);
-				webTorrentCounterID = setInterval(() => {
-					counterWebTorrent[0].textContent = `[${torrent.numPeers} peer${torrent.numPeers === 1 ? '' : 's'}]`;
-				}, 1000);
-				// avoid creating the torrent twice
-				torrentCreatedData.push(data);
-				// default behavior
-				this.setHash(torrent.magnetURI);
-				this.saveData();
-				this.addQrCode($(buttonWebTorrent), undefined, 'torrentLoading');
-				this.setTitle();
-				// update the clipboard
-				inputWebTorrent.val(location.href);
-				this.copyToClipBoard('inputWebTorrent');
-				torrent.on('error', error => inputWebTorrent.val(`WebTorrent failed: ${error}`));
-				this.informOnce('buttonWebTorrent');
-			});
+			this.addQrCode($(buttonWebTorrent), 'onlyLoading', 'torrentLoading');
+			this.EncryptDecrypt.encrypt(this.Editor.getData(undefined, true)).then(result => {
+				const {text, encrypted} = result;
+				// must always be same file name 'peerWebSite' otherwise webtorrent gives us a new magicURI
+				if (!torrentCreatedData.includes(text)) this.WebTorrentSeeder.api.seed(new File([text], 'peerWebSite.txt', { type: 'plain/text', endings: 'native' }), undefined, undefined, undefined, undefined, (torrent) => {
+					// clear interval
+					clearInterval(webTorrentCounterID);
+					webTorrentCounterID = setInterval(() => {
+						counterWebTorrent[0].textContent = `[${torrent.numPeers} peer${torrent.numPeers === 1 ? '' : 's'}]`;
+					}, 1000);
+					// avoid creating the torrent twice
+					torrentCreatedData.push(text);
+					// default behavior
+					this.setHash(torrent.magnetURI);
+					this.saveData();
+					this.addQrCode($(buttonWebTorrent), undefined, 'torrentLoading', encrypted);
+					this.setTitle();
+					// update the clipboard
+					inputWebTorrent.val(location.href);
+					this.copyToClipBoard('inputWebTorrent');
+					torrent.on('error', error => inputWebTorrent.val(`WebTorrent failed: ${error}`));
+					this.informOnce('buttonWebTorrent');
+				});
+			}).catch(error => input.val(`Encrypt failed: ${error}`));
 		});
 		this.WebTorrentSeeder.client.on('error', () => {
 			clearInterval(webTorrentCounterID);
@@ -295,16 +300,18 @@ export class HTML extends MasterHTML {
 		text = textNode.textContent.match(/>.*?([a-zA-Z\d]{1}[^>]*?)</);
 		return text && text.length && text[1] ? text[1] : '';
 	}
-	addQrCode($el, text = location.href, loadingClass = 'blobLoading') {
+	addQrCode($el, text = location.href, loadingClass = 'blobLoading', encrypted = false) {
 		const $oldImg = $el.find('img');
+		// only loading simply makes the loading icon appearing
 		const src = `https://api.qrserver.com/v1/create-qr-code/?data="${this.encode(text)}"`;
 		if (!$oldImg || !$oldImg.length || $oldImg.attr('src') !== src) {
-			const img = document.createElement('img');
+			const img = document.createElement(text === 'onlyLoading' ? 'span' : 'img');
+			const $span = $el.find('.qr');
 			img.src = src;
 			img.classList.add(loadingClass);
 			img.addEventListener('load', event => img.classList.remove(loadingClass));
 			let errorCounter = 0;
-			img.onerror = error => {
+			if (text !== 'onlyLoading') img.onerror = error => {
 				if (errorCounter < 3) {
 					img.src = img.src;
 				} else {
@@ -312,18 +319,15 @@ export class HTML extends MasterHTML {
 				}
 				errorCounter++;
 			};
-			const $span = $el.find('.qr');
 			$span.html(img);
+			if (encrypted) $span.append('<span class="glyphicon glyphicon-lock"></span>');
 			$el.addClass('hasQr');
 			$span.off('click').click(event => {
-				if($span.hasClass('open')){
-					event.stopPropagation();
-				}else{
-					this.shareApi();
-				}
+				event.stopPropagation();
+				if (text !== 'onlyLoading') this.addTinyUrl($el, text);
+				if(!$span.hasClass('open')) this.shareApi();
 				$span.toggleClass('open');
 			});
-			this.addTinyUrl($el, text);
 		}
 	}
 	addTinyUrl($el, text = location.href) {

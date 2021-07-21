@@ -119,8 +119,12 @@ export class App extends MasterApp {
 							reader.onload = (reader => {
 								return () => {
 									const contents = reader.result;
-									this.HTML.setData(this.receiveCont, {message:contents}, false);
-									this.HTML.setTitle(this.HTML.getFirstText(contents));
+									this.EncryptDecrypt.decrypt(contents).then(result => {
+										const {text, decrypted} = result;
+										// if decryption failed by not entering a password but there is already a localStorage with the content, then don't set the data
+										if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) this.HTML.setData(this.receiveCont, {message: text}, false);
+										this.HTML.setTitle(this.HTML.getFirstText(text));
+									}).catch(error => $('#receiver').text(`Decrypt; an Error occured! ${error}`))
 								}
 							})(reader);
 							reader.readAsText(blob);
@@ -153,9 +157,13 @@ export class App extends MasterApp {
 				this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => {
 					clearTimeout(timeout);
 					this.IPFS.pinCid(cid);
-					this.HTML.setData(this.receiveCont, {message: text});
-					this.HTML.setTitle(this.HTML.getFirstText(text));
-				}).catch(error => $('#receiver').text(`An Error occured! ${error}`));
+					this.EncryptDecrypt.decrypt(text).then(result => {
+						const {text, decrypted} = result;
+						// if decryption failed by not entering a password but there is already a localStorage with the content, then don't set the data
+						if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) this.HTML.setData(this.receiveCont, {message: text});
+						this.HTML.setTitle(this.HTML.getFirstText(text));
+					}).catch(error => $('#receiver').text(`Decrypt; an Error occured! ${error}`))
+				}).catch(error => $('#receiver').text(`IPFS; an Error occured! ${error}`));
 				$('.headerReceiver > .counterWebRTC').hide();
 				$('.headerReceiver > .counterWebTorrent').hide();
 			} else {
@@ -168,14 +176,19 @@ export class App extends MasterApp {
 		// logic for sender
 		} else if (reload && location.hash && !(localStorage.getItem('channels') || '').includes(`[${location.hash}]`)) {
 			location.reload();
-		} else if (this.checkHashType(location.hash) === 'ipfs') {
+		} else if (!reload && this.checkHashType(location.hash) === 'ipfs') {
+			// on intial load not on hash change, fetch IPFS data
 			if (this.Editor.getData().length < 12) this.Editor.setData(undefined, this.HTML.loadingAnimation, 'code')
 			const cid = location.hash.substr(6);
 			this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => {
 				this.IPFS.pinCid(cid);
-				this.Editor.setData(undefined, text, 'code');
-				this.HTML.setTitle();
-			}).catch(error => $('#sender').text(`An Error occured! ${error}`));
+				this.EncryptDecrypt.decrypt(text).then(result => {
+					const {text, decrypted} = result;
+					// if decryption failed by not entering a password but there is already a localStorage with the content, then don't set the data
+					if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) this.Editor.setData(undefined, text, 'code');
+					this.HTML.setTitle();
+				}).catch(error => $('#sender').text(`Decrypt; an Error occured! ${error}`))
+			}).catch(error => $('#sender').text(`IPFS; an Error occured! ${error}`));
 		}
 	}
 	setReceiverOrSender(isSender){
