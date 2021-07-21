@@ -40,7 +40,7 @@ App.IPFS.node.then(async node => {
 3. WebRTC will directly and live share/stream the content to other devices. The content goes offline with closing the session/tab. Works for tiny files.
 
 ### HTML/Text Encryption and Decryption
-Peer Web Site supports content encryption aka. salting since v. beta 0.8.0. The code regarding this feature can be found at: JavaScript/js/EncryptDecrypt/EncryptDecrypt.js and ensures that the passwords/passphrases do net get saved nor sent anywhere. This is a very convenient feature to secure your content. Although, it can not encrypt IPFS nor WebTorrent files added to your site and purely encrypts the actual content, which you enter through the text editor or devtools, as well as embedded Base64 files.
+Peer Web Site supports content encryption aka. salting since v. beta 0.8.0. The code regarding this feature can be found at: [EncryptDecrypt.js](https://github.com/Weedshaker/PeerWebSite/blob/master/JavaScript/js/EncryptDecrypt/EncryptDecrypt.js) and ensures that the passwords/passphrases do net get saved nor sent anywhere. This is a very convenient feature to secure your content. Although, it can not encrypt IPFS nor WebTorrent files added to your site and purely encrypts the actual content, which you enter through the text editor or devtools, as well as embedded Base64 files.
 
 ### General Description
 Send Texts, Music, Pictures and Videos embedded in HTML with CSS and JavaScript through WebRTC, WebTorrents or IPFS, live edited P2P as well as static Torrents + IPFS. With WebRTC/WebTorrent (NOT [IPFS - more details](https://ipfs.io/#why)) - No conversation data passes a server nor is saved anywhere but **sent directly from browser to browser**. Your website disappears from the aether as soon as you close or reload your tab, except of your WebTorrent/IPFS snapshots. *(Saving in-site WebTorrents is not yet supported.)*
@@ -52,8 +52,8 @@ Send Texts, Music, Pictures and Videos embedded in HTML with CSS and JavaScript 
 <br clear="right"/>
 
 ### [peerweb.site hosted@ipns](https://ipfs.io/ipns/k2k4r8mv2ud8gd1gndbpdvcagf6r7qodhyojdxzfq4iwbb04ncxiy1x8/index_no_tracking.html)
-This is the CID: QmXLMn5AMM41Jqj4m8ZXX1jA6vsxxZvDoNkZW1Z8M4DqjK to use the peerweb.site v. beta 0.7.135 directly from your ipfs client: `/ipfs/QmXLMn5AMM41Jqj4m8ZXX1jA6vsxxZvDoNkZW1Z8M4DqjK <br />
-[hosted@ipfs](https://ipfs.io/ipfs/QmXLMn5AMM41Jqj4m8ZXX1jA6vsxxZvDoNkZW1Z8M4DqjK/index_no_tracking.html)
+This is the CID: QmPvkfXRzprSZ6vQUHPgc1qYERPGHG2TK68DweQPC6SmpB to use the peerweb.site v. beta 0.8.1 directly from your ipfs client: `/ipfs/QmPvkfXRzprSZ6vQUHPgc1qYERPGHG2TK68DweQPC6SmpB <br />
+[hosted@ipfs](https://ipfs.io/ipfs/QmPvkfXRzprSZ6vQUHPgc1qYERPGHG2TK68DweQPC6SmpB/index_no_tracking.html)
 
 ### We (I) need you!
 More peerweb.site/ipfs/webtorrent/webrtc in conjunction with browser devtools - Tutorials, Examples, Articles and Videos are needed! Please, contribute and PR to get your Link and CID hosted here.
