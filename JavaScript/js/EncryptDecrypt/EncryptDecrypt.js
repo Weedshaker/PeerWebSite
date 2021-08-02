@@ -22,7 +22,7 @@ export class EncryptDecrypt extends MasterWorker {
             return encryptPromise;
         }
         this.create(this.decrypt);
-        this.decrypt = (text, salt) => {
+        this.decrypt = (text, salt, failedFunc = null) => {
             let decryptResolve = null;
             const decryptPromise = new Promise(resolve => {
                 decryptResolve = resolve;
@@ -31,6 +31,13 @@ export class EncryptDecrypt extends MasterWorker {
                 if (!salt) salt = window.prompt('Enter a password or passphrase to decrypt this Peer Web Site\'s html/text!');
                 if (salt) {
                     this.run([text.replace(this.encryptedIndicator, ''), salt], this.workers[1], decryptedText => decryptResolve({text: decryptedText, decrypted: true}));
+                } else if (typeof failedFunc === 'function'){
+                    const funcName = 'SSTdecryptFunc';
+                    window[funcName] = () => this.decrypt(text).then(result => {
+                        const {text, decrypted} = result;
+                        failedFunc(text);
+                    });
+                    decryptResolve({text: `<a onclick="${funcName}()" style="cursor: pointer;">Click and fill in the prompt with the password or passphrase!<br>${text}</a>`, decrypted: 'failed'});
                 } else {
                     decryptResolve({text, decrypted: 'failed'});
                 }
