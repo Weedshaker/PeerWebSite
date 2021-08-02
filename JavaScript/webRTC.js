@@ -15217,7 +15217,7 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 						switch (name) {
 							case 'open-or-join-room':
 								this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
-								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.1<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
+								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.2<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
 								// add edit
 								header.find('#info').append('<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">' + (!isSender ? 'Edit!' : 'Abort Editing!') + '</span></a>');
 								header.find('.edit').click(function (event) {
@@ -18006,6 +18006,8 @@ $__System.register('59', ['5', '6', '7', '18', '33', 'a'], function (_export) {
                     };
                     this.create(this.decrypt);
                     this.decrypt = function (text, salt) {
+                        var failedFunc = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+
                         var decryptResolve = null;
                         var decryptPromise = new _Promise(function (resolve) {
                             decryptResolve = resolve;
@@ -18016,6 +18018,17 @@ $__System.register('59', ['5', '6', '7', '18', '33', 'a'], function (_export) {
                                 _this.run([text.replace(_this.encryptedIndicator, ''), salt], _this.workers[1], function (decryptedText) {
                                     return decryptResolve({ text: decryptedText, decrypted: true });
                                 });
+                            } else if (typeof failedFunc === 'function') {
+                                var funcName = 'SSTdecryptFunc';
+                                window[funcName] = function () {
+                                    return _this.decrypt(text).then(function (result) {
+                                        var text = result.text;
+                                        var decrypted = result.decrypted;
+
+                                        failedFunc(text);
+                                    });
+                                };
+                                decryptResolve({ text: '<a onclick="' + funcName + '()" style="cursor: pointer;">Click and fill in the prompt with the password or passphrase!<br>' + text + '</a>', decrypted: 'failed' });
                             } else {
                                 decryptResolve({ text: text, decrypted: 'failed' });
                             }
@@ -47706,12 +47719,15 @@ $__System.register('9f', ['5', '6', '7', 'a', '9e'], function (_export) {
 													reader.onload = (function (reader) {
 														return function () {
 															var contents = reader.result;
-															_this2.EncryptDecrypt.decrypt(contents).then(function (result) {
+															var setData = function setData(text) {
+																return _this2.HTML.setData(_this2.receiveCont, { message: text }, false);
+															};
+															_this2.EncryptDecrypt.decrypt(contents, undefined, setData).then(function (result) {
 																var text = result.text;
 																var decrypted = result.decrypted;
 
 																// if decryption failed by not entering a password but there is already a localStorage with the content, then don't set the data
-																if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) _this2.HTML.setData(_this2.receiveCont, { message: text }, false);
+																if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) setData(text);
 																_this2.HTML.setTitle(_this2.HTML.getFirstText(text));
 															})['catch'](function (error) {
 																return $('#receiver').text('Decrypt; an Error occured! ' + error);
@@ -47752,12 +47768,15 @@ $__System.register('9f', ['5', '6', '7', 'a', '9e'], function (_export) {
 										_this2.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(function (text) {
 											clearTimeout(timeout);
 											_this2.IPFS.pinCid(cid);
-											_this2.EncryptDecrypt.decrypt(text).then(function (result) {
+											var setData = function setData(text) {
+												return _this2.HTML.setData(_this2.receiveCont, { message: text });
+											};
+											_this2.EncryptDecrypt.decrypt(text, undefined, setData).then(function (result) {
 												var text = result.text;
 												var decrypted = result.decrypted;
 
 												// if decryption failed by not entering a password but there is already a localStorage with the content, then don't set the data
-												if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) _this2.HTML.setData(_this2.receiveCont, { message: text });
+												if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) setData(text);
 												_this2.HTML.setTitle(_this2.HTML.getFirstText(text));
 											})['catch'](function (error) {
 												return $('#receiver').text('Decrypt; an Error occured! ' + error);
@@ -47785,12 +47804,15 @@ $__System.register('9f', ['5', '6', '7', 'a', '9e'], function (_export) {
 									var cid = location.hash.substr(6);
 									_this2.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(function (text) {
 										_this2.IPFS.pinCid(cid);
-										_this2.EncryptDecrypt.decrypt(text).then(function (result) {
+										var setData = function setData(text) {
+											return _this2.Editor.setData(undefined, text, 'code');
+										};
+										_this2.EncryptDecrypt.decrypt(text, undefined, setData).then(function (result) {
 											var text = result.text;
 											var decrypted = result.decrypted;
 
 											// if decryption failed by not entering a password but there is already a localStorage with the content, then don't set the data
-											if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) _this2.Editor.setData(undefined, text, 'code');
+											if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) setData(text);
 											_this2.HTML.setTitle();
 										})['catch'](function (error) {
 											return $('#sender').text('Decrypt; an Error occured! ' + error);

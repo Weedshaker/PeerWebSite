@@ -119,12 +119,13 @@ export class App extends MasterApp {
 							reader.onload = (reader => {
 								return () => {
 									const contents = reader.result;
-									this.EncryptDecrypt.decrypt(contents).then(result => {
+									const setData = text => this.HTML.setData(this.receiveCont, {message: text}, false);
+									this.EncryptDecrypt.decrypt(contents, undefined, setData).then(result => {
 										const {text, decrypted} = result;
 										// if decryption failed by not entering a password but there is already a localStorage with the content, then don't set the data
-										if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) this.HTML.setData(this.receiveCont, {message: text}, false);
+										if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) setData(text);
 										this.HTML.setTitle(this.HTML.getFirstText(text));
-									}).catch(error => $('#receiver').text(`Decrypt; an Error occured! ${error}`))
+									}).catch(error => $('#receiver').text(`Decrypt; an Error occured! ${error}`));
 								}
 							})(reader);
 							reader.readAsText(blob);
@@ -157,12 +158,13 @@ export class App extends MasterApp {
 				this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => {
 					clearTimeout(timeout);
 					this.IPFS.pinCid(cid);
-					this.EncryptDecrypt.decrypt(text).then(result => {
+					const setData = text => this.HTML.setData(this.receiveCont, {message: text});
+					this.EncryptDecrypt.decrypt(text, undefined, setData).then(result => {
 						const {text, decrypted} = result;
 						// if decryption failed by not entering a password but there is already a localStorage with the content, then don't set the data
-						if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) this.HTML.setData(this.receiveCont, {message: text});
+						if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) setData(text);
 						this.HTML.setTitle(this.HTML.getFirstText(text));
-					}).catch(error => $('#receiver').text(`Decrypt; an Error occured! ${error}`))
+					}).catch(error => $('#receiver').text(`Decrypt; an Error occured! ${error}`));
 				}).catch(error => $('#receiver').text(`IPFS; an Error occured! ${error}`));
 				$('.headerReceiver > .counterWebRTC').hide();
 				$('.headerReceiver > .counterWebTorrent').hide();
@@ -182,12 +184,13 @@ export class App extends MasterApp {
 			const cid = location.hash.substr(6);
 			this.IPFS.raceFetchVsCat(cid, 'text', '?filename=peerWebSite.txt').then(text => {
 				this.IPFS.pinCid(cid);
-				this.EncryptDecrypt.decrypt(text).then(result => {
+				const setData = text => this.Editor.setData(undefined, text, 'code');
+				this.EncryptDecrypt.decrypt(text, undefined, setData).then(result => {
 					const {text, decrypted} = result;
 					// if decryption failed by not entering a password but there is already a localStorage with the content, then don't set the data
-					if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) this.Editor.setData(undefined, text, 'code');
+					if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) setData(text);
 					this.HTML.setTitle();
-				}).catch(error => $('#sender').text(`Decrypt; an Error occured! ${error}`))
+				}).catch(error => $('#sender').text(`Decrypt; an Error occured! ${error}`));
 			}).catch(error => $('#sender').text(`IPFS; an Error occured! ${error}`));
 		}
 	}
