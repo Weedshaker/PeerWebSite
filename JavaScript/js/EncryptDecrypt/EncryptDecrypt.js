@@ -27,17 +27,21 @@ export class EncryptDecrypt extends MasterWorker {
             const decryptPromise = new Promise(resolve => {
                 decryptResolve = resolve;
             });
-            if (text.includes(this.encryptedIndicator)) {
+            if (this.isEncrypted(text)) {
                 if (!salt) salt = window.prompt('Enter a password or passphrase to decrypt this Peer Web Site\'s html/text!');
                 if (salt) {
                     this.run([text.replace(this.encryptedIndicator, ''), salt], this.workers[1], decryptedText => decryptResolve({text: decryptedText, decrypted: true}));
                 } else if (typeof failedFunc === 'function'){
                     const funcName = 'SSTdecryptFunc';
-                    window[funcName] = () => this.decrypt(text).then(result => {
-                        const {text, decrypted} = result;
-                        failedFunc(text);
-                    });
-                    decryptResolve({text: `<a onclick="${funcName}()" style="cursor: pointer;">Click and fill in the prompt with the password or passphrase!<br>${text}</a>`, decrypted: 'failed'});
+                    window[funcName] = event => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        this.decrypt(text).then(result => {
+                            const {text, decrypted} = result;
+                            failedFunc(text);
+                        });
+                    };
+                    decryptResolve({text: `<div class="SSTdecrypt" onclick="${funcName}(event)"><span class="glyphicon glyphicon-lock"></span><a onclick="${funcName}(event)">Click and fill in the prompt with the password or passphrase!<br>${text}</a></div>`, decrypted: 'failed'});
                 } else {
                     decryptResolve({text, decrypted: 'failed'});
                 }
@@ -67,5 +71,8 @@ export class EncryptDecrypt extends MasterWorker {
             .map(applySaltToChar)
             .map((charCode) => String.fromCharCode(charCode))
             .join("");
+    }
+    isEncrypted (text) {
+        return text.includes(this.encryptedIndicator);
     }
 }
