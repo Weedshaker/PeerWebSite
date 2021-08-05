@@ -36,6 +36,7 @@ export class EncryptDecrypt extends MasterWorker {
                     window[funcName] = event => {
                         event.preventDefault();
                         event.stopPropagation();
+                        window[funcName] = event => {};
                         this.decrypt(text).then(result => {
                             const {text, decrypted} = result;
                             failedFunc(text);

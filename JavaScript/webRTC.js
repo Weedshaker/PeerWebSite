@@ -15217,7 +15217,7 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 						switch (name) {
 							case 'open-or-join-room':
 								this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
-								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.3<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
+								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.4<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
 								// add edit
 								header.find('#info').append('<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">' + (!isSender ? 'Edit!' : 'Abort Editing!') + '</span></a>');
 								header.find('.edit').click(function (event) {
@@ -18019,18 +18019,21 @@ $__System.register('59', ['5', '6', '7', '18', '33', 'a'], function (_export) {
                                     return decryptResolve({ text: decryptedText, decrypted: true });
                                 });
                             } else if (typeof failedFunc === 'function') {
-                                var funcName = 'SSTdecryptFunc';
-                                window[funcName] = function (event) {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    _this.decrypt(text).then(function (result) {
-                                        var text = result.text;
-                                        var decrypted = result.decrypted;
+                                (function () {
+                                    var funcName = 'SSTdecryptFunc';
+                                    window[funcName] = function (event) {
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                        window[funcName] = function (event) {};
+                                        _this.decrypt(text).then(function (result) {
+                                            var text = result.text;
+                                            var decrypted = result.decrypted;
 
-                                        failedFunc(text);
-                                    });
-                                };
-                                decryptResolve({ text: '<div class="SSTdecrypt" onclick="' + funcName + '(event)"><span class="glyphicon glyphicon-lock"></span><a onclick="' + funcName + '(event)">Click and fill in the prompt with the password or passphrase!<br>' + text + '</a></div>', decrypted: 'failed' });
+                                            failedFunc(text);
+                                        });
+                                    };
+                                    decryptResolve({ text: '<div class="SSTdecrypt" onclick="' + funcName + '(event)"><span class="glyphicon glyphicon-lock"></span><a onclick="' + funcName + '(event)">Click and fill in the prompt with the password or passphrase!<br>' + text + '</a></div>', decrypted: 'failed' });
+                                })();
                             } else {
                                 decryptResolve({ text: text, decrypted: 'failed' });
                             }

@@ -429,6 +429,9 @@ body.viewer #receiver {
 }
 .SSTdecrypt .glyphicon-lock {
     font-size: 5em;
+    align-self: start;
+    padding: 3vh;
+    opacity: 0.7;
 }
 .SSTdecrypt a {
     text-align: center;
