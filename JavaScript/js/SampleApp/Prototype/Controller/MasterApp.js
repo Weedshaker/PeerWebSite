@@ -19,7 +19,7 @@ export class MasterApp {
 		this.EncryptDecrypt = new EncryptDecrypt();
 		this.Editor = new EditorSummernote(this.WebTorrentSeeder, this.IPFS);
 		this.HTML = new HTML(this.WebTorrentReceiver, this.WebTorrentSeeder, this.Editor, this.WebRTC, this.IPFS, this.EncryptDecrypt, this);
-		this.ServiceWorker = new ServiceWorker(undefined, undefined, [this.WebTorrentReceiver.getBlobByFileName.bind(this.WebTorrentReceiver), this.WebTorrentSeeder.getBlobByFileName.bind(this.WebTorrentSeeder)], [this.IPFS.getBlobByFileCID.bind(this.IPFS)], [this.IPFS.pin.bind(this.IPFS)]);
+		this.ServiceWorker = new ServiceWorker(undefined, undefined, [this.WebTorrentReceiver.getBlobByFileName.bind(this.WebTorrentReceiver), this.WebTorrentSeeder.getBlobByFileName.bind(this.WebTorrentSeeder)], [this.IPFS.getBlobByFileCID.bind(this.IPFS)], [this.IPFS.pinIfSender.bind(this.IPFS)]);
 		this.ServiceWorker.run();
 
 		// hot-reloader clear all
