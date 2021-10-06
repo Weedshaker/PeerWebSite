@@ -25,7 +25,7 @@ export class HTML extends MasterHTML {
 					<div id="info" class="flex">
 						<div class="offline">YOU ARE OFFLINE!!!</div>
 						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
-						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.5<span id="sw-version"></span>; Visit Github for more Infos!</a>
+						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.6<span id="sw-version"></span>; Visit Github for more Infos!</a>
 						<a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>
 					</div>
 				</header>`);
@@ -177,7 +177,7 @@ export class HTML extends MasterHTML {
 			e.target.blur();
 		});
 		controls.append(input);
-		let button = $(`<button id="buttonIPFS" class="mui-btn mui-btn--primary"><span class="btnText">IPFS (rather permanent):<br>Take Snapshot & Copy Link</span><span class="qr"></span></button>`);
+		let button = $(`<button id="buttonIPFS" class="mui-btn mui-btn--primary"><span class="btnText">IPFS (rather permanent):<br>Take Snapshot & Copy Link</span><span class="qr"></span><span class="glyphicon glyphicon-floppy-open"></span></button>`);
 		controls.append(button);
 		button.click(event => {
 			this.addQrCode($(button), 'onlyLoading', 'ipfsLoading');
@@ -205,7 +205,7 @@ export class HTML extends MasterHTML {
 			e.target.blur();
 		});
 		controls.append(inputWebTorrent);
-		let buttonWebTorrent = $(`<button id="buttonWebTorrent" class="mui-btn mui-btn--accent"><span class="btnText">WebTorrent (transitory):<br>Take Snapshot & Copy Link</span><span class="qr"></span></button>`);
+		let buttonWebTorrent = $(`<button id="buttonWebTorrent" class="mui-btn mui-btn--accent"><span class="btnText">WebTorrent (transitory):<br>Take Snapshot & Copy Link</span><span class="qr"></span><span class="glyphicon glyphicon-floppy-open"></span></button>`);
 		let counterWebTorrent = $('<span class="counter counterWebTorrent">[0 peers]</span>');
 		if (isSender) {
 			$(buttonWebTorrent).find('.btnText').append(counterWebTorrent);

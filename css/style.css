@@ -186,6 +186,12 @@ input.note-file-input.form-control::after {
 #receiver {
     padding: 5px;
 }
+body #receiver {
+    display: none;
+}
+body[type="webrtc"] #receiver {
+    display: block;
+}
 .panel {
     margin-bottom: 5px !important;
 }
@@ -324,6 +330,13 @@ span.qr.open .glyphicon-lock {
 }
 #buttonWebTorrent .counter, #open-or-join-room .counter {
     color: rgb(198, 195, 221);
+}
+#buttonWebTorrent .glyphicon-floppy-open, #buttonIPFS .glyphicon-floppy-open {
+    padding: min(1em, 1vw);
+    font-size: min(2em, 5vw);
+}
+#buttonWebTorrent.hasQr .glyphicon-floppy-open, #buttonIPFS.hasQr .glyphicon-floppy-open {
+    display: none;
 }
 /* EditorSummernote.js */
 /* TODO: make font-sizes variable

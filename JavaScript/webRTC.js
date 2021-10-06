@@ -15217,7 +15217,7 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 						switch (name) {
 							case 'open-or-join-room':
 								this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
-								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.5<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
+								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.6<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
 								// add edit
 								header.find('#info').append('<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">' + (!isSender ? 'Edit!' : 'Abort Editing!') + '</span></a>');
 								header.find('.edit').click(function (event) {
@@ -15376,7 +15376,7 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 							e.target.blur();
 						});
 						controls.append(input);
-						var button = $('<button id="buttonIPFS" class="mui-btn mui-btn--primary"><span class="btnText">IPFS (rather permanent):<br>Take Snapshot & Copy Link</span><span class="qr"></span></button>');
+						var button = $('<button id="buttonIPFS" class="mui-btn mui-btn--primary"><span class="btnText">IPFS (rather permanent):<br>Take Snapshot & Copy Link</span><span class="qr"></span><span class="glyphicon glyphicon-floppy-open"></span></button>');
 						controls.append(button);
 						button.click(function (event) {
 							_this3.addQrCode($(button), 'onlyLoading', 'ipfsLoading');
@@ -15414,7 +15414,7 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 							e.target.blur();
 						});
 						controls.append(inputWebTorrent);
-						var buttonWebTorrent = $('<button id="buttonWebTorrent" class="mui-btn mui-btn--accent"><span class="btnText">WebTorrent (transitory):<br>Take Snapshot & Copy Link</span><span class="qr"></span></button>');
+						var buttonWebTorrent = $('<button id="buttonWebTorrent" class="mui-btn mui-btn--accent"><span class="btnText">WebTorrent (transitory):<br>Take Snapshot & Copy Link</span><span class="qr"></span><span class="glyphicon glyphicon-floppy-open"></span></button>');
 						var counterWebTorrent = $('<span class="counter counterWebTorrent">[0 peers]</span>');
 						if (isSender) {
 							$(buttonWebTorrent).find('.btnText').append(counterWebTorrent);
