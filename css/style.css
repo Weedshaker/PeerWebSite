@@ -186,10 +186,10 @@ input.note-file-input.form-control::after {
 #receiver {
     padding: 5px;
 }
-body #receiver {
+body:not(.viewer) #receiver {
     display: none;
 }
-body[type="webrtc"] #receiver {
+body[type="webrtc"]:not(.viewer) #receiver {
     display: block;
 }
 .panel {
