@@ -15287,7 +15287,7 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 								this.containers.push(controls);
 								// main containers
 								this.loadingAnimation = '<span class="blobLoading ' + (this.parent.checkHashType(location.hash) === 'magnet' ? 'torrentLoading' : this.parent.checkHashType(location.hash) === 'ipfs' ? 'ipfsLoading' : '') + '"></span><span class="blobLoadingText">Please, be patient. Decentralized content can take a while to load...</span>';
-								var ipfsRegex = /="http.*?gateway\.ipfs\.io.*?\#js.*?"/g;
+								var ipfsRegex = /^\=\"http.*?gateway\.ipfs\.io.*?\#js.*?\"$/;
 								var notIpfs = this.parent.checkHashType(location.hash) !== 'ipfs' || !ipfsRegex.test(localStorage.getItem(location.hash)); /* ipfs javascript does not get triggered else */
 								var sender = $('<div id="' + this.idNames[2] + '">' + (isSender && notIpfs ? localStorage.getItem(location.hash) || '' : '') + '</div>');
 								this.containers.push(sender);

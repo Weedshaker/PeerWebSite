@@ -25,7 +25,7 @@ export class HTML extends MasterHTML {
 					<div id="info" class="flex">
 						<div class="offline">YOU ARE OFFLINE!!!</div>
 						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
-						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.9<span id="sw-version"></span>; Visit Github for more Infos!</a>
+						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.10<span id="sw-version"></span>; Visit Github for more Infos!</a>
 						<a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>
 					</div>
 				</header>`);
@@ -96,7 +96,7 @@ export class HTML extends MasterHTML {
 				this.containers.push(controls);
 				// main containers
 				this.loadingAnimation = `<span class="blobLoading ${this.parent.checkHashType(location.hash) === 'magnet' ? 'torrentLoading' : this.parent.checkHashType(location.hash) === 'ipfs' ? 'ipfsLoading' : ''}"></span><span class="blobLoadingText">Please, be patient. Decentralized content can take a while to load...</span>`;
-				const ipfsRegex = /="http.*?gateway\.ipfs\.io.*?\#js.*?"/g
+				const ipfsRegex = /^\=\"http.*?gateway\.ipfs\.io.*?\#js.*?\"$/
 				const notIpfs = this.parent.checkHashType(location.hash) !== 'ipfs' || !ipfsRegex.test(localStorage.getItem(location.hash)) /* ipfs javascript does not get triggered else */
 				let sender = $(`<div id="${this.idNames[2]}">${isSender && notIpfs ? localStorage.getItem(location.hash) || '' : ''}</div>`);
 				this.containers.push(sender);
