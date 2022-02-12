@@ -25,7 +25,7 @@ export class HTML extends MasterHTML {
 					<div id="info" class="flex">
 						<div class="offline">YOU ARE OFFLINE!!!</div>
 						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
-						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.11<span id="sw-version"></span>; Visit Github for more Infos!</a>
+						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.12<span id="sw-version"></span>; Visit Github for more Infos!</a>
 						<a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>
 					</div>
 				</header>`);
@@ -294,7 +294,11 @@ export class HTML extends MasterHTML {
 		}
 	}
 	setTitle(text = this.getFirstText()) {
-		document.title = text || document.title;
+		document.title = text && !text.includes('Please, be patient.') ? text : document.title;
+		// TODO: find out why it sometimes keeps getting the information text, below a little hack to be removed once discovered
+		if (text.includes('Please, be patient.')) setTimeout(() => {
+			this.setTitle()
+		}, 5000);
 	}
 	getFirstText(text = this.Editor.getData()) {
 		const textNode = document.createElement('textarea');
