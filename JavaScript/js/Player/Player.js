@@ -697,7 +697,7 @@ export default class Player {
     clearTimeout(this.waitToPlayTimeout)
     if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
       this.waitToPlayTimeout = setTimeout(() => {
-        if (this.hasError(control)) return this.nextRandom() // keep this inside the timer, otherwise it can trigger a fast loop
+        if (this.hasError(control) || !control.duration) return this.nextRandom() // keep this inside the timer, otherwise it can trigger a fast loop
         const key = this.allControls.indexOf(control)
         const step = key === -1 ? 1 : this.isLoadingMemory.get(key) || 1
         this.isLoadingMemory.set(key, step + 1)
