@@ -780,7 +780,7 @@ export default class Player {
 
   get allPlayableControls () {
     // exclude any loading controls and error controls
-    return this.allControls.filter(control => !!control.duration && !this.hasError(control))
+    return this.allControls.filter(control => !this.hasError(control))
   }
 
   get allReadyControls () {
