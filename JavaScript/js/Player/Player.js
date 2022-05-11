@@ -781,17 +781,18 @@ export default class Player {
     return controls
   }
 
+  /* TODO: control.duration seems to work poorly on iphone Test */
   filterByReadyState (controls, state = 9) {
     return controls.filter(control => {
       switch (state) {
         case 9:
-          return !!control.duration && control.readyState >= 4
+          return /*!!control.duration && */control.readyState >= 4
         case 8:
-          return !!control.duration && control.readyState >= 3
+          return /*!!control.duration && */control.readyState >= 3
         case 7:
-          return !!control.duration && control.readyState >= 2
+          return /*!!control.duration && */control.readyState >= 2
         case 6:
-          return !!control.duration && control.readyState >= 1
+          return /*!!control.duration && */control.readyState >= 1
         case 5:
           return !!control.duration
         case 0:
