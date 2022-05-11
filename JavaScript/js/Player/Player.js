@@ -704,8 +704,8 @@ export default class Player {
       this.waitToPlayTimeout = setTimeout(() => {
         this.waitToPlayTimeout = null
         // keep this inside the timer, otherwise it can trigger a fast loop
-        if (this.hasError(control) || !control.duration || control.currentTime >= control.duration - 10) {
-          if (control.currentTime >= control.duration - 10 && (this.mode === 'repeat-one' || this.mode === 'loop-machine')) {
+        if (this.hasError(control) || (!!control.duration && control.currentTime >= control.duration - 10)) {
+          if (!!control.duration && control.currentTime >= control.duration - 10 && (this.mode === 'repeat-one' || this.mode === 'loop-machine')) {
             return this.play()
           } else {
             return this.next()
