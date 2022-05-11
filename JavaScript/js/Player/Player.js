@@ -68,17 +68,17 @@ export default class Player {
     document.body.addEventListener('complete', event => {
 			if (this.validateEvent(event)) this.isLoading(false, event.target)
     }, true)
-    document.body.addEventListener('durationchange 	', event => {
+    document.body.addEventListener('durationchange', event => {
 			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
-    document.body.addEventListener('emptied 	', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target)
+    document.body.addEventListener('emptied', event => {
+			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, false)
     }, true)
     // TODO: Iphone ended event sometimes does not get triggered, work around with isLoading()->set time out skip to next
     // loop all audio + video
 		document.body.addEventListener('ended', event => {
 			if (this.validateEvent(event)) {
-        this.isLoading(false, event.target)
+        this.isLoading(false, event.target, undefined, false)
         // set control to 0, since this would not work natively for ios
         this.setCurrentTime(event.target, 0)
         if (this.mode === 'repeat-one' || this.mode === 'loop-machine') {
@@ -123,10 +123,10 @@ export default class Player {
       }
     }, true)
     document.body.addEventListener('stalled', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target)
+			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, false)
     }, true)
     document.body.addEventListener('suspend', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target)
+			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, false)
     }, true)
 		// is triggered repeatingly during playback
 		document.body.addEventListener('timeupdate', event => {
@@ -149,7 +149,7 @@ export default class Player {
 			if (this.validateEvent(event)) this.setVolume(event.target.volume)
 		}, true)
     document.body.addEventListener('waiting', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target)
+			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, false)
     }, true)
     // keyboard
 		if (!this.isSender) {
@@ -686,7 +686,7 @@ export default class Player {
   }
 
   // only force with user interaction eg. play / pause
-  isLoading (loading, control, force = false) {
+  isLoading (loading, control, force = false, doClearTimeout = true) {
     if (!force && control !== this.currentControl) return false
     // classes for the player interface
     if (this.mode !== 'loop-machine' && loading) {
@@ -695,9 +695,14 @@ export default class Player {
       this.html.classList.remove('loading')
     }
     // skip to next if song fails to play
-    clearTimeout(this.waitToPlayTimeout)
+    if (doClearTimeout) {
+      clearTimeout(this.waitToPlayTimeout)
+      this.waitToPlayTimeout = null
+    }
     if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
+      if (this.waitToPlayTimeout !== null) return // return in case there is still a timeout running
       this.waitToPlayTimeout = setTimeout(() => {
+        this.waitToPlayTimeout = null
         // keep this inside the timer, otherwise it can trigger a fast loop
         if (this.hasError(control) || !control.duration || control.currentTime >= control.duration - 10) {
           if (control.currentTime >= control.duration - 10 && (this.mode === 'repeat-one' || this.mode === 'loop-machine')) {
@@ -752,13 +757,13 @@ export default class Player {
       if ((source = control.querySelector('source')) && typeof source.onerror === 'function') {
         control.addEventListener('error', event => {
           control.sst_hasError = true
-          this.isLoading(true, control)
+          this.isLoading(true, control, undefined, false)
           // if it is not already ipfs.cat then trigger it
           if (!this.hasError(control)) source.onerror()
         }, {once: true})
         source.addEventListener('error', event => {
           control.sst_hasError = true
-          this.isLoading(true, control)
+          this.isLoading(true, control, undefined, false)
         }, {once: true})
       }
       this.onErrorExtendedToSourceIds.push(control.id)

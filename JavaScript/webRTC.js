@@ -14461,16 +14461,17 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
             document.body.addEventListener('complete', function (event) {
               if (_this3.validateEvent(event)) _this3.isLoading(false, event.target);
             }, true);
-            document.body.addEventListener('durationchange 	', function (event) {
+            document.body.addEventListener('durationchange', function (event) {
               if (_this3.validateEvent(event)) _this3.isLoading(true, event.target);
             }, true);
-            document.body.addEventListener('emptied 	', function (event) {
-              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target);
+            document.body.addEventListener('emptied', function (event) {
+              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target, undefined, false);
             }, true);
+            // TODO: Iphone ended event sometimes does not get triggered, work around with isLoading()->set time out skip to next
             // loop all audio + video
             document.body.addEventListener('ended', function (event) {
               if (_this3.validateEvent(event)) {
-                _this3.isLoading(false, event.target);
+                _this3.isLoading(false, event.target, undefined, false);
                 // set control to 0, since this would not work natively for ios
                 _this3.setCurrentTime(event.target, 0);
                 if (_this3.mode === 'repeat-one' || _this3.mode === 'loop-machine') {
@@ -14515,10 +14516,10 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
               }
             }, true);
             document.body.addEventListener('stalled', function (event) {
-              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target);
+              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target, undefined, false);
             }, true);
             document.body.addEventListener('suspend', function (event) {
-              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target);
+              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target, undefined, false);
             }, true);
             // is triggered repeatingly during playback
             document.body.addEventListener('timeupdate', function (event) {
@@ -14541,7 +14542,7 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
               if (_this3.validateEvent(event)) _this3.setVolume(event.target.volume);
             }, true);
             document.body.addEventListener('waiting', function (event) {
-              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target);
+              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target, undefined, false);
             }, true);
             // keyboard
             if (!this.isSender) {
@@ -14977,6 +14978,7 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
             var _this9 = this;
 
             var force = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+            var doClearTimeout = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
 
             if (!force && control !== this.currentControl) return false;
             // classes for the player interface
@@ -14986,10 +14988,22 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
               this.html.classList.remove('loading');
             }
             // skip to next if song fails to play
-            clearTimeout(this.waitToPlayTimeout);
+            if (doClearTimeout) {
+              clearTimeout(this.waitToPlayTimeout);
+              this.waitToPlayTimeout = null;
+            }
             if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
+              if (this.waitToPlayTimeout !== null) return; // return in case there is still a timeout running
               this.waitToPlayTimeout = setTimeout(function () {
-                if (_this9.hasError(control) || !control.duration || control.currentTime >= control.duration - 10) return _this9.nextRandom(); // keep this inside the timer, otherwise it can trigger a fast loop
+                _this9.waitToPlayTimeout = null;
+                // keep this inside the timer, otherwise it can trigger a fast loop
+                if (_this9.hasError(control) || !control.duration || control.currentTime >= control.duration - 10) {
+                  if (control.currentTime >= control.duration - 10 && (_this9.mode === 'repeat-one' || _this9.mode === 'loop-machine')) {
+                    return _this9.play();
+                  } else {
+                    return _this9.next();
+                  }
+                }
                 var key = _this9.allControls.indexOf(control);
                 var step = key === -1 ? 1 : _this9.isLoadingMemory.get(key) || 1;
                 _this9.isLoadingMemory.set(key, step + 1);
@@ -15048,13 +15062,13 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
                 if ((source = control.querySelector('source')) && typeof source.onerror === 'function') {
                   control.addEventListener('error', function (event) {
                     control.sst_hasError = true;
-                    _this11.isLoading(true, control);
+                    _this11.isLoading(true, control, undefined, false);
                     // if it is not already ipfs.cat then trigger it
                     if (!_this11.hasError(control)) source.onerror();
                   }, { once: true });
                   source.addEventListener('error', function (event) {
                     control.sst_hasError = true;
-                    _this11.isLoading(true, control);
+                    _this11.isLoading(true, control, undefined, false);
                   }, { once: true });
                 }
                 _this11.onErrorExtendedToSourceIds.push(control.id);
@@ -15217,7 +15231,7 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 						switch (name) {
 							case 'open-or-join-room':
 								this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
-								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.19<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
+								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.20<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
 								// add edit
 								header.find('#info').append('<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">' + (!isSender ? 'Edit!' : 'Abort Editing!') + '</span></a>');
 								header.find('.edit').click(function (event) {
