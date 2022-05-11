@@ -74,6 +74,7 @@ export default class Player {
     document.body.addEventListener('emptied 	', event => {
 			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
+    // TODO: Iphone ended event sometimes does not get triggered, work around with isLoading()->set time out skip to next
     // loop all audio + video
 		document.body.addEventListener('ended', event => {
 			if (this.validateEvent(event)) {
@@ -697,7 +698,14 @@ export default class Player {
     clearTimeout(this.waitToPlayTimeout)
     if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
       this.waitToPlayTimeout = setTimeout(() => {
-        if (this.hasError(control)) return this.nextRandom() // keep this inside the timer, otherwise it can trigger a fast loop
+        // keep this inside the timer, otherwise it can trigger a fast loop
+        if (this.hasError(control) || !control.duration || control.currentTime >= control.duration - 10) {
+          if (control.currentTime >= control.duration - 10 && (this.mode === 'repeat-one' || this.mode === 'loop-machine')) {
+            return this.play()
+          } else {
+            return this.next()
+          }
+        }
         const key = this.allControls.indexOf(control)
         const step = key === -1 ? 1 : this.isLoadingMemory.get(key) || 1
         this.isLoadingMemory.set(key, step + 1)
@@ -767,7 +775,7 @@ export default class Player {
 
   get allPlayableControls () {
     // exclude any loading controls and error controls
-    return this.allControls.filter(control => !this.hasError(control))
+    return this.allControls.filter(control => !!control.duration && !this.hasError(control))
   }
 
   get allReadyControls () {
@@ -781,18 +789,17 @@ export default class Player {
     return controls
   }
 
-  /* TODO: control.duration seems to work poorly on iphone Test */
   filterByReadyState (controls, state = 9) {
     return controls.filter(control => {
       switch (state) {
         case 9:
-          return /*!!control.duration && */control.readyState >= 4
+          return !!control.duration && control.readyState >= 4
         case 8:
-          return /*!!control.duration && */control.readyState >= 3
+          return !!control.duration && control.readyState >= 3
         case 7:
-          return /*!!control.duration && */control.readyState >= 2
+          return !!control.duration && control.readyState >= 2
         case 6:
-          return /*!!control.duration && */control.readyState >= 1
+          return !!control.duration && control.readyState >= 1
         case 5:
           return !!control.duration
         case 0:
