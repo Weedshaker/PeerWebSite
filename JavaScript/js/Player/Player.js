@@ -149,7 +149,7 @@ export default class Player {
 			if (this.validateEvent(event)) this.setVolume(event.target.volume)
 		}, true)
     document.body.addEventListener('waiting', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, false)
+			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
     // keyboard
 		if (!this.isSender) {
