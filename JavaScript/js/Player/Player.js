@@ -72,13 +72,13 @@ export default class Player {
 			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
     document.body.addEventListener('emptied', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, false)
+			if (this.validateEvent(event)) this.isLoading(true, event.target)
     }, true)
     // TODO: Iphone ended event sometimes does not get triggered, work around with isLoading()->set time out skip to next
     // loop all audio + video
 		document.body.addEventListener('ended', event => {
 			if (this.validateEvent(event)) {
-        this.isLoading(false, event.target, undefined, false)
+        this.isLoading(false, event.target)
         // set control to 0, since this would not work natively for ios
         this.setCurrentTime(event.target, 0)
         if (this.mode === 'repeat-one' || this.mode === 'loop-machine') {
@@ -757,13 +757,13 @@ export default class Player {
       if ((source = control.querySelector('source')) && typeof source.onerror === 'function') {
         control.addEventListener('error', event => {
           control.sst_hasError = true
-          this.isLoading(true, control, undefined, false)
+          this.isLoading(true, control)
           // if it is not already ipfs.cat then trigger it
           if (!this.hasError(control)) source.onerror()
         }, {once: true})
         source.addEventListener('error', event => {
           control.sst_hasError = true
-          this.isLoading(true, control, undefined, false)
+          this.isLoading(true, control)
         }, {once: true})
       }
       this.onErrorExtendedToSourceIds.push(control.id)
