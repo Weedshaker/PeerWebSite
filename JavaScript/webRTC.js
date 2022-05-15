@@ -14998,13 +14998,7 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
               this.waitToPlayTimeout = setTimeout(function () {
                 _this9.waitToPlayTimeout = null;
                 // keep this inside the timer, otherwise it can trigger a fast loop
-                if (_this9.hasError(control) || !!control.duration && control.currentTime >= control.duration - 10) {
-                  if (!!control.duration && control.currentTime >= control.duration - 10 && (_this9.mode === 'repeat-one' || _this9.mode === 'loop-machine')) {
-                    return _this9.play();
-                  } else {
-                    return _this9.next();
-                  }
-                }
+                if (_this9.hasError(control)) return _this9.nextRandom(); // keep this inside the timer, otherwise it can trigger a fast loop
                 var key = _this9.allControls.indexOf(control);
                 var step = key === -1 ? 1 : _this9.isLoadingMemory.get(key) || 1;
                 _this9.isLoadingMemory.set(key, step + 1);
@@ -15232,7 +15226,7 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 						switch (name) {
 							case 'open-or-join-room':
 								this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
-								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.25<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
+								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.26<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
 								// add edit
 								header.find('#info').append('<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">' + (!isSender ? 'Edit!' : 'Abort Editing!') + '</span></a>');
 								header.find('.edit').click(function (event) {

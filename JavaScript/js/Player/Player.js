@@ -705,13 +705,7 @@ export default class Player {
       this.waitToPlayTimeout = setTimeout(() => {
         this.waitToPlayTimeout = null
         // keep this inside the timer, otherwise it can trigger a fast loop
-        if (this.hasError(control) || (!!control.duration && control.currentTime >= control.duration - 10)) {
-          if (!!control.duration && control.currentTime >= control.duration - 10 && (this.mode === 'repeat-one' || this.mode === 'loop-machine')) {
-            return this.play()
-          } else {
-            return this.next()
-          }
-        }
+        if (this.hasError(control)) return this.nextRandom() // keep this inside the timer, otherwise it can trigger a fast loop
         const key = this.allControls.indexOf(control)
         const step = key === -1 ? 1 : this.isLoadingMemory.get(key) || 1
         this.isLoadingMemory.set(key, step + 1)
