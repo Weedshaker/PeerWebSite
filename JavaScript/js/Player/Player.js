@@ -69,16 +69,16 @@ export default class Player {
 			if (this.validateEvent(event)) this.isLoading(false, event.target)
     }, true)
     document.body.addEventListener('durationchange', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target)
+			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, 'durationchange')
     }, true)
     document.body.addEventListener('emptied', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target)
+			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, 'emptied')
     }, true)
     // TODO: Iphone ended event sometimes does not get triggered, work around with isLoading()->set time out skip to next
     // loop all audio + video
 		document.body.addEventListener('ended', event => {
 			if (this.validateEvent(event)) {
-        this.isLoading(false, event.target)
+        this.isLoading(false, event.target, undefined, 'ended')
         // set control to 0, since this would not work natively for ios
         this.setCurrentTime(event.target, 0)
         if (this.mode === 'repeat-one' || this.mode === 'loop-machine') {
@@ -89,10 +89,10 @@ export default class Player {
       }
     }, true)
     document.body.addEventListener('loadeddata', event => {
-			if (this.validateEvent(event)) this.isLoading(false, event.target)
+			if (this.validateEvent(event)) this.isLoading(false, event.target, undefined, 'loadeddata')
     }, true)
     document.body.addEventListener('loadedmetadata', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target)
+			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, 'loadedmetadata')
     }, true)
     document.body.addEventListener('pause', event => {
 			if (this.validateEvent(event)) this.pause(event.target, true)
@@ -107,11 +107,11 @@ export default class Player {
 			if (this.validateEvent(event)) this.isLoading(false, event.target)
     }, true)
     document.body.addEventListener('ratechange', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target)
+			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, 'ratechange')
     }, true)
     document.body.addEventListener('seeked', event => {
 			if (this.validateEvent(event)) {
-        this.isLoading(false, event.target)
+        this.isLoading(false, event.target, undefined, 'seeked')
         this.respectRandom = true
         this.saveCurrentTime(event.target)
       }
@@ -123,10 +123,10 @@ export default class Player {
       }
     }, true)
     document.body.addEventListener('stalled', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, false)
+			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, 'stalled')
     }, true)
     document.body.addEventListener('suspend', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, false)
+			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, 'suspend')
     }, true)
 		// is triggered repeatingly during playback
 		document.body.addEventListener('timeupdate', event => {
@@ -149,7 +149,7 @@ export default class Player {
 			if (this.validateEvent(event)) this.setVolume(event.target.volume)
 		}, true)
     document.body.addEventListener('waiting', event => {
-			if (this.validateEvent(event)) this.isLoading(true, event.target)
+			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, 'waiting')
     }, true)
     // keyboard
 		if (!this.isSender) {
@@ -695,9 +695,10 @@ export default class Player {
       this.html.classList.remove('loading')
     }
     // skip to next if song fails to play
-    if (doClearTimeout) {
+    if (doClearTimeout !== false && (doClearTimeout === true || doClearTimeout !== this._lastDoClearTimeout)) {
       clearTimeout(this.waitToPlayTimeout)
       this.waitToPlayTimeout = null
+      this._lastDoClearTimeout = doClearTimeout
     }
     if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
       if (this.waitToPlayTimeout !== null) return // return in case there is still a timeout running
@@ -757,13 +758,13 @@ export default class Player {
       if ((source = control.querySelector('source')) && typeof source.onerror === 'function') {
         control.addEventListener('error', event => {
           control.sst_hasError = true
-          this.isLoading(true, control)
+          this.isLoading(true, control, undefined, 'error')
           // if it is not already ipfs.cat then trigger it
           if (!this.hasError(control)) source.onerror()
         }, {once: true})
         source.addEventListener('error', event => {
           control.sst_hasError = true
-          this.isLoading(true, control)
+          this.isLoading(true, control, undefined, 'error')
         }, {once: true})
       }
       this.onErrorExtendedToSourceIds.push(control.id)

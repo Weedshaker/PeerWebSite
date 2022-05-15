@@ -14462,16 +14462,16 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
               if (_this3.validateEvent(event)) _this3.isLoading(false, event.target);
             }, true);
             document.body.addEventListener('durationchange', function (event) {
-              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target);
+              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target, undefined, 'durationchange');
             }, true);
             document.body.addEventListener('emptied', function (event) {
-              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target);
+              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target, undefined, 'emptied');
             }, true);
             // TODO: Iphone ended event sometimes does not get triggered, work around with isLoading()->set time out skip to next
             // loop all audio + video
             document.body.addEventListener('ended', function (event) {
               if (_this3.validateEvent(event)) {
-                _this3.isLoading(false, event.target);
+                _this3.isLoading(false, event.target, undefined, 'ended');
                 // set control to 0, since this would not work natively for ios
                 _this3.setCurrentTime(event.target, 0);
                 if (_this3.mode === 'repeat-one' || _this3.mode === 'loop-machine') {
@@ -14482,10 +14482,10 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
               }
             }, true);
             document.body.addEventListener('loadeddata', function (event) {
-              if (_this3.validateEvent(event)) _this3.isLoading(false, event.target);
+              if (_this3.validateEvent(event)) _this3.isLoading(false, event.target, undefined, 'loadeddata');
             }, true);
             document.body.addEventListener('loadedmetadata', function (event) {
-              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target);
+              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target, undefined, 'loadedmetadata');
             }, true);
             document.body.addEventListener('pause', function (event) {
               if (_this3.validateEvent(event)) _this3.pause(event.target, true);
@@ -14500,11 +14500,11 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
               if (_this3.validateEvent(event)) _this3.isLoading(false, event.target);
             }, true);
             document.body.addEventListener('ratechange', function (event) {
-              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target);
+              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target, undefined, 'ratechange');
             }, true);
             document.body.addEventListener('seeked', function (event) {
               if (_this3.validateEvent(event)) {
-                _this3.isLoading(false, event.target);
+                _this3.isLoading(false, event.target, undefined, 'seeked');
                 _this3.respectRandom = true;
                 _this3.saveCurrentTime(event.target);
               }
@@ -14516,10 +14516,10 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
               }
             }, true);
             document.body.addEventListener('stalled', function (event) {
-              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target, undefined, false);
+              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target, undefined, 'stalled');
             }, true);
             document.body.addEventListener('suspend', function (event) {
-              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target, undefined, false);
+              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target, undefined, 'suspend');
             }, true);
             // is triggered repeatingly during playback
             document.body.addEventListener('timeupdate', function (event) {
@@ -14542,7 +14542,7 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
               if (_this3.validateEvent(event)) _this3.setVolume(event.target.volume);
             }, true);
             document.body.addEventListener('waiting', function (event) {
-              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target);
+              if (_this3.validateEvent(event)) _this3.isLoading(true, event.target, undefined, 'waiting');
             }, true);
             // keyboard
             if (!this.isSender) {
@@ -14988,9 +14988,10 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
               this.html.classList.remove('loading');
             }
             // skip to next if song fails to play
-            if (doClearTimeout) {
+            if (doClearTimeout !== false && (doClearTimeout === true || doClearTimeout !== this._lastDoClearTimeout)) {
               clearTimeout(this.waitToPlayTimeout);
               this.waitToPlayTimeout = null;
+              this._lastDoClearTimeout = doClearTimeout;
             }
             if (this.mode === 'random' && this.playBtn.classList.contains('is-playing')) {
               if (this.waitToPlayTimeout !== null) return; // return in case there is still a timeout running
@@ -15062,13 +15063,13 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
                 if ((source = control.querySelector('source')) && typeof source.onerror === 'function') {
                   control.addEventListener('error', function (event) {
                     control.sst_hasError = true;
-                    _this11.isLoading(true, control);
+                    _this11.isLoading(true, control, undefined, 'error');
                     // if it is not already ipfs.cat then trigger it
                     if (!_this11.hasError(control)) source.onerror();
                   }, { once: true });
                   source.addEventListener('error', function (event) {
                     control.sst_hasError = true;
-                    _this11.isLoading(true, control);
+                    _this11.isLoading(true, control, undefined, 'error');
                   }, { once: true });
                 }
                 _this11.onErrorExtendedToSourceIds.push(control.id);
@@ -15231,7 +15232,7 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 						switch (name) {
 							case 'open-or-join-room':
 								this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
-								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.24<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
+								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.25<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
 								// add edit
 								header.find('#info').append('<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">' + (!isSender ? 'Edit!' : 'Abort Editing!') + '</span></a>');
 								header.find('.edit').click(function (event) {
