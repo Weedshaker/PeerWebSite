@@ -14999,7 +14999,7 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
                 _this9.waitToPlayTimeout = null;
                 // keep this inside the timer, otherwise it can trigger a fast loop
                 if (_this9.hasError(control)) return _this9.nextRandom(); // keep this inside the timer, otherwise it can trigger a fast loop
-                if (control.currentTime && control.duration && control.currentTime >= control.duration - 5) return _this9.nextRandom(); // when ended
+                if (control.currentTime && control.duration && control.currentTime >= control.duration - 15) return _this9.nextRandom(); // when ended with 15sec tolerance
                 var key = _this9.allControls.indexOf(control);
                 var step = key === -1 ? 1 : _this9.isLoadingMemory.get(key) || 1;
                 _this9.isLoadingMemory.set(key, step + 1);
