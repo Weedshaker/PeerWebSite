@@ -14391,7 +14391,7 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
           this.prevResetTollerance = 3; // sec., used to decide from when a track would be reset when going to prev track
           this.seekTime = 10; // sec., used for seek steps
           this.keyDownTollerance = 300; // ms, used to decide from holding down a key to start seeking
-          this.waitToPlayMs = 5000; // ms, in random mode waiting for play before skipping to next (every pause/play action will trigger multiple of native events which will reset isLoading nextRandom and postpone the nextRandom to trigger)
+          this.waitToPlayMs = 2000; // ms, in random mode waiting for play before skipping to next (every pause/play action will trigger multiple of native events which will reset isLoading nextRandom and postpone the nextRandom to trigger)
           // NOTE: EventListener named eg. 'waiting' retrigger the this.isLoading( faster than the waitToPlayMs = 10000 , for this keep it lower
           // NOTE: tried pause/play quick command to skip to next but did not work on mobile except of starting all songs: this.waitSkipAtPausePlayMs = 2000 // ms, in between pushing pause <-> play to skip to next random song
 
@@ -14999,7 +14999,7 @@ $__System.register('29', ['7', '10', 'a', '2a'], function (_export) {
                 _this9.waitToPlayTimeout = null;
                 // keep this inside the timer, otherwise it can trigger a fast loop
                 if (_this9.hasError(control)) return _this9.nextRandom(); // keep this inside the timer, otherwise it can trigger a fast loop
-                if (control.currentTime && control.currentTime >= control.duration) return _this9.next(); // when ended
+                if (control.currentTime && control.duration && control.currentTime >= control.duration - 5) return _this9.nextRandom(); // when ended
                 var key = _this9.allControls.indexOf(control);
                 var step = key === -1 ? 1 : _this9.isLoadingMemory.get(key) || 1;
                 _this9.isLoadingMemory.set(key, step + 1);
@@ -15227,7 +15227,7 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 						switch (name) {
 							case 'open-or-join-room':
 								this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
-								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.27<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
+								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.28<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
 								// add edit
 								header.find('#info').append('<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">' + (!isSender ? 'Edit!' : 'Abort Editing!') + '</span></a>');
 								header.find('.edit').click(function (event) {
