@@ -34,7 +34,7 @@ export default class Player {
     this.parent = parent
     // wait for the first media to load metadata bevor the player options initialize
     document.body.addEventListener('loadedmetadata', event => this.init(event), { once: true, capture: true })
-    document.body.addEventListener('loadedmetadata', event => this.refreshedInit(event), true)
+    document.body.addEventListener('loadedmetadata', event => this.refreshedInit(event), {capture: true})
   }
 
   init (event) {
@@ -61,19 +61,19 @@ export default class Player {
     // is media playing or not
     document.body.addEventListener('canplay', event => {
 			if (this.validateEvent(event)) this.isLoading(false, event.target)
-    }, true)
+    }, {capture: true})
     document.body.addEventListener('canplaythrough', event => {
 			if (this.validateEvent(event)) this.isLoading(false, event.target)
-    }, true)
+    }, {capture: true})
     document.body.addEventListener('complete', event => {
 			if (this.validateEvent(event)) this.isLoading(false, event.target)
-    }, true)
+    }, {capture: true})
     document.body.addEventListener('durationchange', event => {
 			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, 'durationchange')
-    }, true)
+    }, {capture: true})
     document.body.addEventListener('emptied', event => {
 			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, 'emptied')
-    }, true)
+    }, {capture: true})
     // TODO: Iphone ended event sometimes does not get triggered, work around with isLoading()->set time out skip to next
     // loop all audio + video
 		document.body.addEventListener('ended', event => {
@@ -87,47 +87,47 @@ export default class Player {
           this.next()
         }
       }
-    }, true)
+    }, {capture: true})
     document.body.addEventListener('loadeddata', event => {
 			if (this.validateEvent(event)) this.isLoading(false, event.target, undefined, 'loadeddata')
-    }, true)
+    }, {capture: true})
     document.body.addEventListener('loadedmetadata', event => {
 			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, 'loadedmetadata')
-    }, true)
+    }, {capture: true})
     document.body.addEventListener('pause', event => {
 			if (this.validateEvent(event)) this.pause(event.target, true)
-    }, true)
+    }, {capture: true})
 		document.body.addEventListener('play', event => {
       if (this.validateEvent(event)) this.play(event.target, true)
-    }, true)
+    }, {capture: true})
     document.body.addEventListener('play', event => {
       this.sessionPlayed = true
     }, { capture: true, once: true })
     document.body.addEventListener('playing', event => {
 			if (this.validateEvent(event)) this.isLoading(false, event.target)
-    }, true)
+    }, {capture: true})
     document.body.addEventListener('ratechange', event => {
 			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, 'ratechange')
-    }, true)
+    }, {capture: true})
     document.body.addEventListener('seeked', event => {
 			if (this.validateEvent(event)) {
         this.isLoading(false, event.target, undefined, 'seeked')
         this.respectRandom = true
         this.saveCurrentTime(event.target)
       }
-    }, true)
+    }, {capture: true})
     document.body.addEventListener('seeking', event => {
 			if (this.validateEvent(event)) {
         this.isLoading(true, event.target)
         this.respectRandom = false
       }
-    }, true)
+    }, {capture: true})
     document.body.addEventListener('stalled', event => {
 			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, 'stalled')
-    }, true)
+    }, {capture: true})
     document.body.addEventListener('suspend', event => {
 			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, 'suspend')
-    }, true)
+    }, {capture: true})
 		// is triggered repeatingly during playback
 		document.body.addEventListener('timeupdate', event => {
 			if (this.validateEvent(event)) {
@@ -143,14 +143,14 @@ export default class Player {
         // after error there was the case that the button wouldn't switch to play
         this.playBtn.classList.add('is-playing')
       }
-    }, true)
+    }, {capture: true})
     // keep all at same volume
 		document.body.addEventListener('volumechange', event => {
 			if (this.validateEvent(event)) this.setVolume(event.target.volume)
-		}, true)
+		}, {capture: true})
     document.body.addEventListener('waiting', event => {
 			if (this.validateEvent(event)) this.isLoading(true, event.target, undefined, 'waiting')
-    }, true)
+    }, {capture: true})
     // keyboard
 		if (!this.isSender) {
 			document.body.addEventListener('keydown', event => {
@@ -185,7 +185,7 @@ export default class Player {
             if (!this.nextTimestamp) this.nextTimestamp = Date.now()
           }
 				}
-      }, true)
+      }, {capture: true})
       document.body.addEventListener('keyup', event => {
         // prev, next
         if (event.keyCode === 37 || event.keyCode === 39) {
@@ -200,7 +200,7 @@ export default class Player {
             this.nextTimestamp = undefined
           }
         }
-      }, true)
+      }, {capture: true})
 		}
   }
 
