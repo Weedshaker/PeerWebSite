@@ -756,11 +756,11 @@ export default class Player {
           this.isLoading(true, control, undefined, 'error')
           // if it is not already ipfs.cat then trigger it
           if (!this.hasError(control)) source.onerror()
-        }, {once: true})
+        }, {capture: true, once: true})
         source.addEventListener('error', event => {
           control.sst_hasError = true
           this.isLoading(true, control, undefined, 'error')
-        }, {once: true})
+        }, {capture: true, once: true})
       }
       this.onErrorExtendedToSourceIds.push(control.id)
     }
