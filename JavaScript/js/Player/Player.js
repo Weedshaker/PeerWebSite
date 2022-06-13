@@ -759,7 +759,7 @@ export default class Player {
         }, {capture: true, once: true})
         source.addEventListener('error', event => {
           control.sst_hasError = true
-          this.isLoading(true, control, undefined, 'error')
+          this.next()
         }, {capture: true, once: true})
       }
       this.onErrorExtendedToSourceIds.push(control.id)
