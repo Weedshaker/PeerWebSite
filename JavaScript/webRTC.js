@@ -15227,7 +15227,7 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 						switch (name) {
 							case 'open-or-join-room':
 								this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
-								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.32<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
+								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.33<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
 								// add edit
 								header.find('#info').append('<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">' + (!isSender ? 'Edit!' : 'Abort Editing!') + '</span></a>');
 								header.find('.edit').click(function (event) {
@@ -17621,7 +17621,7 @@ $__System.register('58', ['7', '31', '33', 'a', '2e'], function (_export) {
                 }, {
                     key: 'cat',
                     value: function cat(cid) {
-                        var raw = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+                        var raw = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
 
                         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of
                         // for await alternative
@@ -17648,9 +17648,9 @@ $__System.register('58', ['7', '31', '33', 'a', '2e'], function (_export) {
                                 console.info('@IPFS: Got Page ' + cid + ' through fetch');
                                 resolve(result);
                             })['catch'](rejectFunc);
-                            _this3.cat(cid, false).then(function (result) {
+                            _this3.cat(cid, true).then(function (result) {
                                 console.info('@IPFS: Got Page ' + cid + ' through cat');
-                                resolve(result);
+                                resolve(_this3.utf8ArrayToStr(result));
                                 abortController.abort();
                             })['catch'](rejectFunc);
                         });
@@ -17831,6 +17831,59 @@ $__System.register('58', ['7', '31', '33', 'a', '2e'], function (_export) {
                             if (blob) _this6.Helper.saveBlob(blob, 'peerWebSite_' + cid + '.txt');
                         });
                         return length;
+                    }
+                }, {
+                    key: 'utf8ArrayToStr',
+                    value: function utf8ArrayToStr(arr) {
+                        var _this7 = this;
+
+                        if (ArrayBuffer.isView(arr)) return this._utf8ArrayToStr(arr);
+                        return arr.reduce(function (accumulator, currentValue) {
+                            return accumulator + _this7._utf8ArrayToStr(currentValue);
+                        }, '');
+                    }
+
+                    // http://www.onicos.com/staff/iz/amuse/javascript/expert/utf.txt
+
+                    /* utf.js - UTF-8 <=> UTF-16 convertion
+                    *
+                    * Copyright (C) 1999 Masanao Izumo <iz@onicos.co.jp>
+                    * Version: 1.0
+                    * LastModified: Dec 25 1999
+                    * This library is free.  You can redistribute it and/or modify it.
+                    */
+
+                }, {
+                    key: '_utf8ArrayToStr',
+                    value: function _utf8ArrayToStr(array) {
+                        var out, i, len, c;
+                        var char2, char3;
+
+                        out = "";
+                        len = array.length;
+                        i = 0;
+                        while (i < len) {
+                            c = array[i++];
+                            switch (c >> 4) {
+                                case 0:case 1:case 2:case 3:case 4:case 5:case 6:case 7:
+                                    // 0xxxxxxx
+                                    out += String.fromCharCode(c);
+                                    break;
+                                case 12:case 13:
+                                    // 110x xxxx   10xx xxxx
+                                    char2 = array[i++];
+                                    out += String.fromCharCode((c & 0x1F) << 6 | char2 & 0x3F);
+                                    break;
+                                case 14:
+                                    // 1110 xxxx  10xx xxxx  10xx xxxx
+                                    char2 = array[i++];
+                                    char3 = array[i++];
+                                    out += String.fromCharCode((c & 0x0F) << 12 | (char2 & 0x3F) << 6 | (char3 & 0x3F) << 0);
+                                    break;
+                            }
+                        }
+
+                        return out;
                     }
                 }]);
 
