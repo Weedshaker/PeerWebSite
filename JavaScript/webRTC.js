@@ -15227,7 +15227,7 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 						switch (name) {
 							case 'open-or-join-room':
 								this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
-								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.33<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
+								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.34<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
 								// add edit
 								header.find('#info').append('<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">' + (!isSender ? 'Edit!' : 'Abort Editing!') + '</span></a>');
 								header.find('.edit').click(function (event) {
@@ -15332,17 +15332,23 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 					value: function createWebrtcControls(controls, connection, isSender, headerReceiver) {
 						var _this2 = this;
 
+						var btnTxt1 = 'WebRTC (temporary):';
+						var btnTxt2 = 'Activate Live Session & Copy Link';
+						var details = $('<details><summary>' + btnTxt1 + btnTxt2 + '</summary></details>');
+						controls.append(details);
+						var detailsFlex = $('<div></div>');
+						details.append(detailsFlex);
 						// webrtc
 						var input = $('<input id="' + this.idNames[0] + '" class="mui-panel" placeholder="' + (this.parent.checkHashType() === 'webrtc' ? location.hash.substr(1) : connection.token()) + '">');
-						controls.append(input);
+						detailsFlex.append(input);
 						// clipboard
 						var clipboard = $('<input dir="rtl" type="text" class="mui-panel" id="clipboardInput">').hide();
 						clipboard.keypress(function (e) {
 							e.preventDefault();
 							e.target.blur();
 						});
-						controls.append(clipboard);
-						var button = $('<button id="' + this.idNames[1] + '" class="mui-btn mui-btn--webRTC"><span class="btnText">WebRTC (temporary):<br>Activate Live Session & Copy Link</span><span class="qr"></span></button>');
+						detailsFlex.append(clipboard);
+						var button = $('<button id="' + this.idNames[1] + '" class="mui-btn mui-btn--webRTC"><span class="btnText">' + btnTxt1 + '<br>' + btnTxt2 + '</span><span class="qr"></span></button>');
 						var counterWebRTC = $('<span class="counter counterWebRTC">[0 connected]</span>');
 						if (isSender) {
 							$(button).find('.btnText').append(counterWebRTC);
@@ -15357,7 +15363,7 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 								button.click();
 							}
 						});
-						controls.append(button);
+						detailsFlex.append(button);
 						if (isSender) button.click(function (event) {
 							// fix and define roomid aka link aka hash
 							$('#txt-roomid').val($('#txt-roomid').val().replace(/\s/g, '') || $('#txt-roomid').attr('placeholder'));
@@ -18063,6 +18069,7 @@ $__System.register('59', ['5', '6', '7', '18', '33', 'a'], function (_export) {
                     _get(Object.getPrototypeOf(EncryptDecrypt.prototype), 'constructor', this).call(this);
 
                     this.encryptedIndicator = 'SST_Encrypted:';
+                    this.hintEndIndicator = ':SST_Hint';
 
                     this.create(this.encrypt);
                     this.encrypt = function (text, salt) {
@@ -18072,9 +18079,13 @@ $__System.register('59', ['5', '6', '7', '18', '33', 'a'], function (_export) {
                         });
                         if (!salt) salt = window.prompt('Enter a password or passphrase in case you want to encrypt the html/text!?');
                         if (salt) {
-                            _this.run([text, salt], _this.workers[0], function (encryptedText) {
-                                return encryptResolve({ text: _this.encryptedIndicator + encryptedText, encrypted: true });
-                            });
+                            (function () {
+                                var hint = window.prompt('Enter a hint or question in case you want to give a clue!?') || '';
+                                if (hint) hint = hint + _this.hintEndIndicator;
+                                _this.run([text, salt], _this.workers[0], function (encryptedText) {
+                                    return encryptResolve({ text: _this.encryptedIndicator + hint + encryptedText, encrypted: true });
+                                });
+                            })();
                         } else {
                             encryptResolve({ text: text, encrypted: false });
                         }
@@ -18089,7 +18100,12 @@ $__System.register('59', ['5', '6', '7', '18', '33', 'a'], function (_export) {
                             decryptResolve = resolve;
                         });
                         if (_this.isEncrypted(text)) {
-                            if (!salt) salt = window.prompt('Enter a password or passphrase to decrypt this Peer Web Site\'s html/text!');
+                            if (!salt) {
+                                var hint = text.match(new RegExp(_this.encryptedIndicator + '(.*)' + _this.hintEndIndicator));
+                                hint = Array.isArray(hint) ? hint[1] || '' : '';
+                                salt = window.prompt('Enter a password or passphrase to decrypt this Peer Web Site\'s html/text!' + (hint ? '\n\nHint: ' + hint : ''));
+                                if (hint) text = text.replace(new RegExp(_this.encryptedIndicator + '(.*)' + _this.hintEndIndicator), '');
+                            }
                             if (salt) {
                                 _this.run([text.replace(_this.encryptedIndicator, ''), salt], _this.workers[1], function (decryptedText) {
                                     return decryptResolve({ text: decryptedText, decrypted: true });

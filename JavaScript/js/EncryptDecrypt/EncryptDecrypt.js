@@ -6,6 +6,7 @@ export class EncryptDecrypt extends MasterWorker {
         super()
 
         this.encryptedIndicator = 'SST_Encrypted:'
+        this.hintEndIndicator = ':SST_Hint'
 
         this.create(this.encrypt);
         this.encrypt = (text, salt) => {
@@ -15,7 +16,9 @@ export class EncryptDecrypt extends MasterWorker {
             });
             if (!salt) salt = window.prompt('Enter a password or passphrase in case you want to encrypt the html/text!?');
             if (salt) {
-                this.run([text, salt], this.workers[0], encryptedText => encryptResolve({text: this.encryptedIndicator + encryptedText, encrypted: true}));
+                let hint = window.prompt('Enter a hint or question in case you want to give a clue!?') || '';
+                if (hint) hint = hint + this.hintEndIndicator;
+                this.run([text, salt], this.workers[0], encryptedText => encryptResolve({text: this.encryptedIndicator + hint + encryptedText, encrypted: true}));
             } else {
                 encryptResolve({text, encrypted: false});
             }
@@ -28,7 +31,12 @@ export class EncryptDecrypt extends MasterWorker {
                 decryptResolve = resolve;
             });
             if (this.isEncrypted(text)) {
-                if (!salt) salt = window.prompt('Enter a password or passphrase to decrypt this Peer Web Site\'s html/text!');
+                if (!salt) {
+                    let hint = text.match(new RegExp(this.encryptedIndicator + '(.*)' + this.hintEndIndicator))
+                    hint = Array.isArray(hint) ? hint[1] || '' : ''
+                    salt = window.prompt('Enter a password or passphrase to decrypt this Peer Web Site\'s html/text!' + (hint ? `\n\nHint: ${hint}` : ''));
+                    if (hint) text = text.replace(new RegExp(this.encryptedIndicator + '(.*)' + this.hintEndIndicator), '')
+                }
                 if (salt) {
                     this.run([text.replace(this.encryptedIndicator, ''), salt], this.workers[1], decryptedText => decryptResolve({text: decryptedText, decrypted: true}));
                 } else if (typeof failedFunc === 'function'){

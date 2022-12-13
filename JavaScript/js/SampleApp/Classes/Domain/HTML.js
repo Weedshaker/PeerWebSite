@@ -25,7 +25,7 @@ export class HTML extends MasterHTML {
 					<div id="info" class="flex">
 						<div class="offline">YOU ARE OFFLINE!!!</div>
 						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
-						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.33<span id="sw-version"></span>; Visit Github for more Infos!</a>
+						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.34<span id="sw-version"></span>; Visit Github for more Infos!</a>
 						<a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>
 					</div>
 				</header>`);
@@ -127,17 +127,23 @@ export class HTML extends MasterHTML {
 		return false;
 	}
 	createWebrtcControls(controls, connection, isSender, headerReceiver) {
+		const btnTxt1 = 'WebRTC (temporary):';
+		const btnTxt2 = 'Activate Live Session & Copy Link';
+		const details = $(`<details><summary>${btnTxt1}${btnTxt2}</summary></details>`);
+		controls.append(details);
+		const detailsFlex = $('<div></div>');
+		details.append(detailsFlex)
 		// webrtc
 		let input = $(`<input id="${this.idNames[0]}" class="mui-panel" placeholder="${this.parent.checkHashType() === 'webrtc' ? location.hash.substr(1) : connection.token()}">`);
-		controls.append(input);
+		detailsFlex.append(input);
 		// clipboard
 		let clipboard = $(`<input dir="rtl" type="text" class="mui-panel" id="clipboardInput">`).hide();
 		clipboard.keypress(function (e) {
 			e.preventDefault();
 			e.target.blur();
 		});
-		controls.append(clipboard);
-		let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--webRTC"><span class="btnText">WebRTC (temporary):<br>Activate Live Session & Copy Link</span><span class="qr"></span></button>`);
+		detailsFlex.append(clipboard);
+		let button = $(`<button id="${this.idNames[1]}" class="mui-btn mui-btn--webRTC"><span class="btnText">${btnTxt1}<br>${btnTxt2}</span><span class="qr"></span></button>`);
 		let counterWebRTC = $('<span class="counter counterWebRTC">[0 connected]</span>');
 		if (isSender) {
 			$(button).find('.btnText').append(counterWebRTC);
@@ -152,7 +158,7 @@ export class HTML extends MasterHTML {
 				button.click();
 			}
 		});
-		controls.append(button);
+		detailsFlex.append(button);
 		if (isSender) button.click(event => {
 			// fix and define roomid aka link aka hash
 			$('#txt-roomid').val($('#txt-roomid').val().replace(/\s/g, '') || $('#txt-roomid').attr('placeholder'));

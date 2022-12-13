@@ -141,7 +141,7 @@ body > header .headerReceiver.hasQr > .qr {
     display: flex;
     align-items: center;
 }
-#sender, #receiver, .note-editor, #controls{
+#sender, #receiver, .note-editor, #controls, #controls > details[open]{
     min-width: fit-content;
 }
 #sender, #receiver, .note-editor{
@@ -168,6 +168,8 @@ input.note-file-input.form-control::after {
 .note-editor:not(.fullscreen) .note-editable, #sender {
     height: fit-content !important;
     min-height: 65vh; /* when adjusting search: height in-code search. to change both values. */
+    /* webrtc deprecated */
+    min-height: 74vh;
 }
 .note-editor.fullscreen .note-editable{
     max-width: 100vw;
@@ -191,6 +193,8 @@ body:not(.viewer) #receiver {
 }
 body[type="webrtc"]:not(.viewer) #receiver {
     display: block;
+    /* webrtc deprecated */
+    display: none;
 }
 .panel {
     margin-bottom: 5px !important;
@@ -207,20 +211,36 @@ body {
 body > *, body > .panel {
     border-radius: 10px;
 }
-#controls {
+#controls, #controls > details[open] > div {
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 5px;
     min-height: 5vh;
 }
-#controls > * {
+#controls > details {
+    /* webrtc deprecated */
+    display: none;
+    min-height: 0;
+}
+#controls > details:not([open]) {
+    cursor: pointer;
+    padding: 0.5em 0.5em 0;
+}
+#controls > details[open] > summary {
+    display: none;
+}
+#controls > details {
+    width: 100%;
+    margin: 0;
+}
+#controls > *, #controls > details > div > * {
     height: auto;
     min-height: 54px;
     width: 50%;
     margin: 5px 0 0;
     flex: 1 1 auto;
 }
-#controls > button {
+#controls > button, #controls > details > div > button{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -229,18 +249,18 @@ body > *, body > .panel {
     line-height: 15px;
     padding: 5px;
 }
-#controls > button.hasQr {
+#controls > button.hasQr, #controls > details > div > button.hasQr  {
     justify-content: space-between;
     flex-wrap: wrap;
 }
 @media only screen and (max-width: 650px) {
-    #controls > button.hasQr {
+    #controls > button.hasQr, #controls > details > div > button.hasQr {
         justify-content: center;
     }
-    #controls > button.hasQr > span {
+    #controls > button.hasQr > span, #controls > details > div > button.hasQr > span {
         width: 100%;
     }
-    #controls > button.hasQr > span.qr {
+    #controls > button.hasQr > span.qr, #controls > details > div > button.hasQr > span.qr {
         padding-top: 5px;
     }
 
@@ -311,14 +331,14 @@ span.qr.open .glyphicon-lock {
         opacity: 0.1;
     }
 }
-#controls > input {
+#controls > input, #controls > details > div > input {
     color: green;
     font-weight: bold;
 }
-#controls > button:active {
+#controls > button:active, #controls > details > div > button:active {
     background-color: darkcyan;
 }
-#controls > #inputWebTorrent, #controls > #inputIPFS, #controls > #clipboardInput {
+#controls > #inputWebTorrent, #controls > #inputIPFS, #controls > #clipboardInput, #controls > details > div > #clipboardInput {
     cursor: not-allowed;
 }
 .counter {
@@ -402,6 +422,8 @@ body.viewer {
 }
 body.viewer #receiver {
     min-height: 100vh;
+    /* webrtc deprecated */
+    min-height: 93vh;
 }
 /* file picker form */
 .form-check {
