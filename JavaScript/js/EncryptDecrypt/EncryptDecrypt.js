@@ -26,6 +26,7 @@ export class EncryptDecrypt extends MasterWorker {
         }
         this.create(this.decrypt);
         this.decrypt = (text, salt, failedFunc = null) => {
+            const origText = text
             let decryptResolve = null;
             const decryptPromise = new Promise(resolve => {
                 decryptResolve = resolve;
@@ -45,7 +46,7 @@ export class EncryptDecrypt extends MasterWorker {
                         event.preventDefault();
                         event.stopPropagation();
                         window[funcName] = event => {};
-                        this.decrypt(text).then(result => {
+                        this.decrypt(origText).then(result => {
                             const {text, decrypted} = result;
                             failedFunc(text);
                         });
