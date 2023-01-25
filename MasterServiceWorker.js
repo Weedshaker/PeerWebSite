@@ -28,8 +28,10 @@ class MasterServiceWorker {
 			'./jspm_packages/github/twbs/bootstrap@3.3.7/fonts/glyphicons-halflings-regular.woff2',
 			'./jspm_packages/github/tanaka-de-silva/google-diff-match-patch-js@1.0.0/diff_match_patch.js',
 			'./jspm_packages/github/pieroxy/lz-string@1.4.4/libs/lz-string.min.js',
+			'https://cdn.jsdelivr.net/npm/webtorrent@*/dist/webtorrent.min.js',
 			'https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js',
 			'https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js',
+			'https://cdn.jsdelivr.net/npm/ipfs@*/dist/index.min.js',
 		];
 		this.doNotGetMessage = ['socket.io', 'libp2p.io', 'dns.google', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', 'herokuapp.com', 'webrtcweb.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
 		this.doGetMessage = ['magnet:', 'magnet/', 'ipfs/'];

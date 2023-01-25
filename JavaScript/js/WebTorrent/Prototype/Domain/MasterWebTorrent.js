@@ -48,35 +48,41 @@ export class MasterWebTorrent {
 			store: Function            // Custom chunk store (must follow [abstract-chunk-store](https://www.npmjs.com/package/abstract-chunk-store) API)
 			*/
 			//store: IndexeddbChunkStore
+			// https://cdn.jsdelivr.net/gh/ngosang/trackerslist@master/trackers_best.txt
 			announce: [
-				'udp://tracker.leechers-paradise.org:6969',
-				'udp://tracker.coppersurfer.tk:6969',
-				'udp://tracker.opentrackr.org:1337',
-				'udp://explodie.org:6969',
-				'udp://tracker.empire-js.us:1337',
-				'udp://zephir.monocul.us:6969/announce',
+				'udp://tracker.opentrackr.org:1337/announce',
+				'udp://9.rarbg.com:2810/announce',
+				'udp://tracker.torrent.eu.org:451/announce',
+				'udp://tracker.moeking.me:6969/announce',
+				'udp://tracker.dler.org:6969/announce',
+				'udp://tracker.altrosky.nl:6969/announce',
 				'udp://p4p.arenabg.com:1337/announce',
-				'udp://tracker.internetwarriors.net:1337/announce',
-				'udp://public.popcorn-tracker.org:6969/announce',
-				'udp://eddie4.nl:6969/announce',
+				'udp://opentracker.i2p.rocks:6969/announce',
 				'udp://open.stealth.si:80/announce',
-				'udp://tracker.ex.ua:80/announce',
-				'udp://tracker.filetracker.pl:8089/announce',
-				'udp://tracker.flashtorrents.org:6969/announce',
-				'udp://tracker.kicks-ass.net:80/announce',
-				'udp://tracker.kuroy.me:5944/announce',
-				'udp://tracker.piratepublic.com:1337/announce',
-				'udp://tracker.tiny-vps.com:6969/announce',
-				'udp://tracker.yoshi210.com:6969/announce',
-				'udp://185.5.97.139:8089/announce',
-				'udp://zer0day.ch:1337/announce',
-				'udp://thetracker.org:80/announce',
-				'udp://wambo.club:1337/announce',
-				'udp://tc.animereactor.ru:8082/announce',
-				'udp://tracker.bittor.pw:1337/announce',
-				'udp://tracker.vanitycore.co:6969/announce'
+				'udp://open.demonii.com:1337/announce',
+				'udp://explodie.org:6969/announce',
+				'udp://exodus.desync.com:6969/announce',
+				'https://tracker.nanoha.org:443/announce',
+				'https://tracker.lilithraws.org:443/announce',
+				'https://tr.burnabyhighstar.com:443/announce',
+				'https://opentracker.i2p.rocks:443/announce',
+				'http://tracker1.bt.moack.co.kr:80/announce',
+				'http://tracker.mywaifu.best:6969/announce',
+				'udp://zecircle.xyz:6969/announce',
+				'udp://www.peckservers.com:9000/announce'
 			]
 		};
+		fetch('https://cdn.jsdelivr.net/gh/ngosang/trackerslist@master/trackers_best.txt').then(response => {
+            if (response.status >= 200 && response.status <= 299) return response.text()
+            throw new Error(response.statusText)
+        }).then(text => {
+			const trackers = text.split('\n').filter(text => text)
+			if (trackers.length) {
+				trackers.forEach(tracker => {
+					if (tracker.length && !this.addOpts.announce.includes(tracker)) this.addOpts.announce.unshift(tracker)
+				})
+			}
+		})
 		this.seedOpts = {
 			/*
 			name: String,            // name of the torrent (default = basename of `path`, or 1st file's name)
