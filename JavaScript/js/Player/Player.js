@@ -80,7 +80,7 @@ export default class Player {
 			if (this.validateEvent(event)) {
         this.isLoading(false, event.target, undefined, 'ended')
         // set control to 0, since this would not work natively for ios
-        this.setCurrentTime(event.target, 0)
+        this.setCurrentTime(event.target, 0, true)
         if (this.mode === 'repeat-one' || this.mode === 'loop-machine') {
           this.play(event.target)
         } else {
