@@ -11,8 +11,9 @@ export class IPFS {
         // https://blog.ipfs.io/2020-07-20-js-ipfs-0-48/
         this.node = new Promise(resolve => {
             const createIpfs = () => {
-                if (window.Ipfs) {
-                    resolve(window.Ipfs.create());
+                //https://ipfs.github.io/helia-strings/modules/_helia_strings.html
+                if (window.Helia && window.HeliaStrings) {
+                    resolve(window.Helia.createHelia().then(helia => window.HeliaStrings.strings(helia)));
                 } else {
                     setTimeout(createIpfs, 1000);
                 }
@@ -27,7 +28,7 @@ export class IPFS {
     }
     add(path, content){
         // file.link, which depends on this.baseUrl is only used at EditorSummernote and has an error handling "onFetchError" to findPeers
-        return this.node.then(node => node.add({path, content})).then(file => Object.assign({link: this.baseUrl + file.cid}, file));
+        return this.node.then(node => node.put(content)).then(file => Object.assign({link: this.baseUrl + file.cid}, file));
     }
     fetch(cid, type = 'text', abortController = new AbortController(), queryString = ''){
         return new Promise((resolve, reject) => {
@@ -48,16 +49,7 @@ export class IPFS {
     cat(cid, raw = true){
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of
         // for await alternative
-        return this.node.then(node => {
-            const chunksIterator = node.cat(cid);
-            const chunks = [];
-            const consume = obj => {
-                if (obj.done) return raw ? chunks : chunks.toString();
-                chunks.push(obj.value);
-                return chunksIterator.next().then(consume);
-            };
-            return chunksIterator.next().then(consume); // kick off the recursive function
-        });
+        return this.node.then(node => node.get(cid));
     }
     raceFetchVsCat(cid, type, queryString){
         return new Promise((resolve, reject) => {

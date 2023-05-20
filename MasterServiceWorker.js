@@ -7,8 +7,8 @@
 class MasterServiceWorker {
 	constructor(){
 		this.name = 'ServiceWorker';
-		this.cacheVersion = 'v1';
-		this.devVersion = '0.25';
+		this.cacheVersion = 'v2';
+		this.devVersion = '0.26';
         this.precache = [
             './',
 			'./index.html',
@@ -31,7 +31,8 @@ class MasterServiceWorker {
 			'https://cdn.jsdelivr.net/npm/webtorrent@*/dist/webtorrent.min.js',
 			'https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js',
 			'https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js',
-			'https://cdn.jsdelivr.net/npm/ipfs@*/dist/index.min.js',
+			'https://cdn.jsdelivr.net/npm/@helia/strings@*/dist/index.min.js',
+			'https://cdn.jsdelivr.net/npm/helia@*/dist/index.min.js',
 		];
 		this.doNotGetMessage = ['socket.io', 'libp2p.io', 'dns.google', 'preload.ipfs', 'tinyurl.com', 'api.qrserver.com', 'herokuapp.com', 'webrtcweb.com', '/css/', '/img/', '/JavaScript/', '/jspm_packages/', '/manifest.json', '/favicon.ico', '/#'];
 		this.doGetMessage = ['magnet:', 'magnet/', 'ipfs/'];
