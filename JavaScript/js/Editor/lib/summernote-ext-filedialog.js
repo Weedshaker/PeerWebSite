@@ -48,13 +48,13 @@
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="fileType" id="fileType2" value="ipfs" ${fileType === 'ipfs' || !fileType ? 'checked' : ''}>
+                                <input class="form-check-input" type="radio" name="fileType" id="fileType2" value="ipfs" ${fileType === 'ipfs' ? 'checked' : ''}>
                                 <label class="form-check-label" for="fileType2">
-                                IPFS: Distributed file system (rather permanent) NOTE: Can not be encrypted.
+                                <span style="color:red">IPFS needs the ipfs/helia upgrade and is not working at the moment, check back later!</span><br>IPFS: Distributed file system (rather permanent) NOTE: Can not be encrypted and 
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="fileType" id="fileType3" value="webtorrent" ${fileType === 'webtorrent' ? 'checked' : ''}>
+                                <input class="form-check-input" type="radio" name="fileType" id="fileType3" value="webtorrent" ${fileType === 'webtorrent' || !fileType ? 'checked' : ''}>
                                 <label class="form-check-label" for="fileType3">
                                 WebTorrent: Peer to peer file sharing (transitory) NOTE: Can not be encrypted.
                             </label>

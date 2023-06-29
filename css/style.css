@@ -71,6 +71,14 @@ body > header > div.flex .recycle, body > header > div.flex .edit, body > header
 body > header > div.flex .recycle {
     color: green;
 }
+body > header > div.flex .tdw {
+    animation: color-change 5s infinite;
+}
+@keyframes color-change {
+    0% { color: lightgreen; }
+    50% { color: #f12a2a; }
+    100% { color: lightgreen; }
+}
 body > header > div.flex .edit, body > header > div.flex .download-all {
     display: none;
 }

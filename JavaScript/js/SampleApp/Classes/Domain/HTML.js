@@ -25,8 +25,9 @@ export class HTML extends MasterHTML {
 					<div id="info" class="flex">
 						<div class="offline">YOU ARE OFFLINE!!!</div>
 						<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>
-						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.37<span id="sw-version"></span>; Visit Github for more Infos!</a>
+						<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.38<span id="sw-version"></span>; Visit Github for more Infos!</a>
 						<a href="${location.href.replace(location.hash, '')}" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>
+						<a href="http://www.thedecentralweb.com/" class="tdw">&#9777;&nbsp;<span class="tiny">👉 Try the decentral web chat!</span></a>
 					</div>
 				</header>`);
 				// add edit
@@ -90,8 +91,8 @@ export class HTML extends MasterHTML {
 				if (!isSender) this.addQrCode(headerReceiver, undefined, 'receiverLoading');
 				// controls
 				let controls = $('<div id="controls"></div>')
-				this.createIpfsControls(controls);
 				const counterWebTorrent = this.createWebtorrentControls(controls, isSender, headerReceiver);
+				if (!self.opener) this.createIpfsControls(controls);
 				const webrtcButton = this.createWebrtcControls(controls, connection, isSender, headerReceiver);
 				this.containers.push(controls);
 				// main containers
@@ -188,6 +189,7 @@ export class HTML extends MasterHTML {
 		let button = $(`<button id="buttonIPFS" class="mui-btn mui-btn--primary"><span class="btnText">IPFS (rather permanent):<br>Take Snapshot & Copy Link</span><span class="qr"></span><span class="glyphicon glyphicon-floppy-open"></span></button>`);
 		controls.append(button);
 		button.click(event => {
+			alert('IPFS needs the ipfs/helia upgrade and is not working at the moment, check back later!')
 			this.addQrCode($(button), 'onlyLoading', 'ipfsLoading');
 			this.EncryptDecrypt.encrypt(this.Editor.getData(undefined, true)).then(result => {
 				const {text, encrypted} = result;
@@ -200,6 +202,10 @@ export class HTML extends MasterHTML {
 					// update the clipboard
 					input.val(location.href);
 					this.copyToClipBoard('inputIPFS');
+					if (self.opener) self.opener.postMessage({
+						title: document.title,
+						href: location.href
+					}, "*")
 				}).catch(error => input.val(`IPFS failed: ${error}`))
 			}).catch(error => input.val(`Encrypt failed: ${error}`));
 		});
@@ -246,6 +252,10 @@ export class HTML extends MasterHTML {
 					this.copyToClipBoard('inputWebTorrent');
 					torrent.on('error', error => inputWebTorrent.val(`WebTorrent failed: ${error}`));
 					this.informOnce('buttonWebTorrent');
+					if (self.opener) self.opener.postMessage({
+						title: document.title,
+						href: location.href
+					}, "*")
 				});
 			}).catch(error => input.val(`Encrypt failed: ${error}`));
 		});

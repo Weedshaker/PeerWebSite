@@ -124,7 +124,9 @@ export class App extends MasterApp {
 										const {text, decrypted} = result;
 										// if decryption failed by not entering a password but there is already a localStorage with the content, then don't set the data
 										if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) setData(text);
-										this.HTML.setTitle(this.HTML.getFirstText(this.HTML.getData(this.receiveCont)));
+										setTimeout(() => {
+											this.HTML.setTitle(this.HTML.getFirstText(this.HTML.getData(this.receiveCont)));
+										}, 1000);
 									}).catch(error => $('#receiver').text(`Decrypt; an Error occured! ${error}`));
 								}
 							})(reader);

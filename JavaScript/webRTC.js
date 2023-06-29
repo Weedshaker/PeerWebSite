@@ -15227,7 +15227,7 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 						switch (name) {
 							case 'open-or-join-room':
 								this.idNames = ['txt-roomid', 'open-or-join-room', 'sender', 'receiver'];
-								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.37<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
+								var header = $('<header class="down isTop">\n\t\t\t\t\t<div id="info" class="flex">\n\t\t\t\t\t\t<div class="offline">YOU ARE OFFLINE!!!</div>\n\t\t\t\t\t\t<iframe class="gh-button" src="https://ghbtns.com/github-btn.html?user=Weedshaker&amp;repo=PeerWebSite&amp;type=star&amp;count=true&amp;size=large" scrolling="0" width="160px" height="30px" frameborder="0"></iframe>\n\t\t\t\t\t\t<a href="https://github.com/Weedshaker/PeerWebSite" class="tiny" style="color:white">v. beta 0.8.38<span id="sw-version"></span>; Visit Github for more Infos!</a>\n\t\t\t\t\t\t<a href="' + location.href.replace(location.hash, '') + '" class="recycle">&#9851;&nbsp;<span class="tiny">New Site</span></a>\n\t\t\t\t\t\t<a href="http://www.thedecentralweb.com/" class="tdw">&#9777;&nbsp;<span class="tiny">👉 Try the decentral web chat!</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t</header>');
 								// add edit
 								header.find('#info').append('<a href="#" class="edit">&#9997;&nbsp;<span class="tiny">' + (!isSender ? 'Edit!' : 'Abort Editing!') + '</span></a>');
 								header.find('.edit').click(function (event) {
@@ -15291,8 +15291,8 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 								if (!isSender) this.addQrCode(headerReceiver, undefined, 'receiverLoading');
 								// controls
 								var controls = $('<div id="controls"></div>');
-								this.createIpfsControls(controls);
 								var counterWebTorrent = this.createWebtorrentControls(controls, isSender, headerReceiver);
+								if (!self.opener) this.createIpfsControls(controls);
 								var webrtcButton = this.createWebrtcControls(controls, connection, isSender, headerReceiver);
 								this.containers.push(controls);
 								// main containers
@@ -15397,6 +15397,7 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 						var button = $('<button id="buttonIPFS" class="mui-btn mui-btn--primary"><span class="btnText">IPFS (rather permanent):<br>Take Snapshot & Copy Link</span><span class="qr"></span><span class="glyphicon glyphicon-floppy-open"></span></button>');
 						controls.append(button);
 						button.click(function (event) {
+							alert('IPFS needs the ipfs/helia upgrade and is not working at the moment, check back later!');
 							_this3.addQrCode($(button), 'onlyLoading', 'ipfsLoading');
 							_this3.EncryptDecrypt.encrypt(_this3.Editor.getData(undefined, true)).then(function (result) {
 								var text = result.text;
@@ -15411,6 +15412,10 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 									// update the clipboard
 									input.val(location.href);
 									_this3.copyToClipBoard('inputIPFS');
+									if (self.opener) self.opener.postMessage({
+										title: document.title,
+										href: location.href
+									}, "*");
 								})['catch'](function (error) {
 									return input.val('IPFS failed: ' + error);
 								});
@@ -15469,6 +15474,10 @@ $__System.register('2b', ['5', '6', '7', '27', '29', 'a'], function (_export) {
 										return inputWebTorrent.val('WebTorrent failed: ' + error);
 									});
 									_this4.informOnce('buttonWebTorrent');
+									if (self.opener) self.opener.postMessage({
+										title: document.title,
+										href: location.href
+									}, "*");
 								});
 							})['catch'](function (error) {
 								return input.val('Encrypt failed: ' + error);
@@ -39634,13 +39643,13 @@ var define = $__System.amdDefine;
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="fileType" id="fileType2" value="ipfs" ${fileType === 'ipfs' || !fileType ? 'checked' : ''}>
+                                <input class="form-check-input" type="radio" name="fileType" id="fileType2" value="ipfs" ${fileType === 'ipfs' ? 'checked' : ''}>
                                 <label class="form-check-label" for="fileType2">
-                                IPFS: Distributed file system (rather permanent) NOTE: Can not be encrypted.
+                                <span style="color:red">IPFS needs the ipfs/helia upgrade and is not working at the moment, check back later!</span><br>IPFS: Distributed file system (rather permanent) NOTE: Can not be encrypted and 
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="fileType" id="fileType3" value="webtorrent" ${fileType === 'webtorrent' ? 'checked' : ''}>
+                                <input class="form-check-input" type="radio" name="fileType" id="fileType3" value="webtorrent" ${fileType === 'webtorrent' || !fileType ? 'checked' : ''}>
                                 <label class="form-check-label" for="fileType3">
                                 WebTorrent: Peer to peer file sharing (transitory) NOTE: Can not be encrypted.
                             </label>
@@ -47845,7 +47854,9 @@ $__System.register('9f', ['5', '6', '7', 'a', '9e'], function (_export) {
 
 																// if decryption failed by not entering a password but there is already a localStorage with the content, then don't set the data
 																if (decrypted !== 'failed' || !localStorage.getItem(location.hash)) setData(text);
-																_this2.HTML.setTitle(_this2.HTML.getFirstText(_this2.HTML.getData(_this2.receiveCont)));
+																setTimeout(function () {
+																	_this2.HTML.setTitle(_this2.HTML.getFirstText(_this2.HTML.getData(_this2.receiveCont)));
+																}, 1000);
 															})['catch'](function (error) {
 																return $('#receiver').text('Decrypt; an Error occured! ' + error);
 															});
